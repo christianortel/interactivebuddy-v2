@@ -70,10 +70,10 @@ Bundled skins must be original. Exact references are supported only as private i
 | Napoleon | Dance Kid | Shipped as legally distinct | Bundled equivalent must avoid exact likeness/name | Private imports can use user-owned exact art locally. |
 | Gregor the Goth | Gloom Friend | Shipped as legally distinct | Named character/persona; do not bundle exact asset | Private imports can use user-owned exact art locally. |
 | Republican | Campaign Pal | Shipped as legally distinct | Bundled equivalent must avoid real-party branding | Add alternate nonpartisan campaign variants. |
-| Robot | Robot | Shipped | Bundled | Add optional heavier physics variant. |
-| Gelatin/blob | Gelatin Blob | Shipped | Bundled | Add optional squishier constraint tuning. |
-| Astronaut | Astronaut | Shipped | Bundled | Add room/audio pairing. |
-| Retro arcade skins | Dance Kid, Campaign Pal, Moon Boot | Shipped | Bundled, original art | Add more classic-inspired pack skins. |
+| Robot | Robot with `robot-heavy` physics | Shipped | Bundled | Add robot-specific audio later. |
+| Gelatin/blob | Gelatin Blob with `gelatin-bouncy` physics | Shipped | Bundled | Add optional squishier constraint tuning. |
+| Astronaut | Astronaut with `astronaut-float` physics | Shipped | Bundled | Add room/audio pairing. |
+| Retro arcade skins | Dance Kid, Campaign Pal, Moon Boot with `moon-boot-spring` physics | Shipped | Bundled, original art | Add more classic-inspired pack skins. |
 | Texture-backed pack skins | Circuit Buddy, Hazmat, Intern, CRT | Shipped | Bundled, original art | Add more rooms and texture scale checks. |
 | User-provided exact skins | Private imported asset packs | Shipped | Private/local only | Add import examples for multi-skin packs. |
 
@@ -104,10 +104,9 @@ Private import only:
 
 ## Next Content Batches
 
-1. `Skin Physics Expansion`: add more skin physics only after more skins justify it, with measurable Matter body changes and shop-path regression.
-2. `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, and regression coverage.
-3. `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only after elemental variant queues stabilize.
-4. `Projectile Preset Expansion`: add another projectile only after the elemental queue and classic parity checks stay stable.
+1. `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, and regression coverage.
+2. `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only after elemental variant queues stabilize.
+3. `Projectile Preset Expansion`: add another projectile only after the elemental queue and classic parity checks stay stable.
 
 ## Audit Rules
 

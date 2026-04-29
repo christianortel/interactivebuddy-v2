@@ -161,6 +161,7 @@ Done:
 - Added and verified Offline Local Play Foundation: Matter.js 0.19.0 is now vendored under `vendor/` with its license, `index.html` loads the local runtime instead of jsdelivr, and browser regression verifies the app boots from the local vendor file with no CDN dependency.
 - Added and verified Elemental Variant Polish: Pulse Beam is a low-flash held energy tool with narrow beam visuals, temporary lit body status metadata, steady push/torque physics, `light`/`pulseBeam` scoring tags, Pulse Check mission/challenge coverage, saved best challenge time, and browser regression for particles, pulsed bodies, mood, movement, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Weapon Cosmetics And Effects Audit: every shipped tool now has a `TOOL_EFFECT_AUDIT` entry with cosmetic/effect identity, visible hook, scoring tags, and coverage notes; older simple props now expose explicit cosmetic metadata; Ball, Trampoline, and Gift received direct browser assertions; and the audit table in `docs/weapon-cosmetics-effects-audit.md` tracks all 24 shipped tools. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Skin Physics Expansion: Astronaut now applies an `astronaut-float` variant with lower density, lower air damping, and slightly higher bounce, while Moon Boot Buddy applies a `moon-boot-spring` texture-backed variant with springier restitution and reduced damping. Browser regression buys Robot, Gelatin Blob, Astronaut, and Moon Boot Buddy through the real shop path and asserts selected skin, physics variant metadata, density, air damping, restitution, texture retention, and equipped state. Full `tests/run-regression.ps1 -Visual` passes.
 
 Done assets:
 
@@ -211,7 +212,7 @@ In progress:
 Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Skin Physics Expansion`: add more skin physics only when tied to real skin choices, measurable Matter body changes, shop-path regression, and matrix status.
+- Next queue item is `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, and regression coverage.
 - Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
 
 Process notes:
@@ -234,6 +235,7 @@ Process notes:
 - For projectile expansion, cover factory metadata, direct launch behavior, collision behavior, replay tags, mission coverage, and visual particles before marking the item done.
 - For elemental expansion, assert status-state metadata plus a real physics change, not just particles and score events.
 - For physics variant polish, test skin selection through the shop and assert measurable Matter body values, not only selected skin IDs.
+- For skin physics expansion, cover built-in and asset-pack skins through the real shop path and assert texture retention for texture-backed variants.
 - For room expansion, assert motif metadata in sanitized packs plus actual DOM thumbnails for default, built-in selected, private-imported, and reload paths.
 - For prop expansion, add the new prop to both direct throw regression and mission coverage; require cosmetic metadata plus replay event/tag assertions.
 - For classic buddy feel work, verify both appearance metadata and measurable physics/spawn values so visual style changes do not silently detach from the ragdoll behavior.

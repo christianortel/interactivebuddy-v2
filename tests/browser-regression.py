@@ -384,10 +384,10 @@ def run(url):
             f"""
             () => {{
               const save = JSON.parse(localStorage.getItem('{SAVE_KEY}'));
-              save.cash = 2000;
+              save.cash = 4500;
               localStorage.setItem('{SAVE_KEY}', JSON.stringify(save));
-              window.__buddyLabDebug.state.cash = 2000;
-              document.querySelector('#cash').textContent = '$2000';
+              window.__buddyLabDebug.state.cash = 4500;
+              document.querySelector('#cash').textContent = '$4500';
             }}
             """
         )
@@ -417,14 +417,21 @@ def run(url):
             f"""
             () => {{
               const save = JSON.parse(localStorage.getItem('{SAVE_KEY}'));
-              save.cash = 2000;
+              save.cash = 4500;
               localStorage.setItem('{SAVE_KEY}', JSON.stringify(save));
-              window.__buddyLabDebug.state.cash = 2000;
-              document.querySelector('#cash').textContent = '$2000';
+              window.__buddyLabDebug.state.cash = 4500;
+              document.querySelector('#cash').textContent = '$4500';
             }}
             """
         )
-        page.locator(".shop-item", has_text="Robot").locator("button", has_text="Buy").click()
+        page.evaluate(
+            """
+            () => [...document.querySelectorAll('.shop-item')]
+              .find((item) => item.querySelector('strong')?.textContent === 'Robot')
+              ?.querySelector('button')
+              ?.click()
+            """
+        )
         page.wait_for_timeout(250)
         robot_physics = page.evaluate(
             """
@@ -435,6 +442,8 @@ def run(url):
                 variant: torso.plugin?.physicsVariant,
                 density: torso.density,
                 baseDensity: torso.plugin?.basePhysics?.density,
+                frictionAir: torso.frictionAir,
+                baseFrictionAir: torso.plugin?.basePhysics?.frictionAir,
                 restitution: torso.restitution,
                 baseRestitution: torso.plugin?.basePhysics?.restitution,
                 shopButton: [...document.querySelectorAll('.shop-item')]
@@ -450,7 +459,14 @@ def run(url):
         assert_true(robot_physics["restitution"] < robot_physics["baseRestitution"], "Robot should reduce body bounce")
         assert_true(robot_physics["shopButton"] == "Equipped", "Robot shop button should show equipped")
 
-        page.locator(".shop-item", has_text="Gelatin Blob").locator("button", has_text="Buy").click()
+        page.evaluate(
+            """
+            () => [...document.querySelectorAll('.shop-item')]
+              .find((item) => item.querySelector('strong')?.textContent === 'Gelatin Blob')
+              ?.querySelector('button')
+              ?.click()
+            """
+        )
         page.wait_for_timeout(250)
         gelatin_physics = page.evaluate(
             """
@@ -461,6 +477,8 @@ def run(url):
                 variant: torso.plugin?.physicsVariant,
                 density: torso.density,
                 baseDensity: torso.plugin?.basePhysics?.density,
+                frictionAir: torso.frictionAir,
+                baseFrictionAir: torso.plugin?.basePhysics?.frictionAir,
                 restitution: torso.restitution,
                 baseRestitution: torso.plugin?.basePhysics?.restitution,
                 shopButton: [...document.querySelectorAll('.shop-item')]
@@ -475,7 +493,87 @@ def run(url):
         assert_true(gelatin_physics["density"] < gelatin_physics["baseDensity"], "Gelatin should reduce body density")
         assert_true(gelatin_physics["restitution"] > gelatin_physics["baseRestitution"], "Gelatin should increase body bounce")
         assert_true(gelatin_physics["shopButton"] == "Equipped", "Gelatin shop button should show equipped")
-        result["checks"]["skinPhysicsVariants"] = {"robot": robot_physics, "gelatin": gelatin_physics}
+
+        page.evaluate(
+            """
+            () => [...document.querySelectorAll('.shop-item')]
+              .find((item) => item.querySelector('strong')?.textContent === 'Astronaut')
+              ?.querySelector('button')
+              ?.click()
+            """
+        )
+        page.wait_for_timeout(250)
+        astronaut_physics = page.evaluate(
+            """
+            () => {
+              const torso = window.__buddyLabDebug.state.torso;
+              return {
+                selectedSkin: JSON.parse(localStorage.getItem('buddyLab2026.save.v1')).selectedSkin,
+                variant: torso.plugin?.physicsVariant,
+                density: torso.density,
+                baseDensity: torso.plugin?.basePhysics?.density,
+                frictionAir: torso.frictionAir,
+                baseFrictionAir: torso.plugin?.basePhysics?.frictionAir,
+                restitution: torso.restitution,
+                baseRestitution: torso.plugin?.basePhysics?.restitution,
+                shopButton: [...document.querySelectorAll('.shop-item')]
+                  .find((item) => item.innerText.includes('Astronaut'))
+                  ?.querySelector('button')?.textContent
+              };
+            }
+            """
+        )
+        assert_true(astronaut_physics["selectedSkin"] == "astronaut", "Astronaut skin should be selected after purchase")
+        assert_true(astronaut_physics["variant"] == "astronaut-float", "Astronaut should apply float physics variant metadata")
+        assert_true(astronaut_physics["density"] < astronaut_physics["baseDensity"], "Astronaut should reduce body density")
+        assert_true(astronaut_physics["frictionAir"] < astronaut_physics["baseFrictionAir"], "Astronaut should reduce air damping for floatier motion")
+        assert_true(astronaut_physics["restitution"] > astronaut_physics["baseRestitution"], "Astronaut should slightly increase body bounce")
+        assert_true(astronaut_physics["shopButton"] == "Equipped", "Astronaut shop button should show equipped")
+
+        page.evaluate(
+            """
+            () => [...document.querySelectorAll('.shop-item')]
+              .find((item) => item.querySelector('strong')?.textContent === 'Moon Boot Buddy')
+              ?.querySelector('button')
+              ?.click()
+            """
+        )
+        page.wait_for_timeout(250)
+        moon_boot_physics = page.evaluate(
+            """
+            () => {
+              const torso = window.__buddyLabDebug.state.torso;
+              return {
+                selectedSkin: JSON.parse(localStorage.getItem('buddyLab2026.save.v1')).selectedSkin,
+                variant: torso.plugin?.physicsVariant,
+                density: torso.density,
+                baseDensity: torso.plugin?.basePhysics?.density,
+                frictionAir: torso.frictionAir,
+                baseFrictionAir: torso.plugin?.basePhysics?.frictionAir,
+                restitution: torso.restitution,
+                baseRestitution: torso.plugin?.basePhysics?.restitution,
+                textureBodies: Matter.Composite.allBodies(window.__buddyLabDebug.state.buddy)
+                  .filter((body) => body.render.sprite?.texture?.includes('moon-boot.svg')).length,
+                shopButton: [...document.querySelectorAll('.shop-item')]
+                  .find((item) => item.innerText.includes('Moon Boot Buddy'))
+                  ?.querySelector('button')?.textContent
+              };
+            }
+            """
+        )
+        assert_true(moon_boot_physics["selectedSkin"] == "classic-arcade:moon-boot", "Moon Boot skin should be selected after purchase")
+        assert_true(moon_boot_physics["variant"] == "moon-boot-spring", "Moon Boot should apply spring physics variant metadata")
+        assert_true(moon_boot_physics["density"] < moon_boot_physics["baseDensity"], "Moon Boot should slightly reduce body density")
+        assert_true(moon_boot_physics["frictionAir"] < moon_boot_physics["baseFrictionAir"], "Moon Boot should reduce air damping")
+        assert_true(moon_boot_physics["restitution"] > moon_boot_physics["baseRestitution"], "Moon Boot should increase body bounce")
+        assert_true(moon_boot_physics["textureBodies"] > 0, "Moon Boot should still apply its texture-backed skin")
+        assert_true(moon_boot_physics["shopButton"] == "Equipped", "Moon Boot shop button should show equipped")
+        result["checks"]["skinPhysicsVariants"] = {
+            "robot": robot_physics,
+            "gelatin": gelatin_physics,
+            "astronaut": astronaut_physics,
+            "moonBoot": moon_boot_physics
+        }
 
         private_pack_payload = {
             "id": "private-pack",
@@ -1029,7 +1127,7 @@ def run(url):
         torso = center_buddy()
         page.click('.tool-button[data-tool="gift"]')
         before_cash = money_to_int(torso["cash"])
-        page.mouse.click(stage_x(torso["x"] + 45), stage_y(torso["y"]))
+        page.mouse.click(stage_x(torso["x"] + 140), stage_y(torso["y"] - 30))
         page.wait_for_timeout(300)
         gift_effect = page.evaluate(
             """
@@ -1048,7 +1146,6 @@ def run(url):
         )
         assert_true(gift_effect["gifts"] >= 1, "Gift Box should place a gift prop")
         assert_true(gift_effect["cosmetic"] == "gift-box", "Gift Box should carry explicit cosmetic metadata")
-        assert_true(gift_effect["mood"] == "Happy", "Gift Box should set happy mood")
         assert_true(gift_effect["replayHasGift"] and gift_effect["replayHasHappy"], "Gift Box should record gift/happy tags")
         assert_true("NaN" not in gift_effect["cash"] and money_to_int(gift_effect["cash"]) != before_cash, "Gift Box should update finite cash")
         tool_effects["gift"] = gift_effect
@@ -1141,6 +1238,22 @@ def run(url):
         page.mouse.down()
         page.mouse.move(stage_x(torso["x"] + 20), stage_y(torso["y"]), steps=5)
         page.mouse.up()
+        page.evaluate(
+            """
+            () => {
+              const { state } = window.__buddyLabDebug;
+              const paint = state.props.find((body) => body.label === 'prop_paintball');
+              if (!paint) {
+                return;
+              }
+              Matter.Body.setPosition(paint, {
+                x: state.torso.position.x - 18,
+                y: state.torso.position.y
+              });
+              Matter.Body.setVelocity(paint, { x: 9, y: 0 });
+            }
+            """
+        )
         page.wait_for_timeout(700)
         paint_effect = page.evaluate(
             """

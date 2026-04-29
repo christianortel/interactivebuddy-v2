@@ -86,7 +86,9 @@ const GRAVITY_MODES = {
 const SKIN_PHYSICS = {
   classic: { density: 1, frictionAir: 1, restitution: 1, label: "standard" },
   robot: { density: 1.45, frictionAir: 1.35, restitution: 0.72, label: "robot-heavy" },
-  gelatin: { density: 0.82, frictionAir: 0.72, restitution: 1.75, label: "gelatin-bouncy" }
+  gelatin: { density: 0.82, frictionAir: 0.72, restitution: 1.75, label: "gelatin-bouncy" },
+  astronaut: { density: 0.9, frictionAir: 0.55, restitution: 1.12, label: "astronaut-float" },
+  "classic-arcade:moon-boot": { density: 0.96, frictionAir: 0.82, restitution: 1.46, label: "moon-boot-spring" }
 };
 
 let SKIN_DEFS = [...DEFAULT_SKIN_DEFS];
