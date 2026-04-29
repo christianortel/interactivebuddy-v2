@@ -19,6 +19,7 @@ import {
   createBowlingBallBody,
   createBoxingGloveBody,
   createBrickBody,
+  createConfettiPopperBody,
   createCorkBody,
   createFoamDartBody,
   createGiftBody,
@@ -718,6 +719,8 @@ function setupInteractions() {
       placeTrampoline(worldPoint);
     } else if (state.tool === "gift") {
       placeGift(worldPoint);
+    } else if (state.tool === "confetti") {
+      placeConfettiPopper(worldPoint);
     } else if (state.tool === "tesla") {
       placeTesla(worldPoint);
     } else if (state.tool === "rope") {
@@ -1374,6 +1377,8 @@ function executeInstantTool(toolId, point) {
     placeTrampoline(point);
   } else if (toolId === "gift") {
     placeGift(point);
+  } else if (toolId === "confetti") {
+    placeConfettiPopper(point);
   } else if (toolId === "tesla") {
     placeTesla(point);
   } else if (toolId === "rope") {
@@ -1554,6 +1559,27 @@ function placeGift(position) {
   setMood("Happy", 2600);
   addScore(8, "gift", ["gift", "happy"]);
   recordMission("happy", 1);
+}
+
+function placeConfettiPopper(position) {
+  const popper = createConfettiPopperBody(Bodies, position);
+  registerProp(popper);
+  let touchedBuddy = false;
+  Composite.allBodies(state.buddy).forEach((body) => {
+    const delta = Vector.sub(body.position, position);
+    const distance = Math.max(Vector.magnitude(delta), 12);
+    if (distance > 210) {
+      return;
+    }
+    const away = Vector.normalise(delta);
+    const lift = { x: away.x * 0.55, y: Math.min(-0.65, away.y - 0.9) };
+    Body.applyForce(body, body.position, Vector.mult(Vector.normalise(lift), 0.00105 * body.mass * (1 - distance / 250)));
+    touchedBuddy = true;
+  });
+  spawnConfettiBurst(position, 34);
+  setMood("Excited", 2300);
+  addScore(touchedBuddy ? 9.5 : 6.5, "confetti", ["confetti", "happy", "nice"]);
+  toast("Confetti popper fired.");
 }
 
 function placeTesla(position) {
@@ -2342,8 +2368,8 @@ function playScoreFeedback(reason, reward, tags = []) {
     feedback.play("explosion", intensity);
   } else if (reason === "shock" || reason === "spark" || reason === "gravity") {
     feedback.play("shock", intensity);
-  } else if (reason === "tickle" || reason === "gift") {
-    feedback.play(reason, intensity);
+  } else if (reason === "tickle" || reason === "gift" || reason === "confetti") {
+    feedback.play(reason === "confetti" ? "gift" : reason, intensity);
   } else if (reason === "paint" || reason === "paintball" || reason === "rubber" || reason === "cork" || reason === "corkHit" || reason === "heat" || reason === "frost" || reason === "goo" || reason === "pulse") {
     feedback.play("paint", intensity);
   } else if (reason === "armed" || reason === "build" || reason === "tether" || reason === "liquid") {
@@ -2790,6 +2816,26 @@ function spawnBurst(position, color, count) {
   }
 }
 
+function spawnConfettiBurst(position, count) {
+  const colors = ["#ffd06a", "#55d9cf", "#e46e5f", "#98f17f", "#e7a8ff"];
+  for (let i = 0; i < count; i += 1) {
+    const angle = -Math.PI * 0.9 + Math.random() * Math.PI * 0.8;
+    const speed = 0.055 + Math.random() * 0.1;
+    state.particles.push({
+      type: "spark",
+      kind: "confetti",
+      x: position.x,
+      y: position.y - 8,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 0.035,
+      radius: 1.8 + Math.random() * 2.4,
+      color: colors[i % colors.length],
+      life: 680 + Math.random() * 480,
+      maxLife: 1160
+    });
+  }
+}
+
 function addShake(amount) {
   state.shake = Math.min(24, state.shake + amount);
 }
@@ -3133,6 +3179,8 @@ function drawPropCosmetics(ctx) {
       drawTrampolineCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "gift-box") {
       drawGiftCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "confetti-popper") {
+      drawConfettiPopperCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "tesla-coil") {
       drawTeslaCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "grenade-shell") {
@@ -3197,6 +3245,28 @@ function drawGiftCosmetic(ctx, body, cosmetic) {
   ctx.beginPath();
   ctx.ellipse(-6, -20, 6, 4, -0.35, 0, Math.PI * 2);
   ctx.ellipse(6, -20, 6, 4, 0.35, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawConfettiPopperCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.rim;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-18, -10);
+  ctx.lineTo(18, -10);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.stripe;
+  ctx.fillRect(-14, -4, 28, 6);
+  ctx.fillStyle = cosmetic.cap;
+  ctx.beginPath();
+  ctx.moveTo(16, -13);
+  ctx.lineTo(28, -4);
+  ctx.lineTo(16, 5);
+  ctx.closePath();
   ctx.fill();
   ctx.restore();
 }

@@ -13,6 +13,7 @@ import {
   createBowlingBallBody,
   createBoxingGloveBody,
   createBrickBody,
+  createConfettiPopperBody,
   createCorkBody,
   createFoamDartBody,
   createGiftBody,
@@ -87,6 +88,7 @@ const fakeBodies = {
 };
 
 assert.equal(isInstantPlacementTool("grenade"), true);
+assert.equal(isInstantPlacementTool("confetti"), true);
 assert.equal(isInstantPlacementTool("fan"), false);
 assert.equal(randomPaintColor(() => 0), "#ff7161");
 assert.equal(randomPaintColor(() => 0.999), "#e7a8ff");
@@ -126,6 +128,8 @@ assert.equal(createTrampolineBody(fakeBodies, { x: 10, y: 20 }).isStatic, true);
 assert.equal(createTrampolineBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "trampoline-pad");
 assert.equal(createGiftBody(fakeBodies, { x: 10, y: 20 }).label, "prop_gift");
 assert.equal(createGiftBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "gift-box");
+assert.equal(createConfettiPopperBody(fakeBodies, { x: 10, y: 20 }).label, "prop_confetti");
+assert.equal(createConfettiPopperBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "confetti-popper");
 assert.equal(createTeslaBody(fakeBodies, { x: 10, y: 20 }).label, "prop_tesla");
 assert.equal(createTeslaBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "tesla-coil");
 assert.equal(formatProgress(2), "2");

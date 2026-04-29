@@ -6,7 +6,7 @@ A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: 
 
 - Matter.js ragdoll buddy built from rigid bodies and spring constraints.
 - Classic top menu bar plus a modern HUD, mission panel, shop, and bottom tool rail.
-- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Tesla Coil, and Black Hole.
+- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Confetti Popper, Tesla Coil, and Black Hole.
 - Local asset packs: JSON manifests can add skins, audio packs, and room palettes.
 - Texture-backed pack skins: local SVG skin assets can be applied to the ragdoll bodies.
 - Economy: cash, XP, combo timer, anti-grind yield decay, unlockable tools, unlockable skins, and local persistence.
@@ -37,10 +37,11 @@ Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run l
 - Heat Cone/Spark Wand/Frost Puff/Goo Mist/Pulse Beam: hold near Buddy for elemental effects.
 - Rope: click near Buddy to attach an elastic ceiling tether.
 - Water: click to set liquid height; click near the floor to drain.
+- Confetti Popper: click to place a cheerful popper with particles and a gentle bump.
 - Modes > Gravity: switch between Normal, Low Gravity, and Heavy Gravity physics.
 - Modes > Debug > FPS Counter: show or hide the debug FPS overlay.
 - Export: saves the recent rolling WebM replay buffer from the canvas when supported.
-- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Spark Drill, Frost Test, Slip Test, Pulse Check, and Clip Export.
+- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, and Clip Export.
 - Rubber Blaster shows a burst/cooldown readout and feeds the Bead Cannon challenge.
 - Settings > Asset pack shows a live room-palette preview and selectable room browser for loaded rooms.
 - `R`: reset scene.
@@ -163,6 +164,7 @@ Done:
 - Added and verified Weapon Cosmetics And Effects Audit: every shipped tool now has a `TOOL_EFFECT_AUDIT` entry with cosmetic/effect identity, visible hook, scoring tags, and coverage notes; older simple props now expose explicit cosmetic metadata; Ball, Trampoline, and Gift received direct browser assertions; and the audit table in `docs/weapon-cosmetics-effects-audit.md` tracks all 24 shipped tools. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Skin Physics Expansion: Astronaut now applies an `astronaut-float` variant with lower density, lower air damping, and slightly higher bounce, while Moon Boot Buddy applies a `moon-boot-spring` texture-backed variant with springier restitution and reduced damping. Browser regression buys Robot, Gelatin Blob, Astronaut, and Moon Boot Buddy through the real shop path and asserts selected skin, physics variant metadata, density, air damping, restitution, texture retention, and equipped state. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Room Preset Expansion: Workshop Garage is a new original room pack with a workshop motif thumbnail, palette, Shop Apron Buddy texture skin, Workshop Clack audio pack, manifest registration, room-browser selection coverage, and reload persistence coverage. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Nice Tool Expansion: Confetti Popper is a new cheerful tool with `confetti-popper` cosmetic metadata, custom popper overlay, colored confetti particles, gentle buddy bump physics, `confetti`/`happy`/`nice` scoring tags, Cheer Check mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
 
 Done assets:
 
@@ -215,7 +217,7 @@ In progress:
 Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only when it includes real effects, scoring tags, shop/radial behavior, audit metadata, and direct browser coverage.
+- Next queue item is `Projectile Preset Expansion`: add another projectile only when it includes factory metadata, real launch/collision behavior, scoring tags, mission/challenge hooks where appropriate, audit metadata, and direct browser coverage.
 - Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
 
 Process notes:
@@ -232,6 +234,7 @@ Process notes:
 - For elemental variants, verify five surfaces together: direct tool effect, replay tags, challenge completion, mission rotation, and visible non-flashy particles/status overlays.
 - For weapon/effect audits, build a gap table first, then close missing metadata, visuals, scoring tags, and regression assertions tool by tool.
 - Keep `docs/weapon-cosmetics-effects-audit.md`, `TOOL_EFFECT_AUDIT`, unit checks, and browser checks synchronized whenever tools change.
+- For nice tools, verify they are not cosmetic-only: require a visible prop/effect, mood change, scoring tags, mission/challenge path, and a measurable non-destructive physics response.
 - For mode menu work, only add entries that alter real simulation or settings state, then assert default, active state, save migration, and reload behavior.
 - For room browser work, assert built-in room population, direct browser selection, active state, private import insertion, and reload restoration.
 - For prop polish work, every spawned prop factory should expose cosmetic metadata that unit tests and real throw regression both assert.
