@@ -116,7 +116,7 @@ def run(url):
         assert_true(initial["audioPack"] == "classic", "Default audio pack should be classic")
         assert_true(initial["liquidType"] == "water", "Default liquid type should be water")
         assert_true(initial["challengeMode"] == "free", "Default challenge mode should be Free Play")
-        assert_true({"juggle", "tether", "liquid", "props", "bead", "suction", "spark", "frost", "goo", "pulse", "cheer", "groove", "export"}.issubset(set(initial["challengeOptions"])), "Challenge options should include new modes")
+        assert_true({"juggle", "tether", "liquid", "props", "bead", "suction", "spin", "spark", "frost", "goo", "pulse", "cheer", "groove", "export"}.issubset(set(initial["challengeOptions"])), "Challenge options should include new modes")
         assert_true(initial["toolMeta"] == "Utility", "Default tool meta should describe the active tool category")
         assert_true(initial["modeSubmenus"] >= 2 and initial["fpsButton"] == "FPS Counter", "Modes menu should expose old-style nested submenus")
         assert_true(initial["gravityButtons"] == ["normal", "low", "heavy"], "Modes > Gravity should expose normal/low/heavy options")
@@ -810,7 +810,7 @@ def run(url):
         assert_true(custom_texture_skin["shopButton"] == "Equipped", "Imported data-URL skin shop button should show equipped")
         result["checks"]["customSkinPack"] = {**custom_pack, "reload": custom_pack_reload, "textureSkin": custom_texture_skin}
 
-        required_mission_coverage = {"rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "plunger4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "boombox4", "wheel3", "export1"}
+        required_mission_coverage = {"rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "plunger4", "star4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "boombox4", "wheel3", "export1"}
         seen_missions = set(page.eval_on_selector_all(".mission", "(els) => els.map((el) => el.dataset.missionId)"))
         for _ in range(40):
             if required_mission_coverage.issubset(seen_missions):
@@ -819,7 +819,7 @@ def run(url):
             page.wait_for_timeout(120)
             seen_missions.update(page.eval_on_selector_all(".mission", "(els) => els.map((el) => el.dataset.missionId)"))
         coverage = sorted(seen_missions.intersection(required_mission_coverage))
-        assert_true(coverage == ["beach3", "bead6", "boombox4", "bowling2", "confetti5", "cork4", "dart4", "export1", "frost5", "goo5", "liquid2", "plunger4", "prop4", "pulse5", "punch2", "rope2", "spark5", "wheel3"], "Mission refreshes should cover rope/liquid/prop/projectile/elemental/nice/radial/export missions")
+        assert_true(coverage == ["beach3", "bead6", "boombox4", "bowling2", "confetti5", "cork4", "dart4", "export1", "frost5", "goo5", "liquid2", "plunger4", "prop4", "pulse5", "punch2", "rope2", "spark5", "star4", "wheel3"], "Mission refreshes should cover rope/liquid/prop/projectile/elemental/nice/radial/export missions")
         result["checks"]["missionCoverage"] = {"coverage": coverage}
 
         page.evaluate(
@@ -997,7 +997,7 @@ def run(url):
               version: 2,
               cash: 3000,
               xp: 0,
-              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'boombox', 'tesla', 'blackhole'],
+              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'starshot', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'boombox', 'tesla', 'blackhole'],
               unlockedSkins: ['classic'],
               selectedSkin: 'classic',
               settings: {{ reducedFlash: true, slapstick: true, audio: false, haptics: false, slowMo: false, ceilingOpen: false, assetPack: 'base', audioPack: 'classic', liquidType: 'slime' }},
@@ -1175,7 +1175,7 @@ def run(url):
               version: 2,
               cash: 5000,
               xp: 0,
-              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'boombox', 'tesla', 'blackhole'],
+              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'starshot', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'boombox', 'tesla', 'blackhole'],
               unlockedSkins: ['classic'],
               selectedSkin: 'classic',
               settings: {{ reducedFlash: true, slapstick: true, audio: false, haptics: false, slowMo: false, ceilingOpen: false, assetPack: 'base', audioPack: 'classic', liquidType: 'slime' }},
@@ -1669,6 +1669,101 @@ def run(url):
         assert_true(plunger_effect["torsoSpeed"] > 0.05, "Plunger Shot should tug Buddy with a small impulse")
         assert_true(money_to_int(plunger_effect["cash"]) > before_cash, "Plunger Shot should score cash")
         tool_effects["plunger"] = plunger_effect
+
+        page.evaluate(
+            """
+            () => {
+              const { engine, state } = window.__buddyLabDebug;
+              state.props
+                .filter((body) => body.label === 'prop_plunger')
+                .forEach((body) => Matter.World.remove(engine.world, body));
+              state.props = state.props.filter((body) => body.label !== 'prop_plunger');
+            }
+            """
+        )
+        torso = center_buddy()
+        page.click('.tool-button[data-tool="starshot"]')
+        before_cash = money_to_int(torso["cash"])
+        page.mouse.move(stage_x(torso["x"] - 245), stage_y(torso["y"] - 8))
+        page.mouse.down()
+        page.mouse.move(stage_x(torso["x"] + 18), stage_y(torso["y"] - 2), steps=5)
+        page.mouse.up()
+        page.wait_for_timeout(720)
+        star_effect = page.evaluate(
+            """
+            () => {
+              const stars = window.__buddyLabDebug.state.props.filter((body) => body.label === 'prop_star');
+              const starredBodies = Matter.Composite.allBodies(window.__buddyLabDebug.state.buddy)
+                .filter((body) => body.plugin?.starSpinTime > 0);
+              return {
+                stars: stars.length,
+                hitStars: stars.filter((body) => body.plugin?.hit).length,
+                cosmetic: stars.at(-1)?.plugin?.cosmetic?.type || '',
+                starredBodies: starredBodies.length,
+                fastestStar: stars.reduce((max, body) => Math.max(max, Matter.Vector.magnitude(body.velocity)), 0),
+                fastestStarSpin: stars.reduce((max, body) => Math.max(max, Math.abs(body.angularVelocity)), 0),
+                cash: document.querySelector('#cash')?.textContent,
+                replayHasStar: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'star'),
+                replayHasStarHit: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'starHit'),
+                replayHasStarShot: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('starShot')),
+                replayHasSpin: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('spin')),
+                burstParticles: window.__buddyLabDebug.state.particles.filter((particle) => particle.color === '#ffd06a').length,
+                torsoSpeed: Matter.Vector.magnitude(window.__buddyLabDebug.state.torso.velocity)
+              };
+            }
+            """
+        )
+        assert_true(star_effect["stars"] >= 1, "Star Launcher should spawn a star body")
+        assert_true(star_effect["hitStars"] >= 1, "Star Launcher should mark stars after hitting Buddy")
+        assert_true(star_effect["cosmetic"] == "star-shot", "Star Launcher should carry cosmetic metadata")
+        assert_true(star_effect["starredBodies"] >= 1, "Star Launcher should mark Buddy with temporary spin status")
+        assert_true(star_effect["fastestStar"] > 0.03 or star_effect["fastestStarSpin"] > 0.03, "Star Launcher projectile should retain visible motion")
+        assert_true(star_effect["replayHasStar"], "Star Launcher should score on launch")
+        assert_true(star_effect["replayHasStarHit"], "Star Launcher should score on hit")
+        assert_true(star_effect["replayHasStarShot"] and star_effect["replayHasSpin"], "Star Launcher should emit starShot and spin tags")
+        assert_true(star_effect["burstParticles"] >= 1, "Star Launcher hit should emit star particles")
+        assert_true(star_effect["torsoSpeed"] > 0.04, "Star Launcher should bump Buddy with a small impulse")
+        assert_true(money_to_int(star_effect["cash"]) > before_cash, "Star Launcher should score cash")
+        tool_effects["starshot"] = star_effect
+
+        page.evaluate(
+            """
+            () => {
+              const challenge = document.querySelector('#challengeMode');
+              challenge.value = 'spin';
+              challenge.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            """
+        )
+        torso = center_buddy()
+        page.click('.tool-button[data-tool="starshot"]')
+        for offset in [-42, -18, 8, 34]:
+            page.mouse.move(stage_x(torso["x"] - 245), stage_y(torso["y"] + offset))
+            page.mouse.down()
+            page.mouse.move(stage_x(torso["x"] + 16), stage_y(torso["y"] + offset), steps=5)
+            page.mouse.up()
+            page.wait_for_timeout(360)
+        spin_challenge = page.evaluate(
+            """
+            () => {
+              const save = JSON.parse(localStorage.getItem('buddyLab2026.save.v1'));
+              return {
+                selected: document.querySelector('#challengeMode')?.value,
+                summary: document.querySelector('#replayStrip')?.textContent,
+                best: save.challengeBests?.spin?.elapsed,
+                starredBodies: Matter.Composite.allBodies(window.__buddyLabDebug.state.buddy)
+                  .filter((body) => body.plugin?.starSpinTime > 0).length,
+                cash: document.querySelector('#cash')?.textContent
+              };
+            }
+            """
+        )
+        assert_true(spin_challenge["selected"] == "spin", "Spin Drill challenge should stay selected")
+        assert_true("Spin Drill" in spin_challenge["summary"] and "Complete" in spin_challenge["summary"], "Spin Drill should complete from Star Launcher hooks")
+        assert_true(isinstance(spin_challenge["best"], (int, float)) and spin_challenge["best"] > 0, "Spin Drill best time should be saved")
+        assert_true(spin_challenge["starredBodies"] >= 1, "Spin Drill should leave visible spin body status")
+        assert_true("NaN" not in spin_challenge["cash"], "Spin Drill reward should keep cash finite")
+        tool_effects["spinChallenge"] = spin_challenge
 
         page.evaluate(
             """

@@ -143,6 +143,24 @@ export function createPlungerBody(Bodies, position) {
   });
 }
 
+export function createStarBody(Bodies, position) {
+  return Bodies.polygon(position.x, position.y, 5, 15, {
+    restitution: 0.42,
+    friction: 0.34,
+    density: 0.001,
+    label: "prop_star",
+    plugin: {
+      cosmetic: {
+        type: "star-shot",
+        core: "#fff4b8",
+        stripe: "#55d9cf",
+        rim: "#d8902f"
+      }
+    },
+    render: { fillStyle: "#ffd06a", strokeStyle: "#d8902f", lineWidth: 2 }
+  });
+}
+
 export function createRubberPelletBody(Bodies, position, variantIndex = 0) {
   const variant = getRubberPelletVariant(variantIndex);
   return Bodies.circle(position.x, position.y, 6, {

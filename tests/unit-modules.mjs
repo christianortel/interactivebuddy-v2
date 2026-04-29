@@ -22,6 +22,7 @@ import {
   createPaintballBody,
   createPlungerBody,
   createRubberPelletBody,
+  createStarBody,
   createTeslaBody,
   createTrampolineBody,
   getRubberPelletVariant,
@@ -86,6 +87,9 @@ const fakeBodies = {
   },
   rectangle(x, y, width, height, options) {
     return { shape: "rectangle", x, y, width, height, ...options };
+  },
+  polygon(x, y, sides, radius, options) {
+    return { shape: "polygon", x, y, sides, radius, ...options };
   }
 };
 
@@ -124,6 +128,8 @@ assert.equal(createCorkBody(fakeBodies, { x: 10, y: 20 }).label, "prop_cork");
 assert.equal(createCorkBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "cork-popper");
 assert.equal(createPlungerBody(fakeBodies, { x: 10, y: 20 }).label, "prop_plunger");
 assert.equal(createPlungerBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "plunger-shot");
+assert.equal(createStarBody(fakeBodies, { x: 10, y: 20 }).label, "prop_star");
+assert.equal(createStarBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "star-shot");
 assert.equal(createRubberPelletBody(fakeBodies, { x: 10, y: 20 }).label, "prop_rubber");
 assert.equal(createRubberPelletBody(fakeBodies, { x: 10, y: 20 }, 1).plugin.cosmetic.variant, "safety-orange");
 assert.equal(getRubberPelletVariant(2).id, "mint-blue");

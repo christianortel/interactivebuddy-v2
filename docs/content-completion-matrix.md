@@ -44,7 +44,7 @@ Because the original Flash content list is fragmented online, every exact old it
 | Fist | Boxing Glove padded punch projectile with laced cosmetic overlay | Shipped | Browser regression | Add a true close-range punch subtool only if menu parity becomes priority. |
 | Grenades | Grenade timed explosion | Shipped | Browser regression | Add grenade variants. |
 | Bowling ball / heavy prop | Ball, Beach Ball with striped bouncy cosmetic overlay, Bowling Ball with classic hole/highlight cosmetics, Foam Brick with lined cosmetic overlay, Stage Weight with anvil cosmetic overlay, Prop Tricks challenge hooks | Shipped | Browser regression | Add more prop types only after projectile variant polish stabilizes. |
-| Machine gun / rapid projectile | Rubber Blaster rapid pellet stream, Foam Dart sticky projectile, Cork Popper pop-impact projectile, Plunger Shot suction projectile, burst/cooldown HUD, Bead Cannon/Suction Drill mission/challenge hooks, Dart Board mission, Cork Shots mission, three pellet visual variants | Shipped | Browser regression | Add more projectile variants only after room follow-up and classic parity checks stay stable. |
+| Machine gun / rapid projectile | Rubber Blaster rapid pellet stream, Foam Dart sticky projectile, Cork Popper pop-impact projectile, Plunger Shot suction projectile, Star Launcher spin projectile, burst/cooldown HUD, Bead Cannon/Suction Drill/Spin Drill mission/challenge hooks, Dart Board mission, Cork Shots mission, three pellet visual variants | Shipped | Browser regression | Add more projectile variants only after nice-tool-later and classic parity checks stay stable. |
 | Paint/projectile play | Paintball with decals/tint | Shipped | Browser regression | Add paint color picker or splatter decals. |
 | Gravity vortex | Black Hole pull/orbit force | Shipped | Browser regression | Add visual strength rings and cooldown tuning. |
 | Fire / heat | Heat Cone reduced-flash ember cone | Shipped | Browser regression | Add flame/ignite variants only after accessibility review. |
@@ -104,9 +104,8 @@ Private import only:
 
 ## Next Content Batches
 
-1. `Projectile Follow-up`: add another projectile only after the nice-tool follow-up, and only with factory metadata, real launch/collision behavior, scoring tags, mission/challenge hooks where appropriate, audit metadata, and direct browser coverage.
-2. `Nice Tool Later`: add a money-style nice tool only after projectile follow-up, and only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
-3. `Room Preset Expansion Later`: add another room only after the next tool follow-ups, and only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, asset validation, and regression coverage.
+1. `Nice Tool Later`: add a money-style nice tool only after projectile follow-up, and only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
+2. `Room Preset Expansion Later`: add another room only after the next tool follow-ups, and only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, asset validation, and regression coverage.
 
 ## Audit Rules
 
