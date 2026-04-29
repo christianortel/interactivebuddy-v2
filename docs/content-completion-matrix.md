@@ -49,7 +49,7 @@ Because the original Flash content list is fragmented online, every exact old it
 | Gravity vortex | Black Hole pull/orbit force | Shipped | Browser regression | Add visual strength rings and cooldown tuning. |
 | Fire / heat | Heat Cone reduced-flash ember cone | Shipped | Browser regression | Add flame/ignite variants only after accessibility review. |
 | Shock / electricity | Tesla Coil and Spark Wand handheld arcs | Shipped | Browser regression | Add additional chain variants only after stability review. |
-| Cold / frost / goo | Frost Puff reduced-flash mist with chilled body overlays, Goo Mist slippery coating with lowered friction | Shipped | Browser regression | Add further elemental variants only after physics variant polish. |
+| Cold / frost / goo / light | Frost Puff reduced-flash mist with chilled body overlays, Goo Mist slippery coating with lowered friction, Pulse Beam narrow low-flash energy beam with lit-body status and steady push | Shipped | Browser regression | Audit all shipped weapon cosmetics/effects before adding more variants. |
 | Builders / environment | Trampoline, Rope, Water Fill | Shipped | Browser regression | Add platforms, conveyor, and prop spawners. |
 | Nice/good powers | Gift Box | Partial | Browser regression through shop/scoring | Add money/confetti/boombox variants. |
 | Alternate physics modes | Slow motion, ceiling toggle, Gravity submenu, liquid types, Robot heavy physics, Gelatin bouncy physics | Shipped | Browser regression for settings, gravity, skin physics, and liquids | Add more skin physics only after more skins justify it. |
@@ -103,12 +103,11 @@ Private import only:
 
 ## Next Content Batches
 
-1. `Elemental Variant Polish`: add one more elemental variant with status metadata, real physics/state change, replay tags, mission or challenge hooks, accessibility behavior, and regression coverage.
-2. `Weapon Cosmetics And Effects Audit`: confirm every shipped weapon/tool has explicit cosmetic metadata, visible effect hooks, scoring tags, and direct browser coverage.
-3. `Skin Physics Expansion`: add more skin physics only after more skins justify it.
-4. `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, and regression coverage.
-5. `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only after elemental variant queues stabilize.
-6. `Projectile Preset Expansion`: add another projectile only after the elemental queue and classic parity checks stay stable.
+1. `Weapon Cosmetics And Effects Audit`: confirm every shipped weapon/tool has explicit cosmetic metadata, visible effect hooks, scoring tags, and direct browser coverage.
+2. `Skin Physics Expansion`: add more skin physics only after more skins justify it.
+3. `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, and regression coverage.
+4. `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only after elemental variant queues stabilize.
+5. `Projectile Preset Expansion`: add another projectile only after the elemental queue and classic parity checks stay stable.
 
 ## Audit Rules
 

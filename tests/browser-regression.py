@@ -102,7 +102,7 @@ def run(url):
         assert_true(initial["audioPack"] == "classic", "Default audio pack should be classic")
         assert_true(initial["liquidType"] == "water", "Default liquid type should be water")
         assert_true(initial["challengeMode"] == "free", "Default challenge mode should be Free Play")
-        assert_true({"juggle", "tether", "liquid", "props", "bead", "spark", "frost", "goo", "export"}.issubset(set(initial["challengeOptions"])), "Challenge options should include new modes")
+        assert_true({"juggle", "tether", "liquid", "props", "bead", "spark", "frost", "goo", "pulse", "export"}.issubset(set(initial["challengeOptions"])), "Challenge options should include new modes")
         assert_true(initial["toolMeta"] == "Utility", "Default tool meta should describe the active tool category")
         assert_true(initial["modeSubmenus"] >= 2 and initial["fpsButton"] == "FPS Counter", "Modes menu should expose old-style nested submenus")
         assert_true(initial["gravityButtons"] == ["normal", "low", "heavy"], "Modes > Gravity should expose normal/low/heavy options")
@@ -585,8 +585,8 @@ def run(url):
             page.click("#refreshMissions")
             page.wait_for_timeout(120)
             seen_missions.update(page.eval_on_selector_all(".mission", "(els) => els.map((el) => el.dataset.missionId)"))
-        coverage = sorted(seen_missions.intersection({"rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "spark5", "frost5", "goo5", "wheel3", "export1"}))
-        assert_true(coverage == ["beach3", "bead6", "bowling2", "cork4", "dart4", "export1", "frost5", "goo5", "liquid2", "prop4", "punch2", "rope2", "spark5", "wheel3"], "Mission refreshes should cover rope/liquid/prop/projectile/elemental/radial/export missions")
+        coverage = sorted(seen_missions.intersection({"rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "spark5", "frost5", "goo5", "pulse5", "wheel3", "export1"}))
+        assert_true(coverage == ["beach3", "bead6", "bowling2", "cork4", "dart4", "export1", "frost5", "goo5", "liquid2", "prop4", "pulse5", "punch2", "rope2", "spark5", "wheel3"], "Mission refreshes should cover rope/liquid/prop/projectile/elemental/radial/export missions")
         result["checks"]["missionCoverage"] = {"coverage": coverage}
 
         page.evaluate(
@@ -757,7 +757,7 @@ def run(url):
               version: 2,
               cash: 3000,
               xp: 0,
-              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'grenade', 'trampoline', 'gift', 'tesla', 'blackhole'],
+              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'tesla', 'blackhole'],
               unlockedSkins: ['classic'],
               selectedSkin: 'classic',
               settings: {{ reducedFlash: true, slapstick: true, audio: false, haptics: false, slowMo: false, ceilingOpen: false, assetPack: 'base', audioPack: 'classic', liquidType: 'slime' }},
@@ -935,7 +935,7 @@ def run(url):
               version: 2,
               cash: 5000,
               xp: 0,
-              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'grenade', 'trampoline', 'gift', 'tesla', 'blackhole'],
+              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'tesla', 'blackhole'],
               unlockedSkins: ['classic'],
               selectedSkin: 'classic',
               settings: {{ reducedFlash: true, slapstick: true, audio: false, haptics: false, slowMo: false, ceilingOpen: false, assetPack: 'base', audioPack: 'classic', liquidType: 'slime' }},
@@ -1433,6 +1433,59 @@ def run(url):
         assert_true("Slip Test" in goo_effect["summary"] and "Complete" in goo_effect["summary"], "Slip Test should complete from Goo Mist hooks")
         assert_true(isinstance(goo_effect["best"], (int, float)) and goo_effect["best"] > 0, "Slip Test best time should be saved")
         tool_effects["goomist"] = goo_effect
+
+        page.evaluate(
+            """
+            () => {
+              const challenge = document.querySelector('#challengeMode');
+              challenge.value = 'pulse';
+              challenge.dispatchEvent(new Event('change', { bubbles: true }));
+              window.__buddyLabDebug.state.pulseBeamCooldown = 0;
+            }
+            """
+        )
+        torso = center_buddy()
+        page.click('.tool-button[data-tool="pulsebeam"]')
+        before_cash = money_to_int(torso["cash"])
+        page.mouse.move(stage_x(torso["x"] - 130), stage_y(torso["y"] - 4))
+        page.mouse.down()
+        page.mouse.move(stage_x(torso["x"] - 62), stage_y(torso["y"]), steps=3)
+        page.wait_for_timeout(1600)
+        page.mouse.up()
+        pulse_effect = page.evaluate(
+            """
+            () => {
+              const save = JSON.parse(localStorage.getItem('buddyLab2026.save.v1'));
+              const pulsedBodies = Matter.Composite.allBodies(window.__buddyLabDebug.state.buddy)
+                .filter((body) => body.plugin?.pulseTime > 0);
+              return {
+                cash: document.querySelector('#cash')?.textContent,
+                replayHasPulse: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'pulse'),
+                replayHasPulseBeam: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('pulseBeam')),
+                replayHasLight: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('light')),
+                pulseParticles: window.__buddyLabDebug.state.particles.filter((particle) => particle.color === '#fff27a').length,
+                pulsedBodies: pulsedBodies.length,
+                mood: window.__buddyLabDebug.state.mood,
+                torsoSpeed: Matter.Vector.magnitude(window.__buddyLabDebug.state.torso.velocity),
+                selected: document.querySelector('#challengeMode')?.value,
+                summary: document.querySelector('#replayStrip')?.textContent,
+                best: save.challengeBests?.pulse?.elapsed
+              };
+            }
+            """
+        )
+        assert_true(pulse_effect["replayHasPulse"], "Pulse Beam should record pulse events")
+        assert_true(pulse_effect["replayHasPulseBeam"], "Pulse Beam should emit the shared pulseBeam event")
+        assert_true(pulse_effect["replayHasLight"], "Pulse Beam should tag light events")
+        assert_true(pulse_effect["pulseParticles"] >= 1, "Pulse Beam should emit visible low-flash particles")
+        assert_true(pulse_effect["pulsedBodies"] >= 1, "Pulse Beam should temporarily mark lit buddy bodies")
+        assert_true(pulse_effect["mood"] == "Afraid", "Pulse Beam should set afraid mood")
+        assert_true(pulse_effect["torsoSpeed"] > 0.04, "Pulse Beam should apply a steady push")
+        assert_true(money_to_int(pulse_effect["cash"]) > before_cash, "Pulse Beam should score cash")
+        assert_true(pulse_effect["selected"] == "pulse", "Pulse Check challenge should stay selected")
+        assert_true("Pulse Check" in pulse_effect["summary"] and "Complete" in pulse_effect["summary"], "Pulse Check should complete from Pulse Beam hooks")
+        assert_true(isinstance(pulse_effect["best"], (int, float)) and pulse_effect["best"] > 0, "Pulse Check best time should be saved")
+        tool_effects["pulsebeam"] = pulse_effect
 
         torso = center_buddy()
         page.click('.tool-button[data-tool="fan"]')

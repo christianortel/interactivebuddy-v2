@@ -6,7 +6,7 @@ A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: 
 
 - Matter.js ragdoll buddy built from rigid bodies and spring constraints.
 - Classic top menu bar plus a modern HUD, mission panel, shop, and bottom tool rail.
-- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Tesla Coil, and Black Hole.
+- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Tesla Coil, and Black Hole.
 - Local asset packs: JSON manifests can add skins, audio packs, and room palettes.
 - Texture-backed pack skins: local SVG skin assets can be applied to the ragdoll bodies.
 - Economy: cash, XP, combo timer, anti-grind yield decay, unlockable tools, unlockable skins, and local persistence.
@@ -34,13 +34,13 @@ Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run l
 - Fan/Black Hole: hold on the stage.
 - Paintball/Foam Dart: drag to aim and release.
 - Grenade/Gift/Trampoline/Tesla: click to place.
-- Heat Cone/Spark Wand/Frost Puff/Goo Mist: hold near Buddy for elemental effects.
+- Heat Cone/Spark Wand/Frost Puff/Goo Mist/Pulse Beam: hold near Buddy for elemental effects.
 - Rope: click near Buddy to attach an elastic ceiling tether.
 - Water: click to set liquid height; click near the floor to drain.
 - Modes > Gravity: switch between Normal, Low Gravity, and Heavy Gravity physics.
 - Modes > Debug > FPS Counter: show or hide the debug FPS overlay.
 - Export: saves the recent rolling WebM replay buffer from the canvas when supported.
-- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Spark Drill, Frost Test, Slip Test, and Clip Export.
+- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Spark Drill, Frost Test, Slip Test, Pulse Check, and Clip Export.
 - Rubber Blaster shows a burst/cooldown readout and feeds the Bead Cannon challenge.
 - Settings > Asset pack shows a live room-palette preview and selectable room browser for loaded rooms.
 - `R`: reset scene.
@@ -159,6 +159,7 @@ Done:
 - Added and verified Classic Buddy Feel: the default buddy now starts in the old lower-left stage position at a smaller classic scale, uses looser/damped ragdoll constraints for a floppier early-web-toy feel, and renders a glossy gray segmented overlay with a simple mood-aware face while preserving the 15-body physics skeleton. Browser regression asserts classic body metadata, lower-left spawn, smaller head scale, and damping, and the full visual runner passes.
 - Added and verified Projectile Variant Polish: Cork Popper is a new legally distinct aim-and-release projectile with a dedicated Matter body factory, `cork-popper` cosmetic overlay, launch scoring, Buddy-hit collision scoring, pop impulse, Cork Shots mission coverage, and direct browser regression for spawned cork bodies, hit state, replay tags, particles, cosmetics, movement, and finite cash gain. Verification also hardened the regression by clearing leftover prop bodies before Hand flick checks and made Black Hole keep the intended afraid mood while active. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Offline Local Play Foundation: Matter.js 0.19.0 is now vendored under `vendor/` with its license, `index.html` loads the local runtime instead of jsdelivr, and browser regression verifies the app boots from the local vendor file with no CDN dependency.
+- Added and verified Elemental Variant Polish: Pulse Beam is a low-flash held energy tool with narrow beam visuals, temporary lit body status metadata, steady push/torque physics, `light`/`pulseBeam` scoring tags, Pulse Check mission/challenge coverage, saved best challenge time, and browser regression for particles, pulsed bodies, mood, movement, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
 
 Done assets:
 
@@ -208,8 +209,8 @@ In progress:
 Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Elemental Variant Polish`: add one more elemental variant only after defining status metadata, real physics/state change, replay tags, mission or challenge hooks, regression coverage, accessibility behavior, and matrix status before moving on.
-- Parallel tracking item: keep expanding weapon-specific cosmetics/effects through clean-room tool variants, and keep exact old skins/assets private-import-only unless rights are documented.
+- Next queue item is `Weapon Cosmetics And Effects Audit`: confirm every shipped weapon/tool has explicit cosmetic metadata, visible effect hooks, scoring tags, and direct browser coverage before starting another content expansion.
+- Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
 
 Process notes:
 
@@ -223,6 +224,7 @@ Process notes:
 - For cosmetic-only work, attach explicit metadata that regression can assert, then verify the rendered overlay through the full visual runner.
 - For projectile visual variants, assert both normal tool use and challenge use so cosmetic rotation stays tied to real gameplay.
 - For elemental variants, verify five surfaces together: direct tool effect, replay tags, challenge completion, mission rotation, and visible non-flashy particles/status overlays.
+- For weapon/effect audits, build a gap table first, then close missing metadata, visuals, scoring tags, and regression assertions tool by tool.
 - For mode menu work, only add entries that alter real simulation or settings state, then assert default, active state, save migration, and reload behavior.
 - For room browser work, assert built-in room population, direct browser selection, active state, private import insertion, and reload restoration.
 - For prop polish work, every spawned prop factory should expose cosmetic metadata that unit tests and real throw regression both assert.

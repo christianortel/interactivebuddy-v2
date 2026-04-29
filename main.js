@@ -197,6 +197,7 @@ const state = {
   sparkWandCooldown: 0,
   frostPuffCooldown: 0,
   gooMistCooldown: 0,
+  pulseBeamCooldown: 0,
   liquidScoreCooldown: 0,
   lastFloorContact: performance.now(),
   airborneBank: 0,
@@ -734,6 +735,8 @@ function setupInteractions() {
       setMood("Surprised", 900);
     } else if (state.tool === "goomist") {
       setMood("Curious", 900);
+    } else if (state.tool === "pulsebeam") {
+      setMood("Afraid", 900);
     } else if (state.tool === "hand") {
       const target = getBuddyAt(worldPoint);
       if (target) {
@@ -899,6 +902,9 @@ function setupPhysicsEvents() {
     if (state.tool === "goomist" && state.pointerDown) {
       applyGooMist(delta);
     }
+    if (state.tool === "pulsebeam" && state.pointerDown) {
+      applyPulseBeam(delta);
+    }
     updateGrenades();
     updateTesla(delta);
     updateLiquid(delta);
@@ -1016,6 +1022,9 @@ function tickTimers(delta) {
   if (state.gooMistCooldown > 0) {
     state.gooMistCooldown -= delta;
   }
+  if (state.pulseBeamCooldown > 0) {
+    state.pulseBeamCooldown -= delta;
+  }
   if (state.liquidScoreCooldown > 0) {
     state.liquidScoreCooldown -= delta;
   }
@@ -1032,6 +1041,7 @@ function tickTimers(delta) {
   updateChallengeTimer(delta);
   updateFrostedBodies(delta);
   updateGooedBodies(delta);
+  updatePulseBodies(delta);
 
   for (const [tool, heat] of state.toolHeat.entries()) {
     const next = Math.max(0, heat - delta / 8500);
@@ -1902,6 +1912,91 @@ function applyGooMist() {
   }
 }
 
+function applyPulseBeam() {
+  const radius = 315;
+  const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
+  const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
+  let touchedBuddy = false;
+
+  Composite.allBodies(state.buddy).forEach((body) => {
+    const delta = Vector.sub(body.position, state.pointerCurrent);
+    const distance = Math.max(Vector.magnitude(delta), 8);
+    if (distance > radius) {
+      return;
+    }
+    const dir = Vector.normalise(delta);
+    const alignment = Vector.dot(dir, aim);
+    if (alignment < 0.72) {
+      return;
+    }
+    const sideDistance = Math.abs(delta.x * -aim.y + delta.y * aim.x);
+    if (sideDistance > 58) {
+      return;
+    }
+    const falloff = (1 - distance / radius) * alignment * (1 - sideDistance / 70);
+    const force = 0.00006 * state.power * body.mass * Math.max(0.1, falloff);
+    Body.applyForce(body, body.position, {
+      x: aim.x * force,
+      y: aim.y * force - 0.00001 * state.power * body.mass * falloff
+    });
+    Body.setAngularVelocity(body, body.angularVelocity + 0.026 * falloff);
+    body.plugin = body.plugin || {};
+    body.plugin.pulseTime = Math.max(body.plugin.pulseTime || 0, 850);
+    if (!body.plugin.pulseRestoreFill) {
+      body.plugin.pulseRestoreFill = body.render.fillStyle;
+      body.plugin.pulseRestoreStroke = body.render.strokeStyle;
+    }
+    body.render.fillStyle = "#fff6b8";
+    body.render.strokeStyle = "#f1ff8b";
+    touchedBuddy = true;
+  });
+
+  for (let i = 0; i < 2; i += 1) {
+    const spread = (Math.random() - 0.5) * 32;
+    state.particles.push({
+      type: "spark",
+      x: state.pointerCurrent.x + aim.x * (45 + Math.random() * 74) - aim.y * spread,
+      y: state.pointerCurrent.y + aim.y * (45 + Math.random() * 74) + aim.x * spread,
+      vx: aim.x * 0.08 - aim.y * spread * 0.00045,
+      vy: aim.y * 0.08 + aim.x * spread * 0.00045 - 0.01,
+      radius: 1.8 + Math.random() * 1.9,
+      color: "#fff27a",
+      life: 260,
+      maxLife: 260
+    });
+  }
+
+  if (touchedBuddy && state.pulseBeamCooldown <= 0) {
+    addScore(4.4 + state.power * 0.036, "pulse", ["light", "elemental", "pulseBeam", "force"]);
+    setMood("Afraid", 850);
+    state.pulseBeamCooldown = 250;
+  }
+}
+
+function updatePulseBodies(delta) {
+  if (!state.buddy) {
+    return;
+  }
+  Composite.allBodies(state.buddy).forEach((body) => {
+    if (!body.plugin?.pulseTime) {
+      return;
+    }
+    body.plugin.pulseTime = Math.max(0, body.plugin.pulseTime - delta);
+    if (body.plugin.pulseTime > 0) {
+      return;
+    }
+    if (body.plugin.pulseRestoreFill) {
+      body.render.fillStyle = body.plugin.pulseRestoreFill;
+    }
+    if (body.plugin.pulseRestoreStroke) {
+      body.render.strokeStyle = body.plugin.pulseRestoreStroke;
+    }
+    delete body.plugin.pulseTime;
+    delete body.plugin.pulseRestoreFill;
+    delete body.plugin.pulseRestoreStroke;
+  });
+}
+
 function updateGooedBodies(delta) {
   if (!state.buddy) {
     return;
@@ -2246,7 +2341,7 @@ function playScoreFeedback(reason, reward, tags = []) {
     feedback.play("shock", intensity);
   } else if (reason === "tickle" || reason === "gift") {
     feedback.play(reason, intensity);
-  } else if (reason === "paint" || reason === "paintball" || reason === "rubber" || reason === "cork" || reason === "corkHit" || reason === "heat" || reason === "frost" || reason === "goo") {
+  } else if (reason === "paint" || reason === "paintball" || reason === "rubber" || reason === "cork" || reason === "corkHit" || reason === "heat" || reason === "frost" || reason === "goo" || reason === "pulse") {
     feedback.play("paint", intensity);
   } else if (reason === "armed" || reason === "build" || reason === "tether" || reason === "liquid") {
     feedback.play("select", 0.5);
@@ -2981,6 +3076,27 @@ function drawToolFields(ctx) {
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(state.pointerCurrent.x, state.pointerCurrent.y, 108, angle - 0.38, angle + 0.38);
+    ctx.stroke();
+    ctx.restore();
+  }
+  if (state.tool === "pulsebeam" && state.pointerDown) {
+    const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
+    const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.strokeStyle = "#fff27a";
+    ctx.lineWidth = 16;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(state.pointerCurrent.x, state.pointerCurrent.y);
+    ctx.lineTo(state.pointerCurrent.x + aim.x * 240, state.pointerCurrent.y + aim.y * 240);
+    ctx.stroke();
+    ctx.globalAlpha = 0.48;
+    ctx.strokeStyle = "#f1ff8b";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(state.pointerCurrent.x, state.pointerCurrent.y);
+    ctx.lineTo(state.pointerCurrent.x + aim.x * 285, state.pointerCurrent.y + aim.y * 285);
     ctx.stroke();
     ctx.restore();
   }

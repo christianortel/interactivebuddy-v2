@@ -14,6 +14,7 @@ export const TOOL_DEFS = [
   { id: "sparkwand", name: "Spark Wand", icon: "Z", category: "Elemental", cost: 1180, description: "Hold near Buddy to chain short shock arcs from the cursor." },
   { id: "frostpuff", name: "Frost Puff", icon: "F", category: "Elemental", cost: 1260, description: "Hold to chill Buddy with a reduced-flash frost mist." },
   { id: "goomist", name: "Goo Mist", icon: "M", category: "Elemental", cost: 1320, description: "Hold to coat Buddy in slippery green goo." },
+  { id: "pulsebeam", name: "Pulse Beam", icon: "|", category: "Elemental", cost: 1460, description: "Hold a narrow low-flash energy beam on Buddy for a steady push." },
   { id: "grenade", name: "Grenade", icon: "G", category: "Explosives", cost: 460, description: "Timed radial impulse with camera shake." },
   { id: "trampoline", name: "Trampoline", icon: "_", category: "Builders", cost: 720, description: "Place a bouncy pad for airborne combos." },
   { id: "anvil", name: "Stage Weight", icon: "A", category: "Props", cost: 1180, description: "A heavy overhead drop for big slapstick impacts." },
@@ -64,6 +65,7 @@ export const MISSION_POOL = [
   { id: "spark5", title: "Spark Drill", description: "Land 5 Spark Wand arcs.", target: 5, event: "sparkWand", reward: 175 },
   { id: "frost5", title: "Frost Test", description: "Land 5 Frost Puff chills.", target: 5, event: "frostPuff", reward: 175 },
   { id: "goo5", title: "Slip Test", description: "Land 5 Goo Mist coats.", target: 5, event: "goo", reward: 180 },
+  { id: "pulse5", title: "Pulse Check", description: "Hold 5 Pulse Beam hits.", target: 5, event: "pulseBeam", reward: 185 },
   { id: "wheel3", title: "Quick Picker", description: "Open the radial tool wheel 3 times.", target: 3, event: "radialWheel", reward: 90 },
   { id: "export1", title: "Clip It", description: "Export one replay clip.", target: 1, event: "replayExport", reward: 160 }
 ];
@@ -78,5 +80,6 @@ export const CHALLENGE_MODES = {
   spark: { name: "Spark Drill", description: "Land 5 Spark Wand arcs before time runs out.", event: "sparkWand", target: 5, duration: 35, reward: 240 },
   frost: { name: "Frost Test", description: "Land 5 Frost Puff chills before time runs out.", event: "frostPuff", target: 5, duration: 35, reward: 240 },
   goo: { name: "Slip Test", description: "Land 5 Goo Mist coats before time runs out.", event: "goo", target: 5, duration: 35, reward: 245 },
+  pulse: { name: "Pulse Check", description: "Hold 5 Pulse Beam hits before time runs out.", event: "pulseBeam", target: 5, duration: 35, reward: 250 },
   export: { name: "Clip Export", description: "Export 1 replay clip before time runs out.", event: "replayExport", target: 1, duration: 35, reward: 260 }
 };
