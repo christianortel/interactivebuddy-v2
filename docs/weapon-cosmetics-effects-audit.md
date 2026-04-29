@@ -33,6 +33,7 @@ Status key:
 | Water Fill | Liquid room fill with type-specific physics | `liquid`, `builder` | Liquid use and Liquid Control challenge | Complete |
 | Gift Box | `gift-box` ribbon/bow metadata and happy mood | `gift`, `happy` | Tool effects regression | Complete |
 | Confetti Popper | `confetti-popper` popper metadata, colored particles, cheerful bump | `confetti`, `happy`, `nice` | Tool effects and Cheer Check challenge | Complete |
+| Boombox | `boombox` speaker metadata, music-note particles, rhythmic happy pulses | `boombox`, `music`, `happy`, `nice` | Tool effects and Groove Check challenge | Complete |
 | Tesla Coil | `tesla-coil` coil/core metadata and bolt particles | `shock`, `stun` | Tool effects regression | Complete |
 | Black Hole | Gravity ring field and orbit arc | `gravity`, `force` | Tool effects regression | Complete |
 

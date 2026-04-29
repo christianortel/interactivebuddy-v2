@@ -1,4 +1,4 @@
-const INSTANT_PLACEMENT_TOOLS = new Set(["grenade", "trampoline", "gift", "confetti", "tesla", "rope", "water"]);
+const INSTANT_PLACEMENT_TOOLS = new Set(["grenade", "trampoline", "gift", "confetti", "boombox", "tesla", "rope", "water"]);
 const PAINT_COLORS = ["#ff7161", "#ffc857", "#98f17f", "#55d9cf", "#e7a8ff"];
 export const RUBBER_PELLET_VARIANTS = [
   { id: "charcoal-lime", fill: "#2f3a40", stroke: "#f1ff8b", stripe: "#f1ff8b", dot: "#111719" },
@@ -284,6 +284,26 @@ export function createConfettiPopperBody(Bodies, position) {
       }
     },
     render: { fillStyle: "#f6f1d0", strokeStyle: "#55d9cf", lineWidth: 3 }
+  });
+}
+
+export function createBoomboxBody(Bodies, position) {
+  return Bodies.rectangle(position.x, position.y, 58, 34, {
+    chamfer: { radius: 7 },
+    restitution: 0.28,
+    friction: 0.72,
+    density: 0.0021,
+    label: "prop_boombox",
+    plugin: {
+      cosmetic: {
+        type: "boombox",
+        speaker: "#111719",
+        cone: "#55d9cf",
+        trim: "#ffc857",
+        handle: "#f6f1d0"
+      }
+    },
+    render: { fillStyle: "#39484d", strokeStyle: "#ffc857", lineWidth: 3 }
   });
 }
 

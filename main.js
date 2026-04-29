@@ -16,6 +16,7 @@ import {
   createAnvilBody,
   createBallBody,
   createBeachBallBody,
+  createBoomboxBody,
   createBowlingBallBody,
   createBoxingGloveBody,
   createBrickBody,
@@ -137,6 +138,7 @@ const state = {
   props: [],
   grenades: [],
   coils: [],
+  boomboxes: [],
   ropes: [],
   liquid: {
     enabled: false,
@@ -722,6 +724,8 @@ function setupInteractions() {
       placeGift(worldPoint);
     } else if (state.tool === "confetti") {
       placeConfettiPopper(worldPoint);
+    } else if (state.tool === "boombox") {
+      placeBoombox(worldPoint);
     } else if (state.tool === "tesla") {
       placeTesla(worldPoint);
     } else if (state.tool === "rope") {
@@ -916,6 +920,7 @@ function setupPhysicsEvents() {
     }
     updateGrenades();
     updateTesla(delta);
+    updateBoomboxes(delta);
     updateLiquid(delta);
     updateParticles(delta);
     updateAirborne(delta);
@@ -1383,6 +1388,8 @@ function executeInstantTool(toolId, point) {
     placeGift(point);
   } else if (toolId === "confetti") {
     placeConfettiPopper(point);
+  } else if (toolId === "boombox") {
+    placeBoombox(point);
   } else if (toolId === "tesla") {
     placeTesla(point);
   } else if (toolId === "rope") {
@@ -1596,6 +1603,16 @@ function placeConfettiPopper(position) {
   setMood("Excited", 2300);
   addScore(touchedBuddy ? 9.5 : 6.5, "confetti", ["confetti", "happy", "nice"]);
   toast("Confetti popper fired.");
+}
+
+function placeBoombox(position) {
+  const boombox = createBoomboxBody(Bodies, position);
+  registerProp(boombox);
+  state.boomboxes.push({ body: boombox, beat: 60, life: 5600 });
+  spawnMusicNotes(position, 7);
+  setMood("Happy", 2400);
+  addScore(4.5, "boombox", ["boombox", "music", "happy", "nice"]);
+  toast("Boombox playing.");
 }
 
 function placeTesla(position) {
@@ -2165,6 +2182,40 @@ function updateTesla(delta) {
   }
 }
 
+function updateBoomboxes(delta) {
+  for (const boombox of state.boomboxes) {
+    boombox.life -= delta;
+    boombox.beat -= delta;
+    if (boombox.life <= 0 || !state.props.includes(boombox.body)) {
+      continue;
+    }
+    if (boombox.beat > 0) {
+      continue;
+    }
+    boombox.beat = 620;
+    let touchedBuddy = false;
+    Composite.allBodies(state.buddy).forEach((body) => {
+      const offset = Vector.sub(body.position, boombox.body.position);
+      const distance = Math.max(Vector.magnitude(offset), 16);
+      if (distance > 230) {
+        return;
+      }
+      const falloff = 1 - distance / 230;
+      const side = body.position.x >= boombox.body.position.x ? 1 : -1;
+      const pulse = { x: side * 0.00042 * falloff * body.mass, y: -0.00062 * falloff * body.mass };
+      Body.applyForce(body, body.position, pulse);
+      Body.setAngularVelocity(body, body.angularVelocity + side * 0.006 * falloff);
+      touchedBuddy = true;
+    });
+    spawnMusicNotes(boombox.body.position, touchedBuddy ? 9 : 5);
+    addScore(touchedBuddy ? 4.8 : 2.4, "boombox", ["boombox", "music", "happy", "nice"]);
+    if (touchedBuddy) {
+      setMood("Happy", 1100);
+    }
+  }
+  state.boomboxes = state.boomboxes.filter((boombox) => boombox.life > 0 && state.props.includes(boombox.body));
+}
+
 function updateLiquid(delta) {
   if (!state.liquid.enabled) {
     return;
@@ -2212,10 +2263,10 @@ function updateLiquid(delta) {
 function updateParticles(delta) {
   state.particles.forEach((particle) => {
     particle.life -= delta;
-    if (particle.type === "spark") {
+    if (particle.type === "spark" || particle.type === "music") {
       particle.x += particle.vx * delta;
       particle.y += particle.vy * delta;
-      particle.vy += 0.0007 * delta;
+      particle.vy += particle.type === "music" ? 0.00018 * delta : 0.0007 * delta;
     }
   });
   state.particles = state.particles.filter((particle) => particle.life > 0);
@@ -2399,7 +2450,7 @@ function playScoreFeedback(reason, reward, tags = []) {
     feedback.play("explosion", intensity);
   } else if (reason === "shock" || reason === "spark" || reason === "gravity") {
     feedback.play("shock", intensity);
-  } else if (reason === "tickle" || reason === "gift" || reason === "confetti") {
+  } else if (reason === "tickle" || reason === "gift" || reason === "confetti" || reason === "boombox") {
     feedback.play(reason === "confetti" ? "gift" : reason, intensity);
   } else if (reason === "paint" || reason === "paintball" || reason === "rubber" || reason === "cork" || reason === "corkHit" || reason === "plunger" || reason === "plungerHit" || reason === "heat" || reason === "frost" || reason === "goo" || reason === "pulse") {
     feedback.play("paint", intensity);
@@ -2694,6 +2745,7 @@ function resetScene() {
   state.props = [];
   state.grenades = [];
   state.coils = [];
+  state.boomboxes = [];
   state.ropes.forEach((rope) => World.remove(engine.world, rope));
   state.ropes = [];
   state.liquid.enabled = false;
@@ -2863,6 +2915,25 @@ function spawnConfettiBurst(position, count) {
       color: colors[i % colors.length],
       life: 680 + Math.random() * 480,
       maxLife: 1160
+    });
+  }
+}
+
+function spawnMusicNotes(position, count) {
+  const colors = ["#ffc857", "#55d9cf", "#f6f1d0"];
+  for (let i = 0; i < count; i += 1) {
+    const side = i % 2 === 0 ? -1 : 1;
+    state.particles.push({
+      type: "music",
+      kind: "music",
+      x: position.x + side * (12 + Math.random() * 18),
+      y: position.y - 16,
+      vx: side * (0.015 + Math.random() * 0.025),
+      vy: -0.05 - Math.random() * 0.06,
+      radius: 3 + Math.random() * 1.5,
+      color: colors[i % colors.length],
+      life: 820 + Math.random() * 420,
+      maxLife: 1240
     });
   }
 }
@@ -3214,6 +3285,8 @@ function drawPropCosmetics(ctx) {
       drawGiftCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "confetti-popper") {
       drawConfettiPopperCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "boombox") {
+      drawBoomboxCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "tesla-coil") {
       drawTeslaCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "grenade-shell") {
@@ -3301,6 +3374,33 @@ function drawConfettiPopperCosmetic(ctx, body, cosmetic) {
   ctx.lineTo(16, 5);
   ctx.closePath();
   ctx.fill();
+  ctx.restore();
+}
+
+function drawBoomboxCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.handle;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, -18, 15, Math.PI, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.trim;
+  ctx.fillRect(-22, -11, 44, 5);
+  ctx.fillStyle = cosmetic.speaker;
+  [-16, 16].forEach((x) => {
+    ctx.beginPath();
+    ctx.arc(x, 7, 9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = cosmetic.cone;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, 7, 4, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+  ctx.fillStyle = cosmetic.cone;
+  ctx.fillRect(-5, -1, 10, 5);
   ctx.restore();
 }
 
@@ -3593,6 +3693,18 @@ function drawParticles(ctx) {
       ctx.moveTo(particle.a.x, particle.a.y);
       ctx.lineTo((particle.a.x + particle.b.x) / 2 + Math.random() * 18 - 9, (particle.a.y + particle.b.y) / 2 + Math.random() * 18 - 9);
       ctx.lineTo(particle.b.x, particle.b.y);
+      ctx.stroke();
+    } else if (particle.type === "music") {
+      ctx.strokeStyle = particle.color;
+      ctx.fillStyle = particle.color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y + 7, particle.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(particle.x + particle.radius, particle.y + 7);
+      ctx.lineTo(particle.x + particle.radius, particle.y - 10);
+      ctx.lineTo(particle.x + particle.radius + 8, particle.y - 8);
       ctx.stroke();
     } else {
       ctx.fillStyle = particle.color;

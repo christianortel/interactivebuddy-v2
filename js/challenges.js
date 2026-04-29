@@ -20,7 +20,7 @@ export function createChallengeController({
   dateNow = () => Date.now()
 }) {
   function chooseMissions() {
-    const coverageIds = ["rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "plunger4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "wheel3", "export1"];
+    const coverageIds = ["rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "plunger4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "boombox4", "wheel3", "export1"];
     const coverageMission = missionPool.find((mission) => mission.id === coverageIds[state.missionCycle % coverageIds.length]);
     state.missionCycle += 1;
     const shuffled = missionPool

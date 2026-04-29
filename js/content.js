@@ -23,6 +23,7 @@ export const TOOL_DEFS = [
   { id: "water", name: "Water Fill", icon: "W", category: "Liquids", cost: 0, description: "Click to set water height; click near the floor to drain." },
   { id: "gift", name: "Gift Box", icon: "+", category: "Nice", cost: 920, description: "Spend a little cash to cheer up the buddy." },
   { id: "confetti", name: "Confetti Popper", icon: "!", category: "Nice", cost: 1080, description: "Place a popper that showers confetti and gives Buddy a cheerful bump." },
+  { id: "boombox", name: "Boombox", icon: "J", category: "Nice", cost: 1240, description: "Place a speaker that plays upbeat pulses, music notes, and happy motion." },
   { id: "tesla", name: "Tesla Coil", icon: "T", category: "Energy", cost: 1350, description: "Drop a coil that shocks nearby limbs in pulses." },
   { id: "blackhole", name: "Black Hole", icon: "@", category: "Force", cost: 2100, description: "Hold to pull everything into orbital chaos." }
 ];
@@ -52,6 +53,7 @@ export const TOOL_EFFECT_AUDIT = {
   water: { cosmetic: "liquid room fill", visual: "water/slime/oil band with buoyancy", scoring: ["liquid", "builder"], coverage: "browser liquid use and Liquid Control challenge" },
   gift: { cosmetic: "gift-box prop metadata", visual: "gift body and happy mood", scoring: ["gift", "happy"], coverage: "browser toolEffects gift" },
   confetti: { cosmetic: "confetti-popper prop metadata", visual: "popper body, colored confetti particles, and cheerful bump", scoring: ["confetti", "happy", "nice"], coverage: "browser toolEffects confetti and Cheer Check challenge" },
+  boombox: { cosmetic: "boombox speaker prop metadata", visual: "speaker body, music-note particles, and rhythmic happy pulses", scoring: ["boombox", "music", "happy", "nice"], coverage: "browser toolEffects boombox and Groove Check challenge" },
   tesla: { cosmetic: "tesla-coil prop metadata", visual: "coil body and bolt particles", scoring: ["shock", "stun"], coverage: "browser toolEffects tesla" },
   blackhole: { cosmetic: "gravity ring field", visual: "dark pull ring and green orbit arc", scoring: ["gravity", "force"], coverage: "browser toolEffects blackhole" }
 };
@@ -99,6 +101,7 @@ export const MISSION_POOL = [
   { id: "goo5", title: "Slip Test", description: "Land 5 Goo Mist coats.", target: 5, event: "goo", reward: 180 },
   { id: "pulse5", title: "Pulse Check", description: "Hold 5 Pulse Beam hits.", target: 5, event: "pulseBeam", reward: 185 },
   { id: "confetti5", title: "Cheer Check", description: "Pop confetti 5 times.", target: 5, event: "confetti", reward: 150 },
+  { id: "boombox4", title: "Groove Check", description: "Score 4 Boombox music pulses.", target: 4, event: "boombox", reward: 165 },
   { id: "wheel3", title: "Quick Picker", description: "Open the radial tool wheel 3 times.", target: 3, event: "radialWheel", reward: 90 },
   { id: "export1", title: "Clip It", description: "Export one replay clip.", target: 1, event: "replayExport", reward: 160 }
 ];
@@ -116,5 +119,6 @@ export const CHALLENGE_MODES = {
   goo: { name: "Slip Test", description: "Land 5 Goo Mist coats before time runs out.", event: "goo", target: 5, duration: 35, reward: 245 },
   pulse: { name: "Pulse Check", description: "Hold 5 Pulse Beam hits before time runs out.", event: "pulseBeam", target: 5, duration: 35, reward: 250 },
   cheer: { name: "Cheer Check", description: "Pop 5 Confetti Poppers before time runs out.", event: "confetti", target: 5, duration: 35, reward: 210 },
+  groove: { name: "Groove Check", description: "Score 4 Boombox music pulses before time runs out.", event: "boombox", target: 4, duration: 35, reward: 225 },
   export: { name: "Clip Export", description: "Export 1 replay clip before time runs out.", event: "replayExport", target: 1, duration: 35, reward: 260 }
 };

@@ -51,7 +51,7 @@ Because the original Flash content list is fragmented online, every exact old it
 | Shock / electricity | Tesla Coil and Spark Wand handheld arcs | Shipped | Browser regression | Add additional chain variants only after stability review. |
 | Cold / frost / goo / light | Frost Puff reduced-flash mist with chilled body overlays, Goo Mist slippery coating with lowered friction, Pulse Beam narrow low-flash energy beam with lit-body status and steady push | Shipped | Browser regression | Audit all shipped weapon cosmetics/effects before adding more variants. |
 | Builders / environment | Trampoline, Rope, Water Fill | Shipped | Browser regression | Add platforms, conveyor, and prop spawners. |
-| Nice/good powers | Gift Box and Confetti Popper with Cheer Check mission/challenge hooks | Shipped | Browser regression through direct tool effects and Cheer Check completion | Add money/boombox variants after projectile preset expansion. |
+| Nice/good powers | Gift Box, Confetti Popper, and Boombox with Cheer Check and Groove Check mission/challenge hooks | Shipped | Browser regression through direct tool effects, Cheer Check completion, and Groove Check completion | Add money variants only after projectile follow-up stabilizes. |
 | Alternate physics modes | Slow motion, ceiling toggle, Gravity submenu, liquid types, Robot heavy physics, Gelatin bouncy physics | Shipped | Browser regression for settings, gravity, skin physics, and liquids | Add more skin physics only after more skins justify it. |
 | Scripting engine / modding | JSON asset packs and private imports | Partial | Unit and browser regression | Add scriptable tool schema later. |
 | Weapon cosmetics/effects audit | Every shipped tool has `TOOL_EFFECT_AUDIT` metadata, visible effect identity, scoring tags, and direct regression coverage | Shipped | Unit checks, browser regression, and `docs/weapon-cosmetics-effects-audit.md` | Keep synchronized as new tools ship. |
@@ -104,8 +104,8 @@ Private import only:
 
 ## Next Content Batches
 
-1. `Nice Tool Follow-up`: add a money/boombox-style nice tool only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
-2. `Projectile Follow-up`: add another projectile only after the nice-tool follow-up, and only with factory metadata, real launch/collision behavior, scoring tags, mission/challenge hooks where appropriate, audit metadata, and direct browser coverage.
+1. `Projectile Follow-up`: add another projectile only after the nice-tool follow-up, and only with factory metadata, real launch/collision behavior, scoring tags, mission/challenge hooks where appropriate, audit metadata, and direct browser coverage.
+2. `Nice Tool Later`: add a money-style nice tool only after projectile follow-up, and only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
 3. `Room Preset Expansion Later`: add another room only after the next tool follow-ups, and only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, asset validation, and regression coverage.
 
 ## Audit Rules

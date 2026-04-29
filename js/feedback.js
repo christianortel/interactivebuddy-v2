@@ -160,6 +160,9 @@ export class FeedbackEngine {
     } else if (eventName === "tickle" || eventName === "gift") {
       this.tone({ frequency: 440, duration: 0.09, type: "sine", gain: 0.09, bend: 1.33 });
       setTimeout(() => this.tone({ frequency: 660, duration: 0.08, type: "sine", gain: 0.07, bend: 1.18 }), 70);
+    } else if (eventName === "boombox") {
+      this.tone({ frequency: 196, duration: 0.08, type: "triangle", gain: 0.1, bend: 1 });
+      setTimeout(() => this.tone({ frequency: 294, duration: 0.07, type: "sine", gain: 0.07, bend: 1.5 }), 85);
     } else if (eventName === "paint") {
       this.tone({ frequency: 520, duration: 0.06, type: "triangle", gain: 0.08, bend: 0.82 });
     } else if (eventName === "unlock") {

@@ -6,7 +6,7 @@ A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: 
 
 - Matter.js ragdoll buddy built from rigid bodies and spring constraints.
 - Classic top menu bar plus a modern HUD, mission panel, shop, and bottom tool rail.
-- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Plunger Shot, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Confetti Popper, Tesla Coil, and Black Hole.
+- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Plunger Shot, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Confetti Popper, Boombox, Tesla Coil, and Black Hole.
 - Local asset packs: JSON manifests can add skins, audio packs, and room palettes.
 - Texture-backed pack skins: local SVG skin assets can be applied to the ragdoll bodies.
 - Economy: cash, XP, combo timer, anti-grind yield decay, unlockable tools, unlockable skins, and local persistence.
@@ -38,10 +38,11 @@ Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run l
 - Rope: click near Buddy to attach an elastic ceiling tether.
 - Water: click to set liquid height; click near the floor to drain.
 - Confetti Popper: click to place a cheerful popper with particles and a gentle bump.
+- Boombox: click to place a speaker that emits music notes, happy pulses, and gentle motion.
 - Modes > Gravity: switch between Normal, Low Gravity, and Heavy Gravity physics.
 - Modes > Debug > FPS Counter: show or hide the debug FPS overlay.
 - Export: saves the recent rolling WebM replay buffer from the canvas when supported.
-- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Suction Drill, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, and Clip Export.
+- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Suction Drill, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, Groove Check, and Clip Export.
 - Rubber Blaster shows a burst/cooldown readout and feeds the Bead Cannon challenge.
 - Settings > Asset pack shows a live room-palette preview and selectable room browser for loaded rooms.
 - `R`: reset scene.
@@ -167,6 +168,7 @@ Done:
 - Added and verified Nice Tool Expansion: Confetti Popper is a new cheerful tool with `confetti-popper` cosmetic metadata, custom popper overlay, colored confetti particles, gentle buddy bump physics, `confetti`/`happy`/`nice` scoring tags, Cheer Check mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Projectile Preset Expansion: Plunger Shot is a new aim-and-release projectile with `plunger-shot` cosmetic metadata, suction-cup overlay, launch and hit scoring, temporary Buddy suction status, tug impulse physics, Suction Drill mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Room Preset Follow-up: Dojo Studio is a new original room pack with a dojo motif thumbnail, mat-floor palette, Practice Gi Buddy texture skin, Dojo Tap audio pack, manifest registration, room-browser selection coverage, and reload persistence coverage. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Nice Tool Follow-up: Boombox is a new cheerful timed tool with `boombox` speaker cosmetic metadata, custom overlay, music-note particles, rhythmic happy force pulses, `boombox`/`music`/`happy`/`nice` scoring tags, Groove Check mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
 
 Done assets:
 
@@ -221,7 +223,7 @@ In progress:
 Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Nice Tool Follow-up`: add a money/boombox-style nice tool only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
+- Next queue item is `Projectile Follow-up`: add another projectile only with factory metadata, real launch/collision behavior, scoring tags, mission/challenge hooks where appropriate, audit metadata, and direct browser coverage.
 - Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
 
 Process notes:

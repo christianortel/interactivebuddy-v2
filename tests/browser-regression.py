@@ -116,7 +116,7 @@ def run(url):
         assert_true(initial["audioPack"] == "classic", "Default audio pack should be classic")
         assert_true(initial["liquidType"] == "water", "Default liquid type should be water")
         assert_true(initial["challengeMode"] == "free", "Default challenge mode should be Free Play")
-        assert_true({"juggle", "tether", "liquid", "props", "bead", "suction", "spark", "frost", "goo", "pulse", "cheer", "export"}.issubset(set(initial["challengeOptions"])), "Challenge options should include new modes")
+        assert_true({"juggle", "tether", "liquid", "props", "bead", "suction", "spark", "frost", "goo", "pulse", "cheer", "groove", "export"}.issubset(set(initial["challengeOptions"])), "Challenge options should include new modes")
         assert_true(initial["toolMeta"] == "Utility", "Default tool meta should describe the active tool category")
         assert_true(initial["modeSubmenus"] >= 2 and initial["fpsButton"] == "FPS Counter", "Modes menu should expose old-style nested submenus")
         assert_true(initial["gravityButtons"] == ["normal", "low", "heavy"], "Modes > Gravity should expose normal/low/heavy options")
@@ -810,7 +810,7 @@ def run(url):
         assert_true(custom_texture_skin["shopButton"] == "Equipped", "Imported data-URL skin shop button should show equipped")
         result["checks"]["customSkinPack"] = {**custom_pack, "reload": custom_pack_reload, "textureSkin": custom_texture_skin}
 
-        required_mission_coverage = {"rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "plunger4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "wheel3", "export1"}
+        required_mission_coverage = {"rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "plunger4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "boombox4", "wheel3", "export1"}
         seen_missions = set(page.eval_on_selector_all(".mission", "(els) => els.map((el) => el.dataset.missionId)"))
         for _ in range(40):
             if required_mission_coverage.issubset(seen_missions):
@@ -819,7 +819,7 @@ def run(url):
             page.wait_for_timeout(120)
             seen_missions.update(page.eval_on_selector_all(".mission", "(els) => els.map((el) => el.dataset.missionId)"))
         coverage = sorted(seen_missions.intersection(required_mission_coverage))
-        assert_true(coverage == ["beach3", "bead6", "bowling2", "confetti5", "cork4", "dart4", "export1", "frost5", "goo5", "liquid2", "plunger4", "prop4", "pulse5", "punch2", "rope2", "spark5", "wheel3"], "Mission refreshes should cover rope/liquid/prop/projectile/elemental/nice/radial/export missions")
+        assert_true(coverage == ["beach3", "bead6", "boombox4", "bowling2", "confetti5", "cork4", "dart4", "export1", "frost5", "goo5", "liquid2", "plunger4", "prop4", "pulse5", "punch2", "rope2", "spark5", "wheel3"], "Mission refreshes should cover rope/liquid/prop/projectile/elemental/nice/radial/export missions")
         result["checks"]["missionCoverage"] = {"coverage": coverage}
 
         page.evaluate(
@@ -997,7 +997,7 @@ def run(url):
               version: 2,
               cash: 3000,
               xp: 0,
-              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'tesla', 'blackhole'],
+              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'boombox', 'tesla', 'blackhole'],
               unlockedSkins: ['classic'],
               selectedSkin: 'classic',
               settings: {{ reducedFlash: true, slapstick: true, audio: false, haptics: false, slowMo: false, ceilingOpen: false, assetPack: 'base', audioPack: 'classic', liquidType: 'slime' }},
@@ -1175,7 +1175,7 @@ def run(url):
               version: 2,
               cash: 5000,
               xp: 0,
-              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'tesla', 'blackhole'],
+              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'boombox', 'tesla', 'blackhole'],
               unlockedSkins: ['classic'],
               selectedSkin: 'classic',
               settings: {{ reducedFlash: true, slapstick: true, audio: false, haptics: false, slowMo: false, ceilingOpen: false, assetPack: 'base', audioPack: 'classic', liquidType: 'slime' }},
@@ -1343,6 +1343,75 @@ def run(url):
         assert_true(cheer_challenge["confettiParticles"] >= 20, "Cheer Check should leave visible confetti particles")
         assert_true("NaN" not in cheer_challenge["cash"], "Cheer Check reward should keep cash finite")
         tool_effects["cheerChallenge"] = cheer_challenge
+
+        torso = center_buddy()
+        page.click('.tool-button[data-tool="boombox"]')
+        before_cash = money_to_int(torso["cash"])
+        page.mouse.click(stage_x(torso["x"] + 95), stage_y(torso["y"] + 10))
+        page.wait_for_timeout(950)
+        boombox_effect = page.evaluate(
+            """
+            () => {
+              const boxes = window.__buddyLabDebug.state.props.filter((body) => body.label === 'prop_boombox');
+              return {
+                boomboxes: boxes.length,
+                activeBoomboxes: window.__buddyLabDebug.state.boomboxes.length,
+                cosmetic: boxes.at(-1)?.plugin?.cosmetic?.type || '',
+                musicParticles: window.__buddyLabDebug.state.particles.filter((particle) => particle.kind === 'music').length,
+                cash: document.querySelector('#cash')?.textContent,
+                mood: window.__buddyLabDebug.state.mood,
+                torsoSpeed: Matter.Vector.magnitude(window.__buddyLabDebug.state.torso.velocity),
+                replayHasBoombox: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'boombox'),
+                replayHasMusic: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('music')),
+                replayHasHappy: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('happy')),
+                replayHasNice: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('nice'))
+              };
+            }
+            """
+        )
+        assert_true(boombox_effect["boomboxes"] >= 1, "Boombox should place a speaker prop")
+        assert_true(boombox_effect["activeBoomboxes"] >= 1, "Boombox should keep a timed active music effect")
+        assert_true(boombox_effect["cosmetic"] == "boombox", "Boombox should carry explicit cosmetic metadata")
+        assert_true(boombox_effect["musicParticles"] >= 7, "Boombox should emit visible music-note particles")
+        assert_true(boombox_effect["mood"] == "Happy", "Boombox should set happy mood")
+        assert_true(boombox_effect["torsoSpeed"] > 0.01, "Boombox should pulse Buddy with gentle motion")
+        assert_true(boombox_effect["replayHasBoombox"] and boombox_effect["replayHasMusic"] and boombox_effect["replayHasHappy"] and boombox_effect["replayHasNice"], "Boombox should record boombox/music/happy/nice tags")
+        assert_true(money_to_int(boombox_effect["cash"]) > before_cash, "Boombox should score cash")
+        tool_effects["boombox"] = boombox_effect
+
+        page.evaluate(
+            """
+            () => {
+              const challenge = document.querySelector('#challengeMode');
+              challenge.value = 'groove';
+              challenge.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            """
+        )
+        torso = center_buddy()
+        page.click('.tool-button[data-tool="boombox"]')
+        page.mouse.click(stage_x(torso["x"] + 75), stage_y(torso["y"] + 20))
+        page.wait_for_timeout(2800)
+        groove_challenge = page.evaluate(
+            """
+            () => {
+              const save = JSON.parse(localStorage.getItem('buddyLab2026.save.v1'));
+              return {
+                selected: document.querySelector('#challengeMode')?.value,
+                summary: document.querySelector('#replayStrip')?.textContent,
+                best: save.challengeBests?.groove?.elapsed,
+                musicParticles: window.__buddyLabDebug.state.particles.filter((particle) => particle.kind === 'music').length,
+                cash: document.querySelector('#cash')?.textContent
+              };
+            }
+            """
+        )
+        assert_true(groove_challenge["selected"] == "groove", "Groove Check challenge should stay selected")
+        assert_true("Groove Check" in groove_challenge["summary"] and "Complete" in groove_challenge["summary"], "Groove Check should complete from Boombox hooks")
+        assert_true(isinstance(groove_challenge["best"], (int, float)) and groove_challenge["best"] > 0, "Groove Check best time should be saved")
+        assert_true(groove_challenge["musicParticles"] >= 7, "Groove Check should leave visible music-note particles")
+        assert_true("NaN" not in groove_challenge["cash"], "Groove Check reward should keep cash finite")
+        tool_effects["grooveChallenge"] = groove_challenge
 
         torso = center_buddy()
         page.click('.tool-button[data-tool="rope"]')
