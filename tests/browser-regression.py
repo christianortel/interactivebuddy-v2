@@ -63,6 +63,8 @@ def run(url):
               fpsButton: document.querySelector('#fpsCounterButton')?.textContent,
               fpsVisible: document.querySelector('#fpsCounter')?.classList.contains('fps-counter--visible'),
               fpsText: document.querySelector('#fpsCounter')?.textContent,
+              matterLoaded: Boolean(window.Matter?.Engine),
+              scriptSources: [...document.scripts].map((script) => script.getAttribute('src')).filter(Boolean),
               roomPreviewPack: document.querySelector('#roomPreview')?.dataset.roomPack,
               roomPreviewName: document.querySelector('#roomPreview .room-preview__name')?.textContent,
               roomPreviewMotif: document.querySelector('#roomPreview .room-thumbnail--large')?.dataset.motif,
@@ -83,6 +85,9 @@ def run(url):
         assert_true(initial["shopItems"] >= 11, "Expected shop items")
         assert_true("NaN" not in initial["cash"], "Initial cash should be finite")
         assert_true("NaN" not in initial["xp"], "Initial XP should be finite")
+        assert_true(initial["matterLoaded"], "Matter.js should load before the app starts")
+        assert_true("vendor/matter.min.js" in initial["scriptSources"], "Matter.js should be loaded from the local vendor runtime")
+        assert_true(not any(src.startswith(("http://", "https://", "//")) for src in initial["scriptSources"]), "Runtime scripts should not load from a CDN")
         assert_true(initial["assetPack"] == "base", "Default asset pack should be base")
         assert_true("neon-lab" in initial["assetPackOptions"], "Local Neon Lab asset pack should load")
         assert_true("retro-office" in initial["assetPackOptions"], "Local Retro Office asset pack should load")

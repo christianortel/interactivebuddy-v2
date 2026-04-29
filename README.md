@@ -6,7 +6,7 @@ A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: 
 
 - Matter.js ragdoll buddy built from rigid bodies and spring constraints.
 - Classic top menu bar plus a modern HUD, mission panel, shop, and bottom tool rail.
-- Tools: Open Hand, Ball, Bowling Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Tesla Coil, and Black Hole.
+- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Tesla Coil, and Black Hole.
 - Local asset packs: JSON manifests can add skins, audio packs, and room palettes.
 - Texture-backed pack skins: local SVG skin assets can be applied to the ragdoll bodies.
 - Economy: cash, XP, combo timer, anti-grind yield decay, unlockable tools, unlockable skins, and local persistence.
@@ -23,7 +23,7 @@ python -m http.server 5173
 
 Then visit `http://localhost:5173`.
 
-Matter.js is loaded from a CDN, so the first run needs network access.
+Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run locally after checkout without Wi-Fi.
 
 ## Controls
 
@@ -158,6 +158,7 @@ Done:
 - Added and verified Prop Expansion: Beach Ball is a new legally distinct light/bouncy prop with a dedicated Matter body factory, `beach-ball-striped` cosmetic metadata and render overlay, aim-and-release launch behavior, `beachball` mission hook, shared `propVariant` scoring/challenge support, and browser regression for tool unlock, spawn speed, cosmetic metadata, replay tags, mission coverage, finite cash, and visual runner stability. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Classic Buddy Feel: the default buddy now starts in the old lower-left stage position at a smaller classic scale, uses looser/damped ragdoll constraints for a floppier early-web-toy feel, and renders a glossy gray segmented overlay with a simple mood-aware face while preserving the 15-body physics skeleton. Browser regression asserts classic body metadata, lower-left spawn, smaller head scale, and damping, and the full visual runner passes.
 - Added and verified Projectile Variant Polish: Cork Popper is a new legally distinct aim-and-release projectile with a dedicated Matter body factory, `cork-popper` cosmetic overlay, launch scoring, Buddy-hit collision scoring, pop impulse, Cork Shots mission coverage, and direct browser regression for spawned cork bodies, hit state, replay tags, particles, cosmetics, movement, and finite cash gain. Verification also hardened the regression by clearing leftover prop bodies before Hand flick checks and made Black Hole keep the intended afraid mood while active. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Offline Local Play Foundation: Matter.js 0.19.0 is now vendored under `vendor/` with its license, `index.html` loads the local runtime instead of jsdelivr, and browser regression verifies the app boots from the local vendor file with no CDN dependency.
 
 Done assets:
 
@@ -196,6 +197,9 @@ Done assets:
 - `docs/content-completion-matrix.md`
 - `main.js`
 - `tests/browser-regression.py`
+- `vendor/README.md`
+- `vendor/matter-js.LICENSE`
+- `vendor/matter.min.js`
 
 In progress:
 
@@ -205,6 +209,7 @@ Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
 - Next queue item is `Elemental Variant Polish`: add one more elemental variant only after defining status metadata, real physics/state change, replay tags, mission or challenge hooks, regression coverage, accessibility behavior, and matrix status before moving on.
+- Parallel tracking item: keep expanding weapon-specific cosmetics/effects through clean-room tool variants, and keep exact old skins/assets private-import-only unless rights are documented.
 
 Process notes:
 
@@ -227,4 +232,5 @@ Process notes:
 - For room expansion, assert motif metadata in sanitized packs plus actual DOM thumbnails for default, built-in selected, private-imported, and reload paths.
 - For prop expansion, add the new prop to both direct throw regression and mission coverage; require cosmetic metadata plus replay event/tag assertions.
 - For classic buddy feel work, verify both appearance metadata and measurable physics/spawn values so visual style changes do not silently detach from the ragdoll behavior.
+- For offline-readiness work, remove network runtime dependencies first, vendor licenses with the code, and verify a fresh local server boot before marking the item done.
 - For projectile variant polish, isolate prior projectile bodies before direct collision tests and assert both launch and hit events so path blockage cannot hide a weak behavior.

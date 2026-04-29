@@ -33,6 +33,7 @@ Because the original Flash content list is fragmented online, every exact old it
 | Skins store | Built-in skins plus asset-pack skins | Shipped | Browser regression | Add skin categories and previews. |
 | Local save | Versioned localStorage save, import/export | Shipped | Browser regression | Add preset compatibility versioning. |
 | Replay/export | Rolling WebM replay export | Shipped | Browser regression | Add GIF/MP4 export later. |
+| Offline local play | Vendored Matter.js runtime loaded from `vendor/matter.min.js` | Shipped | Browser regression and source scan | Keep future third-party runtime assets vendored with licenses. |
 
 ## Tools And Effects
 
@@ -103,10 +104,11 @@ Private import only:
 ## Next Content Batches
 
 1. `Elemental Variant Polish`: add one more elemental variant with status metadata, real physics/state change, replay tags, mission or challenge hooks, accessibility behavior, and regression coverage.
-2. `Skin Physics Expansion`: add more skin physics only after more skins justify it.
-3. `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, and regression coverage.
-4. `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only after elemental variant queues stabilize.
-5. `Projectile Preset Expansion`: add another projectile only after the elemental queue and classic parity checks stay stable.
+2. `Weapon Cosmetics And Effects Audit`: confirm every shipped weapon/tool has explicit cosmetic metadata, visible effect hooks, scoring tags, and direct browser coverage.
+3. `Skin Physics Expansion`: add more skin physics only after more skins justify it.
+4. `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, and regression coverage.
+5. `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only after elemental variant queues stabilize.
+6. `Projectile Preset Expansion`: add another projectile only after the elemental queue and classic parity checks stay stable.
 
 ## Audit Rules
 
@@ -114,3 +116,4 @@ Private import only:
 - Add direct browser behavior coverage for every new tool.
 - Run `tests/run-regression.ps1 -Visual` before moving a content batch from `Planned` to `Shipped`.
 - Keep exact old skins out of bundled packs unless rights are explicitly documented.
+- Keep offline play intact by avoiding CDN/runtime network dependencies in shipped browser code.
