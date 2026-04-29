@@ -19,6 +19,11 @@
       "id": "classic-desktop",
       "name": "Classic Desktop",
       "path": "assets/packs/classic-desktop/pack.json"
+    },
+    {
+      "id": "workshop-garage",
+      "name": "Workshop Garage",
+      "path": "assets/packs/workshop-garage/pack.json"
     }
   ]
 }

@@ -1,0 +1,36 @@
+{
+  "id": "workshop-garage",
+  "name": "Workshop Garage",
+  "description": "A practical gray-green workshop room with pegboard details for prop-heavy sandbox sessions.",
+  "room": {
+    "background": "#7f8c82",
+    "grid": "#dbe5da",
+    "floor": "#4f5a52",
+    "accent": "#ffd06a",
+    "motif": "workshop"
+  },
+  "skins": [
+    {
+      "id": "workshop-garage:shop-apron",
+      "name": "Shop Apron Buddy",
+      "cost": 480,
+      "color": "#d8ded8",
+      "accent": "#ffd06a",
+      "texture": "assets/packs/workshop-garage/skins/shop-apron.svg",
+      "textureScale": 0.72,
+      "description": "An original shop-apron outfit for prop-heavy room sessions."
+    }
+  ],
+  "audioPacks": {
+    "workshopClack": {
+      "name": "Workshop Clack",
+      "master": 0.16,
+      "pitch": 0.88,
+      "toneWave": "triangle",
+      "impactWave": "sawtooth",
+      "zapWave": "square",
+      "noiseFilter": 0.92,
+      "decay": 1.08
+    }
+  }
+}

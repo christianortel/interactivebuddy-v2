@@ -325,6 +325,37 @@ button {
   opacity: 0.72;
 }
 
+.room-thumbnail[data-motif="workshop"] .room-thumbnail__grid {
+  opacity: 0.2;
+  background-size: 14px 14px;
+}
+
+.room-thumbnail[data-motif="workshop"]::after {
+  content: "";
+  position: absolute;
+  top: 18%;
+  left: 9%;
+  width: 34%;
+  height: 26%;
+  border: 1px solid rgba(22, 48, 31, 0.24);
+  border-radius: 2px;
+  background:
+    radial-gradient(circle, var(--room-accent) 0 2px, transparent 3px) 0 0 / 12px 12px,
+    rgba(255, 255, 255, 0.14);
+}
+
+.room-thumbnail[data-motif="workshop"]::before {
+  content: "";
+  position: absolute;
+  right: 12%;
+  bottom: 28%;
+  width: 22%;
+  height: 18%;
+  border: 1px solid rgba(22, 48, 31, 0.22);
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(var(--room-accent) 0 4px, rgba(255, 255, 255, 0.16) 4px);
+}
+
 .room-preview__swatches {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

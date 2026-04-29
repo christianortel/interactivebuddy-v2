@@ -101,12 +101,15 @@ def run(url):
         assert_true("retro-office" in initial["assetPackOptions"], "Local Retro Office asset pack should load")
         assert_true("classic-arcade" in initial["assetPackOptions"], "Classic Arcade asset pack should load")
         assert_true("classic-desktop" in initial["assetPackOptions"], "Classic Desktop room pack should load")
+        assert_true("workshop-garage" in initial["assetPackOptions"], "Workshop Garage room pack should load")
         assert_true({"Gloom Friend", "Fruit Clock", "Everyday Pal"}.issubset(set(initial["shopNames"])), "Classic Skin Pack 2 skins should appear in shop")
         assert_true("Desk Pal" in initial["shopNames"], "Classic Desktop skin should appear in shop")
+        assert_true("Shop Apron Buddy" in initial["shopNames"], "Workshop Garage skin should appear in shop")
         assert_true("neonPulse" in initial["audioPackOptions"], "Asset-pack audio pack should load")
         assert_true("officeClick" in initial["audioPackOptions"], "Second asset-pack audio pack should load")
         assert_true("cabinetThunk" in initial["audioPackOptions"], "Classic Arcade audio pack should load")
         assert_true("desktopTap" in initial["audioPackOptions"], "Classic Desktop audio pack should load")
+        assert_true("workshopClack" in initial["audioPackOptions"], "Workshop Garage audio pack should load")
         assert_true(initial["audioPack"] == "classic", "Default audio pack should be classic")
         assert_true(initial["liquidType"] == "water", "Default liquid type should be water")
         assert_true(initial["challengeMode"] == "free", "Default challenge mode should be Free Play")
@@ -121,8 +124,8 @@ def run(url):
         assert_true(initial["roomPreviewSwatches"] == 4, "Room preview should show four palette swatches")
         assert_true(any("#87968e" in color for color in initial["roomPreviewColors"]), "Base room preview should expose the background color")
         assert_true(initial["roomBrowserActive"] == "base", "Room browser should default to Base Lab")
-        assert_true({"base", "neon-lab", "retro-office", "classic-arcade", "classic-desktop"}.issubset(set(initial["roomBrowserButtons"])), "Room browser should list built-in room packs")
-        assert_true({"lab", "neon", "office", "arcade", "desktop"}.issubset(set(initial["roomBrowserThumbnails"])), "Room browser should render motif thumbnails for built-in room packs")
+        assert_true({"base", "neon-lab", "retro-office", "classic-arcade", "classic-desktop", "workshop-garage"}.issubset(set(initial["roomBrowserButtons"])), "Room browser should list built-in room packs")
+        assert_true({"lab", "neon", "office", "arcade", "desktop", "workshop"}.issubset(set(initial["roomBrowserThumbnails"])), "Room browser should render motif thumbnails for built-in room packs")
         result["checks"]["initial"] = initial
 
         classic_buddy = page.evaluate(
@@ -322,6 +325,64 @@ def run(url):
         assert_true(room_pack["browserCount"] >= 5, "Room browser should show all loaded room packs")
         assert_true(any("#9aa59d" in color for color in room_pack["previewColors"]), "Classic Desktop preview should expose its room background")
         result["checks"]["roomPack"] = room_pack
+
+        page.click('#roomPreview .room-browser__button[data-room-pack="workshop-garage"]')
+        page.wait_for_timeout(180)
+        workshop_room_pack = page.evaluate(
+            f"""
+            () => ({{
+              selected: document.querySelector('#assetPack')?.value,
+              saved: JSON.parse(localStorage.getItem('{SAVE_KEY}')).settings.assetPack,
+              toast: document.querySelector('#toast')?.textContent,
+              shopHasShopApron: [...document.querySelectorAll('.shop-item strong')].some((el) => el.textContent === 'Shop Apron Buddy'),
+              audioHasWorkshopClack: [...document.querySelectorAll('#audioPack option')].some((option) => option.value === 'workshopClack'),
+              roomBackground: window.__buddyLabDebug.state.assetPacks.find((pack) => pack.id === 'workshop-garage')?.room.background,
+              roomMotif: window.__buddyLabDebug.state.assetPacks.find((pack) => pack.id === 'workshop-garage')?.room.motif,
+              previewPack: document.querySelector('#roomPreview')?.dataset.roomPack,
+              previewName: document.querySelector('#roomPreview .room-preview__name')?.textContent,
+              previewMotif: document.querySelector('#roomPreview .room-thumbnail--large')?.dataset.motif,
+              browserActive: document.querySelector('#roomPreview .room-browser__button.is-active')?.dataset.roomPack,
+              browserPressed: document.querySelector('#roomPreview .room-browser__button[data-room-pack="workshop-garage"]')?.getAttribute('aria-pressed'),
+              browserMotif: document.querySelector('#roomPreview .room-browser__button[data-room-pack="workshop-garage"] .room-thumbnail--mini')?.dataset.motif,
+              browserCount: document.querySelectorAll('#roomPreview .room-browser__button').length,
+              previewColors: [...document.querySelectorAll('#roomPreview .room-preview__swatch')]
+                .map((swatch) => swatch.getAttribute('aria-label'))
+            }})
+            """
+        )
+        assert_true(workshop_room_pack["selected"] == "workshop-garage", "Workshop Garage selector should apply")
+        assert_true(workshop_room_pack["saved"] == "workshop-garage", "Workshop Garage room pack should persist")
+        assert_true(workshop_room_pack["shopHasShopApron"], "Workshop Garage skin should be in shop")
+        assert_true(workshop_room_pack["audioHasWorkshopClack"], "Workshop Garage audio pack should be in selector")
+        assert_true(workshop_room_pack["roomBackground"] == "#7f8c82", "Workshop Garage room palette should be registered")
+        assert_true(workshop_room_pack["roomMotif"] == "workshop", "Workshop Garage room motif should be registered")
+        assert_true(workshop_room_pack["previewPack"] == "workshop-garage" and workshop_room_pack["previewName"] == "Workshop Garage", "Workshop Garage room preview should update")
+        assert_true(workshop_room_pack["previewMotif"] == "workshop" and workshop_room_pack["browserMotif"] == "workshop", "Workshop Garage preview and browser entry should render workshop thumbnails")
+        assert_true(workshop_room_pack["browserActive"] == "workshop-garage" and workshop_room_pack["browserPressed"] == "true", "Room browser should show Workshop Garage as active")
+        assert_true(workshop_room_pack["browserCount"] >= 6, "Room browser should include the new Workshop Garage pack")
+        assert_true(any("#7f8c82" in color for color in workshop_room_pack["previewColors"]), "Workshop Garage preview should expose its room background")
+        result["checks"]["workshopRoomPack"] = workshop_room_pack
+
+        page.reload(wait_until="networkidle")
+        page.wait_for_timeout(900)
+        workshop_room_reload = page.evaluate(
+            """
+            () => ({
+              selected: document.querySelector('#assetPack')?.value,
+              hasOption: [...document.querySelectorAll('#assetPack option')].some((option) => option.value === 'workshop-garage'),
+              hasSkin: [...document.querySelectorAll('.shop-item strong')].some((el) => el.textContent === 'Shop Apron Buddy'),
+              hasAudio: [...document.querySelectorAll('#audioPack option')].some((option) => option.value === 'workshopClack'),
+              previewPack: document.querySelector('#roomPreview')?.dataset.roomPack,
+              browserActive: document.querySelector('#roomPreview .room-browser__button.is-active')?.dataset.roomPack,
+              browserMotif: document.querySelector('#roomPreview .room-browser__button[data-room-pack="workshop-garage"] .room-thumbnail--mini')?.dataset.motif
+            })
+            """
+        )
+        assert_true(workshop_room_reload["selected"] == "workshop-garage", "Workshop Garage selection should survive reload")
+        assert_true(workshop_room_reload["hasOption"] and workshop_room_reload["hasSkin"] and workshop_room_reload["hasAudio"], "Workshop Garage content should survive reload")
+        assert_true(workshop_room_reload["previewPack"] == "workshop-garage", "Workshop Garage preview should restore after reload")
+        assert_true(workshop_room_reload["browserActive"] == "workshop-garage" and workshop_room_reload["browserMotif"] == "workshop", "Workshop Garage room browser state should survive reload")
+        result["checks"]["workshopRoomReload"] = workshop_room_reload
 
         page.evaluate(
             """

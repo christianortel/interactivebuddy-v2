@@ -162,6 +162,7 @@ Done:
 - Added and verified Elemental Variant Polish: Pulse Beam is a low-flash held energy tool with narrow beam visuals, temporary lit body status metadata, steady push/torque physics, `light`/`pulseBeam` scoring tags, Pulse Check mission/challenge coverage, saved best challenge time, and browser regression for particles, pulsed bodies, mood, movement, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Weapon Cosmetics And Effects Audit: every shipped tool now has a `TOOL_EFFECT_AUDIT` entry with cosmetic/effect identity, visible hook, scoring tags, and coverage notes; older simple props now expose explicit cosmetic metadata; Ball, Trampoline, and Gift received direct browser assertions; and the audit table in `docs/weapon-cosmetics-effects-audit.md` tracks all 24 shipped tools. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Skin Physics Expansion: Astronaut now applies an `astronaut-float` variant with lower density, lower air damping, and slightly higher bounce, while Moon Boot Buddy applies a `moon-boot-spring` texture-backed variant with springier restitution and reduced damping. Browser regression buys Robot, Gelatin Blob, Astronaut, and Moon Boot Buddy through the real shop path and asserts selected skin, physics variant metadata, density, air damping, restitution, texture retention, and equipped state. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Room Preset Expansion: Workshop Garage is a new original room pack with a workshop motif thumbnail, palette, Shop Apron Buddy texture skin, Workshop Clack audio pack, manifest registration, room-browser selection coverage, and reload persistence coverage. Full `tests/run-regression.ps1 -Visual` passes.
 
 Done assets:
 
@@ -196,6 +197,8 @@ Done assets:
 - `assets/packs/classic-arcade/skins/everyday-pal.svg`
 - `assets/packs/classic-desktop/pack.json`
 - `assets/packs/classic-desktop/skins/desk-pal.svg`
+- `assets/packs/workshop-garage/pack.json`
+- `assets/packs/workshop-garage/skins/shop-apron.svg`
 - `docs/asset-packs.md`
 - `docs/content-completion-matrix.md`
 - `docs/weapon-cosmetics-effects-audit.md`
@@ -212,7 +215,7 @@ In progress:
 Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, and regression coverage.
+- Next queue item is `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only when it includes real effects, scoring tags, shop/radial behavior, audit metadata, and direct browser coverage.
 - Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
 
 Process notes:
