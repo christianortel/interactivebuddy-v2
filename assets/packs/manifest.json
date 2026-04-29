@@ -24,6 +24,11 @@
       "id": "workshop-garage",
       "name": "Workshop Garage",
       "path": "assets/packs/workshop-garage/pack.json"
+    },
+    {
+      "id": "dojo-studio",
+      "name": "Dojo Studio",
+      "path": "assets/packs/dojo-studio/pack.json"
     }
   ]
 }

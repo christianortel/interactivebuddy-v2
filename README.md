@@ -166,6 +166,7 @@ Done:
 - Added and verified Room Preset Expansion: Workshop Garage is a new original room pack with a workshop motif thumbnail, palette, Shop Apron Buddy texture skin, Workshop Clack audio pack, manifest registration, room-browser selection coverage, and reload persistence coverage. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Nice Tool Expansion: Confetti Popper is a new cheerful tool with `confetti-popper` cosmetic metadata, custom popper overlay, colored confetti particles, gentle buddy bump physics, `confetti`/`happy`/`nice` scoring tags, Cheer Check mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Projectile Preset Expansion: Plunger Shot is a new aim-and-release projectile with `plunger-shot` cosmetic metadata, suction-cup overlay, launch and hit scoring, temporary Buddy suction status, tug impulse physics, Suction Drill mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Room Preset Follow-up: Dojo Studio is a new original room pack with a dojo motif thumbnail, mat-floor palette, Practice Gi Buddy texture skin, Dojo Tap audio pack, manifest registration, room-browser selection coverage, and reload persistence coverage. Full `tests/run-regression.ps1 -Visual` passes.
 
 Done assets:
 
@@ -202,6 +203,8 @@ Done assets:
 - `assets/packs/classic-desktop/skins/desk-pal.svg`
 - `assets/packs/workshop-garage/pack.json`
 - `assets/packs/workshop-garage/skins/shop-apron.svg`
+- `assets/packs/dojo-studio/pack.json`
+- `assets/packs/dojo-studio/skins/practice-gi.svg`
 - `docs/asset-packs.md`
 - `docs/content-completion-matrix.md`
 - `docs/weapon-cosmetics-effects-audit.md`
@@ -218,7 +221,7 @@ In progress:
 Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Room Preset Follow-up`: add another room only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, asset validation, and regression coverage.
+- Next queue item is `Nice Tool Follow-up`: add a money/boombox-style nice tool only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
 - Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
 
 Process notes:

@@ -1,0 +1,36 @@
+{
+  "id": "dojo-studio",
+  "name": "Dojo Studio",
+  "description": "A calm practice-room palette with mat flooring and a banner motif for controlled sandbox experiments.",
+  "room": {
+    "background": "#8c9084",
+    "grid": "#f1e3c6",
+    "floor": "#3e4d48",
+    "accent": "#d85f4f",
+    "motif": "dojo"
+  },
+  "skins": [
+    {
+      "id": "dojo-studio:practice-gi",
+      "name": "Practice Gi Buddy",
+      "cost": 520,
+      "color": "#eee8d7",
+      "accent": "#d85f4f",
+      "texture": "assets/packs/dojo-studio/skins/practice-gi.svg",
+      "textureScale": 0.72,
+      "description": "An original practice outfit for clean-room challenge sessions."
+    }
+  ],
+  "audioPacks": {
+    "dojoTap": {
+      "name": "Dojo Tap",
+      "master": 0.15,
+      "pitch": 0.96,
+      "toneWave": "sine",
+      "impactWave": "triangle",
+      "zapWave": "square",
+      "noiseFilter": 0.82,
+      "decay": 1.18
+    }
+  }
+}

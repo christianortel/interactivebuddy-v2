@@ -356,6 +356,43 @@ button {
   background: linear-gradient(var(--room-accent) 0 4px, rgba(255, 255, 255, 0.16) 4px);
 }
 
+.room-thumbnail[data-motif="dojo"] .room-thumbnail__grid {
+  opacity: 0.18;
+  background-size: 24px 14px;
+}
+
+.room-thumbnail[data-motif="dojo"] .room-thumbnail__floor {
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0 2px, transparent 2px 24px),
+    var(--room-floor);
+}
+
+.room-thumbnail[data-motif="dojo"]::after {
+  content: "";
+  position: absolute;
+  top: 13%;
+  left: 11%;
+  width: 31%;
+  height: 24%;
+  border: 1px solid rgba(22, 48, 31, 0.24);
+  border-radius: 2px;
+  background:
+    linear-gradient(90deg, transparent 0 40%, var(--room-accent) 40% 60%, transparent 60%),
+    rgba(255, 255, 255, 0.16);
+}
+
+.room-thumbnail[data-motif="dojo"]::before {
+  content: "";
+  position: absolute;
+  right: 14%;
+  bottom: 28%;
+  width: 22%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--room-accent);
+  box-shadow: 0 -10px 0 rgba(255, 255, 255, 0.16);
+}
+
 .room-preview__swatches {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

@@ -3630,8 +3630,11 @@ Events.on(engine, "collisionStart", (event) => {
     cork.plugin.hit = true;
     const offset = Vector.sub(target.position, cork.position);
     const direction = Vector.magnitude(offset) > 0.001 ? Vector.normalise(offset) : { x: 1, y: 0 };
-    const impulse = Vector.mult(direction, 0.0026 * target.mass);
+    const impulse = Vector.mult(direction, 0.0034 * target.mass);
     Body.applyForce(target, target.position, impulse);
+    if (state.torso && state.torso !== target) {
+      Body.applyForce(state.torso, state.torso.position, Vector.mult(direction, 0.0014 * state.torso.mass));
+    }
     Body.setAngularVelocity(cork, cork.angularVelocity * 0.55);
     addScore(7.5, "corkHit", ["projectile", "corkPopper", "blunt", "bounce"]);
     recordMission("corkPopper", 1);

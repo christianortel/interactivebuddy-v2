@@ -102,14 +102,17 @@ def run(url):
         assert_true("classic-arcade" in initial["assetPackOptions"], "Classic Arcade asset pack should load")
         assert_true("classic-desktop" in initial["assetPackOptions"], "Classic Desktop room pack should load")
         assert_true("workshop-garage" in initial["assetPackOptions"], "Workshop Garage room pack should load")
+        assert_true("dojo-studio" in initial["assetPackOptions"], "Dojo Studio room pack should load")
         assert_true({"Gloom Friend", "Fruit Clock", "Everyday Pal"}.issubset(set(initial["shopNames"])), "Classic Skin Pack 2 skins should appear in shop")
         assert_true("Desk Pal" in initial["shopNames"], "Classic Desktop skin should appear in shop")
         assert_true("Shop Apron Buddy" in initial["shopNames"], "Workshop Garage skin should appear in shop")
+        assert_true("Practice Gi Buddy" in initial["shopNames"], "Dojo Studio skin should appear in shop")
         assert_true("neonPulse" in initial["audioPackOptions"], "Asset-pack audio pack should load")
         assert_true("officeClick" in initial["audioPackOptions"], "Second asset-pack audio pack should load")
         assert_true("cabinetThunk" in initial["audioPackOptions"], "Classic Arcade audio pack should load")
         assert_true("desktopTap" in initial["audioPackOptions"], "Classic Desktop audio pack should load")
         assert_true("workshopClack" in initial["audioPackOptions"], "Workshop Garage audio pack should load")
+        assert_true("dojoTap" in initial["audioPackOptions"], "Dojo Studio audio pack should load")
         assert_true(initial["audioPack"] == "classic", "Default audio pack should be classic")
         assert_true(initial["liquidType"] == "water", "Default liquid type should be water")
         assert_true(initial["challengeMode"] == "free", "Default challenge mode should be Free Play")
@@ -124,8 +127,8 @@ def run(url):
         assert_true(initial["roomPreviewSwatches"] == 4, "Room preview should show four palette swatches")
         assert_true(any("#87968e" in color for color in initial["roomPreviewColors"]), "Base room preview should expose the background color")
         assert_true(initial["roomBrowserActive"] == "base", "Room browser should default to Base Lab")
-        assert_true({"base", "neon-lab", "retro-office", "classic-arcade", "classic-desktop", "workshop-garage"}.issubset(set(initial["roomBrowserButtons"])), "Room browser should list built-in room packs")
-        assert_true({"lab", "neon", "office", "arcade", "desktop", "workshop"}.issubset(set(initial["roomBrowserThumbnails"])), "Room browser should render motif thumbnails for built-in room packs")
+        assert_true({"base", "neon-lab", "retro-office", "classic-arcade", "classic-desktop", "workshop-garage", "dojo-studio"}.issubset(set(initial["roomBrowserButtons"])), "Room browser should list built-in room packs")
+        assert_true({"lab", "neon", "office", "arcade", "desktop", "workshop", "dojo"}.issubset(set(initial["roomBrowserThumbnails"])), "Room browser should render motif thumbnails for built-in room packs")
         result["checks"]["initial"] = initial
 
         classic_buddy = page.evaluate(
@@ -383,6 +386,66 @@ def run(url):
         assert_true(workshop_room_reload["previewPack"] == "workshop-garage", "Workshop Garage preview should restore after reload")
         assert_true(workshop_room_reload["browserActive"] == "workshop-garage" and workshop_room_reload["browserMotif"] == "workshop", "Workshop Garage room browser state should survive reload")
         result["checks"]["workshopRoomReload"] = workshop_room_reload
+
+        page.locator(".menu", has_text="Settings").hover()
+        page.locator('#roomPreview .room-browser__button[data-room-pack="dojo-studio"]').scroll_into_view_if_needed()
+        page.click('#roomPreview .room-browser__button[data-room-pack="dojo-studio"]')
+        page.wait_for_timeout(180)
+        dojo_room_pack = page.evaluate(
+            f"""
+            () => ({{
+              selected: document.querySelector('#assetPack')?.value,
+              saved: JSON.parse(localStorage.getItem('{SAVE_KEY}')).settings.assetPack,
+              toast: document.querySelector('#toast')?.textContent,
+              shopHasPracticeGi: [...document.querySelectorAll('.shop-item strong')].some((el) => el.textContent === 'Practice Gi Buddy'),
+              audioHasDojoTap: [...document.querySelectorAll('#audioPack option')].some((option) => option.value === 'dojoTap'),
+              roomBackground: window.__buddyLabDebug.state.assetPacks.find((pack) => pack.id === 'dojo-studio')?.room.background,
+              roomMotif: window.__buddyLabDebug.state.assetPacks.find((pack) => pack.id === 'dojo-studio')?.room.motif,
+              previewPack: document.querySelector('#roomPreview')?.dataset.roomPack,
+              previewName: document.querySelector('#roomPreview .room-preview__name')?.textContent,
+              previewMotif: document.querySelector('#roomPreview .room-thumbnail--large')?.dataset.motif,
+              browserActive: document.querySelector('#roomPreview .room-browser__button.is-active')?.dataset.roomPack,
+              browserPressed: document.querySelector('#roomPreview .room-browser__button[data-room-pack="dojo-studio"]')?.getAttribute('aria-pressed'),
+              browserMotif: document.querySelector('#roomPreview .room-browser__button[data-room-pack="dojo-studio"] .room-thumbnail--mini')?.dataset.motif,
+              browserCount: document.querySelectorAll('#roomPreview .room-browser__button').length,
+              previewColors: [...document.querySelectorAll('#roomPreview .room-preview__swatch')]
+                .map((swatch) => swatch.getAttribute('aria-label'))
+            }})
+            """
+        )
+        assert_true(dojo_room_pack["selected"] == "dojo-studio", "Dojo Studio selector should apply")
+        assert_true(dojo_room_pack["saved"] == "dojo-studio", "Dojo Studio room pack should persist")
+        assert_true(dojo_room_pack["shopHasPracticeGi"], "Dojo Studio skin should be in shop")
+        assert_true(dojo_room_pack["audioHasDojoTap"], "Dojo Studio audio pack should be in selector")
+        assert_true(dojo_room_pack["roomBackground"] == "#8c9084", "Dojo Studio room palette should be registered")
+        assert_true(dojo_room_pack["roomMotif"] == "dojo", "Dojo Studio room motif should be registered")
+        assert_true(dojo_room_pack["previewPack"] == "dojo-studio" and dojo_room_pack["previewName"] == "Dojo Studio", "Dojo Studio room preview should update")
+        assert_true(dojo_room_pack["previewMotif"] == "dojo" and dojo_room_pack["browserMotif"] == "dojo", "Dojo Studio preview and browser entry should render dojo thumbnails")
+        assert_true(dojo_room_pack["browserActive"] == "dojo-studio" and dojo_room_pack["browserPressed"] == "true", "Room browser should show Dojo Studio as active")
+        assert_true(dojo_room_pack["browserCount"] >= 7, "Room browser should include the new Dojo Studio pack")
+        assert_true(any("#8c9084" in color for color in dojo_room_pack["previewColors"]), "Dojo Studio preview should expose its room background")
+        result["checks"]["dojoRoomPack"] = dojo_room_pack
+
+        page.reload(wait_until="networkidle")
+        page.wait_for_timeout(900)
+        dojo_room_reload = page.evaluate(
+            """
+            () => ({
+              selected: document.querySelector('#assetPack')?.value,
+              hasOption: [...document.querySelectorAll('#assetPack option')].some((option) => option.value === 'dojo-studio'),
+              hasSkin: [...document.querySelectorAll('.shop-item strong')].some((el) => el.textContent === 'Practice Gi Buddy'),
+              hasAudio: [...document.querySelectorAll('#audioPack option')].some((option) => option.value === 'dojoTap'),
+              previewPack: document.querySelector('#roomPreview')?.dataset.roomPack,
+              browserActive: document.querySelector('#roomPreview .room-browser__button.is-active')?.dataset.roomPack,
+              browserMotif: document.querySelector('#roomPreview .room-browser__button[data-room-pack="dojo-studio"] .room-thumbnail--mini')?.dataset.motif
+            })
+            """
+        )
+        assert_true(dojo_room_reload["selected"] == "dojo-studio", "Dojo Studio selection should survive reload")
+        assert_true(dojo_room_reload["hasOption"] and dojo_room_reload["hasSkin"] and dojo_room_reload["hasAudio"], "Dojo Studio content should survive reload")
+        assert_true(dojo_room_reload["previewPack"] == "dojo-studio", "Dojo Studio preview should restore after reload")
+        assert_true(dojo_room_reload["browserActive"] == "dojo-studio" and dojo_room_reload["browserMotif"] == "dojo", "Dojo Studio room browser state should survive reload")
+        result["checks"]["dojoRoomReload"] = dojo_room_reload
 
         page.evaluate(
             """

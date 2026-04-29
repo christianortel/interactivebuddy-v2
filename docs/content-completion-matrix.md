@@ -82,8 +82,8 @@ Bundled skins must be original. Exact references are supported only as private i
 | Original-era reference | Buddy Lab 2026 equivalent | Status | Verification | Remaining work |
 | --- | --- | --- | --- | --- |
 | Blank gray room | Base Lab and Classic Desktop | Shipped | Visual regression | Add optional old-menu wallpaper variants later. |
-| Environment/room upgrades | Neon Lab, Retro Office, Classic Arcade, Classic Desktop, and Workshop Garage palettes plus live preview swatches and motif mini-room thumbnails | Shipped | Asset validation plus browser regression for default, selected, private import, and reload paths | Add more room presets only when they include original room motifs. |
-| Skin voice/SFX swaps | Audio packs: Classic, Arcade, Sci-Fi, Soft, Neon Pulse, Office Click, Cabinet Thunk, Desktop Tap, Workshop Clack | Partial | Browser regression | Add per-skin voice bark hooks. |
+| Environment/room upgrades | Neon Lab, Retro Office, Classic Arcade, Classic Desktop, Workshop Garage, and Dojo Studio palettes plus live preview swatches and motif mini-room thumbnails | Shipped | Asset validation plus browser regression for default, selected, private import, and reload paths | Add more room presets only when they include original room motifs. |
+| Skin voice/SFX swaps | Audio packs: Classic, Arcade, Sci-Fi, Soft, Neon Pulse, Office Click, Cabinet Thunk, Desktop Tap, Workshop Clack, Dojo Tap | Partial | Browser regression | Add per-skin voice bark hooks. |
 | Modes menu | Challenge selector, ceiling toggle, replay export, nested Debug submenu | Shipped | Browser regression | Add more old-style mode entries only when tied to behavior. |
 | FPS counter | Modes > Debug FPS Counter overlay | Shipped | Browser regression | Tune sampling only if real playtest shows jitter. |
 
@@ -104,9 +104,9 @@ Private import only:
 
 ## Next Content Batches
 
-1. `Room Preset Follow-up`: add another room only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, asset validation, and regression coverage.
-2. `Nice Tool Follow-up`: add a money/boombox-style nice tool only after room follow-up, and only with mood, scoring, visible effects, and regression coverage.
-3. `Projectile Follow-up`: add another projectile only after room and nice-tool follow-ups, and only with factory metadata, real launch/collision behavior, scoring tags, mission/challenge hooks where appropriate, audit metadata, and direct browser coverage.
+1. `Nice Tool Follow-up`: add a money/boombox-style nice tool only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
+2. `Projectile Follow-up`: add another projectile only after the nice-tool follow-up, and only with factory metadata, real launch/collision behavior, scoring tags, mission/challenge hooks where appropriate, audit metadata, and direct browser coverage.
+3. `Room Preset Expansion Later`: add another room only after the next tool follow-ups, and only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, asset validation, and regression coverage.
 
 ## Audit Rules
 
