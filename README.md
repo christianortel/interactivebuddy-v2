@@ -6,7 +6,7 @@ A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: 
 
 - Matter.js ragdoll buddy built from rigid bodies and spring constraints.
 - Classic top menu bar plus a modern HUD, mission panel, shop, and bottom tool rail.
-- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Confetti Popper, Tesla Coil, and Black Hole.
+- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Plunger Shot, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Confetti Popper, Tesla Coil, and Black Hole.
 - Local asset packs: JSON manifests can add skins, audio packs, and room palettes.
 - Texture-backed pack skins: local SVG skin assets can be applied to the ragdoll bodies.
 - Economy: cash, XP, combo timer, anti-grind yield decay, unlockable tools, unlockable skins, and local persistence.
@@ -32,7 +32,7 @@ Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run l
 - Quick tap with Hand: tickle.
 - Ball/Paintball: drag to aim, release to fire.
 - Fan/Black Hole: hold on the stage.
-- Paintball/Foam Dart: drag to aim and release.
+- Paintball/Foam Dart/Cork Popper/Plunger Shot: drag to aim and release.
 - Grenade/Gift/Trampoline/Tesla: click to place.
 - Heat Cone/Spark Wand/Frost Puff/Goo Mist/Pulse Beam: hold near Buddy for elemental effects.
 - Rope: click near Buddy to attach an elastic ceiling tether.
@@ -41,7 +41,7 @@ Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run l
 - Modes > Gravity: switch between Normal, Low Gravity, and Heavy Gravity physics.
 - Modes > Debug > FPS Counter: show or hide the debug FPS overlay.
 - Export: saves the recent rolling WebM replay buffer from the canvas when supported.
-- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, and Clip Export.
+- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Suction Drill, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, and Clip Export.
 - Rubber Blaster shows a burst/cooldown readout and feeds the Bead Cannon challenge.
 - Settings > Asset pack shows a live room-palette preview and selectable room browser for loaded rooms.
 - `R`: reset scene.
@@ -165,6 +165,7 @@ Done:
 - Added and verified Skin Physics Expansion: Astronaut now applies an `astronaut-float` variant with lower density, lower air damping, and slightly higher bounce, while Moon Boot Buddy applies a `moon-boot-spring` texture-backed variant with springier restitution and reduced damping. Browser regression buys Robot, Gelatin Blob, Astronaut, and Moon Boot Buddy through the real shop path and asserts selected skin, physics variant metadata, density, air damping, restitution, texture retention, and equipped state. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Room Preset Expansion: Workshop Garage is a new original room pack with a workshop motif thumbnail, palette, Shop Apron Buddy texture skin, Workshop Clack audio pack, manifest registration, room-browser selection coverage, and reload persistence coverage. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Nice Tool Expansion: Confetti Popper is a new cheerful tool with `confetti-popper` cosmetic metadata, custom popper overlay, colored confetti particles, gentle buddy bump physics, `confetti`/`happy`/`nice` scoring tags, Cheer Check mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Projectile Preset Expansion: Plunger Shot is a new aim-and-release projectile with `plunger-shot` cosmetic metadata, suction-cup overlay, launch and hit scoring, temporary Buddy suction status, tug impulse physics, Suction Drill mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
 
 Done assets:
 
@@ -217,7 +218,7 @@ In progress:
 Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Projectile Preset Expansion`: add another projectile only when it includes factory metadata, real launch/collision behavior, scoring tags, mission/challenge hooks where appropriate, audit metadata, and direct browser coverage.
+- Next queue item is `Room Preset Follow-up`: add another room only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, asset validation, and regression coverage.
 - Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
 
 Process notes:

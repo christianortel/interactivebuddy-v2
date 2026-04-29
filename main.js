@@ -25,6 +25,7 @@ import {
   createGiftBody,
   createGrenadeBody,
   createPaintballBody,
+  createPlungerBody,
   createRubberPelletBody,
   createTeslaBody,
   createTrampolineBody,
@@ -711,7 +712,7 @@ function setupInteractions() {
 
     if (state.tool === "grenade") {
       spawnGrenade(worldPoint);
-    } else if (state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper") {
+    } else if (state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper" || state.tool === "plunger") {
       state.aimVector = { start: worldPoint, end: worldPoint };
     } else if (state.tool === "ball" || state.tool === "beachball" || state.tool === "bowling" || state.tool === "brick" || state.tool === "glove" || state.tool === "anvil") {
       state.aimVector = { start: worldPoint, end: worldPoint };
@@ -803,6 +804,8 @@ function setupInteractions() {
       fireFoamDart(state.pointerStart, endPoint);
     } else if (state.tool === "corkpopper") {
       fireCorkPopper(state.pointerStart, endPoint);
+    } else if (state.tool === "plunger") {
+      firePlungerShot(state.pointerStart, endPoint);
     } else if (state.tool === "hand" && elapsed < 210 && distance < 12) {
       tickleAt(endPoint);
     }
@@ -1048,6 +1051,7 @@ function tickTimers(delta) {
   updateFrostedBodies(delta);
   updateGooedBodies(delta);
   updatePulseBodies(delta);
+  updateSuctionBodies(delta);
 
   for (const [tool, heat] of state.toolHeat.entries()) {
     const next = Math.max(0, heat - delta / 8500);
@@ -1531,6 +1535,18 @@ function fireCorkPopper(start, end) {
   Body.setAngularVelocity(cork, 0.22 * Math.sign(launch.x || 1));
   registerProp(cork);
   addScore(2.2, "cork", ["projectile", "corkPopper"]);
+}
+
+function firePlungerShot(start, end) {
+  const direction = Vector.sub(end, start);
+  const launch = Vector.magnitude(direction) > 4 ? Vector.normalise(direction) : { x: 1, y: 0 };
+  const plunger = createPlungerBody(Bodies, start);
+  plunger.plugin = { ...plunger.plugin, projectile: "plunger", born: performance.now() };
+  Body.setAngle(plunger, Math.atan2(launch.y, launch.x));
+  Body.setVelocity(plunger, Vector.mult(launch, 15.5 + state.power * 0.09));
+  Body.setAngularVelocity(plunger, 0.14 * Math.sign(launch.x || 1));
+  registerProp(plunger);
+  addScore(2.4, "plunger", ["projectile", "plungerShot"]);
 }
 
 function spawnGrenade(position) {
@@ -2058,6 +2074,21 @@ function updateGooedBodies(delta) {
   });
 }
 
+function updateSuctionBodies(delta) {
+  if (!state.buddy) {
+    return;
+  }
+  Composite.allBodies(state.buddy).forEach((body) => {
+    if (!body.plugin?.suctionTime) {
+      return;
+    }
+    body.plugin.suctionTime = Math.max(0, body.plugin.suctionTime - delta);
+    if (body.plugin.suctionTime === 0) {
+      delete body.plugin.suctionTime;
+    }
+  });
+}
+
 function updateGrenades() {
   const now = performance.now();
   for (const grenade of state.grenades) {
@@ -2370,7 +2401,7 @@ function playScoreFeedback(reason, reward, tags = []) {
     feedback.play("shock", intensity);
   } else if (reason === "tickle" || reason === "gift" || reason === "confetti") {
     feedback.play(reason === "confetti" ? "gift" : reason, intensity);
-  } else if (reason === "paint" || reason === "paintball" || reason === "rubber" || reason === "cork" || reason === "corkHit" || reason === "heat" || reason === "frost" || reason === "goo" || reason === "pulse") {
+  } else if (reason === "paint" || reason === "paintball" || reason === "rubber" || reason === "cork" || reason === "corkHit" || reason === "plunger" || reason === "plungerHit" || reason === "heat" || reason === "frost" || reason === "goo" || reason === "pulse") {
     feedback.play("paint", intensity);
   } else if (reason === "armed" || reason === "build" || reason === "tether" || reason === "liquid") {
     feedback.play("select", 0.5);
@@ -3022,7 +3053,7 @@ function drawAim(ctx) {
     return;
   }
   ctx.save();
-  ctx.strokeStyle = state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper" ? "#ffc857" : "#e8f7f4";
+  ctx.strokeStyle = state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper" || state.tool === "plunger" ? "#ffc857" : "#e8f7f4";
   ctx.lineWidth = 3;
   ctx.setLineDash([8, 7]);
   ctx.beginPath();
@@ -3173,6 +3204,8 @@ function drawPropCosmetics(ctx) {
       drawFoamDartCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "cork-popper") {
       drawCorkCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "plunger-shot") {
+      drawPlungerCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "ball-basic") {
       drawBallCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "trampoline-pad") {
@@ -3521,6 +3554,34 @@ function drawCorkCosmetic(ctx, body, cosmetic) {
   ctx.restore();
 }
 
+function drawPlungerCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.globalAlpha = 0.95;
+  ctx.strokeStyle = cosmetic.handle;
+  ctx.lineWidth = 5;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(-18, 0);
+  ctx.lineTo(8, 0);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.cup;
+  ctx.beginPath();
+  ctx.moveTo(7, -8);
+  ctx.quadraticCurveTo(24, -8, 26, 0);
+  ctx.quadraticCurveTo(24, 8, 7, 8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = cosmetic.ring;
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.moveTo(10, -7);
+  ctx.quadraticCurveTo(18, 0, 10, 7);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawParticles(ctx) {
   for (const particle of state.particles) {
     const alpha = Math.max(0, particle.life / particle.maxLife);
@@ -3576,6 +3637,32 @@ Events.on(engine, "collisionStart", (event) => {
     recordMission("corkPopper", 1);
     setMood("Surprised", 1100);
     spawnBurst(cork.position, "#c58a55", 6);
+  }
+});
+
+Events.on(engine, "collisionStart", (event) => {
+  for (const pair of event.pairs) {
+    const plunger = [pair.bodyA, pair.bodyB].find((body) => body.plugin?.projectile === "plunger" && !body.plugin?.hit);
+    const target = pair.bodyA === plunger ? pair.bodyB : pair.bodyA;
+    if (!plunger || !isBuddyBody(target)) {
+      continue;
+    }
+    plunger.plugin.hit = true;
+    plunger.plugin.suction = true;
+    const offset = Vector.sub(plunger.position, target.position);
+    const direction = Vector.magnitude(offset) > 0.001 ? Vector.normalise(offset) : { x: -1, y: 0 };
+    target.plugin = {
+      ...target.plugin,
+      suctionTime: 1650
+    };
+    Body.applyForce(target, target.position, Vector.mult(direction, 0.0032 * target.mass));
+    Body.setVelocity(plunger, Vector.mult(target.velocity, 0.35));
+    Body.setAngularVelocity(plunger, 0);
+    Body.setAngle(plunger, Math.atan2(direction.y, direction.x));
+    addScore(8.2, "plungerHit", ["projectile", "plungerShot", "suction", "blunt"]);
+    recordMission("plungerShot", 1);
+    setMood("Surprised", 1300);
+    spawnBurst(plunger.position, "#e46e5f", 7);
   }
 });
 

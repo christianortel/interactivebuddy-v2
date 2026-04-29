@@ -124,6 +124,25 @@ export function createCorkBody(Bodies, position) {
   });
 }
 
+export function createPlungerBody(Bodies, position) {
+  return Bodies.rectangle(position.x, position.y, 38, 16, {
+    chamfer: { radius: 6 },
+    restitution: 0.22,
+    friction: 0.48,
+    density: 0.00125,
+    label: "prop_plunger",
+    plugin: {
+      cosmetic: {
+        type: "plunger-shot",
+        cup: "#e46e5f",
+        handle: "#c58a55",
+        ring: "#5c2f28"
+      }
+    },
+    render: { fillStyle: "#c58a55", strokeStyle: "#5c2f28", lineWidth: 2 }
+  });
+}
+
 export function createRubberPelletBody(Bodies, position, variantIndex = 0) {
   const variant = getRubberPelletVariant(variantIndex);
   return Bodies.circle(position.x, position.y, 6, {

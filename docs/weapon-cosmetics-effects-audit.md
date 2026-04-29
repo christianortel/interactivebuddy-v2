@@ -19,6 +19,7 @@ Status key:
 | Paintball | `paintball-splat` projectile metadata, decal/tint on hit | `paintball`, `paint` | Tool effects regression | Complete |
 | Foam Dart | `foam-dart` tip/fin/stripe metadata, sticky state | `dart`, `dartHit`, `foamDart` | Tool effects regression | Complete |
 | Cork Popper | `cork-popper` ring/fleck/cap overlay | `cork`, `corkHit`, `corkPopper` | Tool effects regression | Complete |
+| Plunger Shot | `plunger-shot` suction-cup overlay and temporary Buddy suction status | `plunger`, `plungerHit`, `suction` | Tool effects and Suction Drill challenge | Complete |
 | Rubber Blaster | `rubber-pellet` rotating variants and burst HUD | `rubber`, `beadCannon` | Tool effects and Bead Cannon challenge | Complete |
 | Heat Cone | Reduced-flash ember cone | `heat`, `elemental` | Tool effects regression | Complete |
 | Spark Wand | Cursor-to-body bolt arcs | `spark`, `sparkWand` | Spark Drill regression | Complete |

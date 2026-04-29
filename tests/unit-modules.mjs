@@ -19,6 +19,7 @@ import {
   createGiftBody,
   createGrenadeBody,
   createPaintballBody,
+  createPlungerBody,
   createRubberPelletBody,
   createTeslaBody,
   createTrampolineBody,
@@ -119,6 +120,8 @@ assert.equal(createFoamDartBody(fakeBodies, { x: 10, y: 20 }).label, "prop_foamd
 assert.equal(createFoamDartBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "foam-dart");
 assert.equal(createCorkBody(fakeBodies, { x: 10, y: 20 }).label, "prop_cork");
 assert.equal(createCorkBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "cork-popper");
+assert.equal(createPlungerBody(fakeBodies, { x: 10, y: 20 }).label, "prop_plunger");
+assert.equal(createPlungerBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "plunger-shot");
 assert.equal(createRubberPelletBody(fakeBodies, { x: 10, y: 20 }).label, "prop_rubber");
 assert.equal(createRubberPelletBody(fakeBodies, { x: 10, y: 20 }, 1).plugin.cosmetic.variant, "safety-orange");
 assert.equal(getRubberPelletVariant(2).id, "mint-blue");

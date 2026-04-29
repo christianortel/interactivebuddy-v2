@@ -113,7 +113,7 @@ def run(url):
         assert_true(initial["audioPack"] == "classic", "Default audio pack should be classic")
         assert_true(initial["liquidType"] == "water", "Default liquid type should be water")
         assert_true(initial["challengeMode"] == "free", "Default challenge mode should be Free Play")
-        assert_true({"juggle", "tether", "liquid", "props", "bead", "spark", "frost", "goo", "pulse", "cheer", "export"}.issubset(set(initial["challengeOptions"])), "Challenge options should include new modes")
+        assert_true({"juggle", "tether", "liquid", "props", "bead", "suction", "spark", "frost", "goo", "pulse", "cheer", "export"}.issubset(set(initial["challengeOptions"])), "Challenge options should include new modes")
         assert_true(initial["toolMeta"] == "Utility", "Default tool meta should describe the active tool category")
         assert_true(initial["modeSubmenus"] >= 2 and initial["fpsButton"] == "FPS Counter", "Modes menu should expose old-style nested submenus")
         assert_true(initial["gravityButtons"] == ["normal", "low", "heavy"], "Modes > Gravity should expose normal/low/heavy options")
@@ -747,7 +747,7 @@ def run(url):
         assert_true(custom_texture_skin["shopButton"] == "Equipped", "Imported data-URL skin shop button should show equipped")
         result["checks"]["customSkinPack"] = {**custom_pack, "reload": custom_pack_reload, "textureSkin": custom_texture_skin}
 
-        required_mission_coverage = {"rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "wheel3", "export1"}
+        required_mission_coverage = {"rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "plunger4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "wheel3", "export1"}
         seen_missions = set(page.eval_on_selector_all(".mission", "(els) => els.map((el) => el.dataset.missionId)"))
         for _ in range(40):
             if required_mission_coverage.issubset(seen_missions):
@@ -756,7 +756,7 @@ def run(url):
             page.wait_for_timeout(120)
             seen_missions.update(page.eval_on_selector_all(".mission", "(els) => els.map((el) => el.dataset.missionId)"))
         coverage = sorted(seen_missions.intersection(required_mission_coverage))
-        assert_true(coverage == ["beach3", "bead6", "bowling2", "confetti5", "cork4", "dart4", "export1", "frost5", "goo5", "liquid2", "prop4", "pulse5", "punch2", "rope2", "spark5", "wheel3"], "Mission refreshes should cover rope/liquid/prop/projectile/elemental/nice/radial/export missions")
+        assert_true(coverage == ["beach3", "bead6", "bowling2", "confetti5", "cork4", "dart4", "export1", "frost5", "goo5", "liquid2", "plunger4", "prop4", "pulse5", "punch2", "rope2", "spark5", "wheel3"], "Mission refreshes should cover rope/liquid/prop/projectile/elemental/nice/radial/export missions")
         result["checks"]["missionCoverage"] = {"coverage": coverage}
 
         page.evaluate(
@@ -934,7 +934,7 @@ def run(url):
               version: 2,
               cash: 3000,
               xp: 0,
-              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'tesla', 'blackhole'],
+              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'tesla', 'blackhole'],
               unlockedSkins: ['classic'],
               selectedSkin: 'classic',
               settings: {{ reducedFlash: true, slapstick: true, audio: false, haptics: false, slowMo: false, ceilingOpen: false, assetPack: 'base', audioPack: 'classic', liquidType: 'slime' }},
@@ -1112,7 +1112,7 @@ def run(url):
               version: 2,
               cash: 5000,
               xp: 0,
-              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'tesla', 'blackhole'],
+              unlockedTools: ['hand', 'ball', 'beachball', 'bowling', 'brick', 'glove', 'anvil', 'rope', 'water', 'fan', 'paintball', 'foamdart', 'corkpopper', 'plunger', 'rubber', 'heatcone', 'sparkwand', 'frostpuff', 'goomist', 'pulsebeam', 'grenade', 'trampoline', 'gift', 'confetti', 'tesla', 'blackhole'],
               unlockedSkins: ['classic'],
               selectedSkin: 'classic',
               settings: {{ reducedFlash: true, slapstick: true, audio: false, haptics: false, slowMo: false, ceilingOpen: false, assetPack: 'base', audioPack: 'classic', liquidType: 'slime' }},
@@ -1483,6 +1483,99 @@ def run(url):
         assert_true(cork_effect["torsoSpeed"] > 0.05, "Cork Popper should pop Buddy with a small impulse")
         assert_true(money_to_int(cork_effect["cash"]) > before_cash, "Cork Popper should score cash")
         tool_effects["corkpopper"] = cork_effect
+
+        page.evaluate(
+            """
+            () => {
+              const { engine, state } = window.__buddyLabDebug;
+              state.props
+                .filter((body) => body.label === 'prop_cork')
+                .forEach((body) => Matter.World.remove(engine.world, body));
+              state.props = state.props.filter((body) => body.label !== 'prop_cork');
+            }
+            """
+        )
+        torso = center_buddy()
+        page.click('.tool-button[data-tool="plunger"]')
+        before_cash = money_to_int(torso["cash"])
+        page.mouse.move(stage_x(torso["x"] - 245), stage_y(torso["y"] - 4))
+        page.mouse.down()
+        page.mouse.move(stage_x(torso["x"] + 12), stage_y(torso["y"] - 2), steps=5)
+        page.mouse.up()
+        page.wait_for_timeout(720)
+        plunger_effect = page.evaluate(
+            """
+            () => {
+              const plungers = window.__buddyLabDebug.state.props.filter((body) => body.label === 'prop_plunger');
+              const suctionBodies = Matter.Composite.allBodies(window.__buddyLabDebug.state.buddy)
+                .filter((body) => body.plugin?.suctionTime > 0);
+              return {
+                plungers: plungers.length,
+                hitPlungers: plungers.filter((body) => body.plugin?.hit).length,
+                suctionPlungers: plungers.filter((body) => body.plugin?.suction).length,
+                suctionBodies: suctionBodies.length,
+                cosmetic: plungers.at(-1)?.plugin?.cosmetic?.type || '',
+                cash: document.querySelector('#cash')?.textContent,
+                replayHasPlunger: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'plunger'),
+                replayHasPlungerHit: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'plungerHit'),
+                replayHasSuction: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('suction')),
+                replayHasPlungerShot: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('plungerShot')),
+                burstParticles: window.__buddyLabDebug.state.particles.filter((particle) => particle.color === '#e46e5f').length,
+                torsoSpeed: Matter.Vector.magnitude(window.__buddyLabDebug.state.torso.velocity)
+              };
+            }
+            """
+        )
+        assert_true(plunger_effect["plungers"] >= 1, "Plunger Shot should spawn a plunger body")
+        assert_true(plunger_effect["hitPlungers"] >= 1 and plunger_effect["suctionPlungers"] >= 1, "Plunger Shot should mark suction hits")
+        assert_true(plunger_effect["suctionBodies"] >= 1, "Plunger Shot should mark Buddy with temporary suction status")
+        assert_true(plunger_effect["cosmetic"] == "plunger-shot", "Plunger Shot should carry cosmetic metadata")
+        assert_true(plunger_effect["replayHasPlunger"], "Plunger Shot should score on launch")
+        assert_true(plunger_effect["replayHasPlungerHit"], "Plunger Shot should score on hit")
+        assert_true(plunger_effect["replayHasSuction"] and plunger_effect["replayHasPlungerShot"], "Plunger Shot should emit suction and plungerShot tags")
+        assert_true(plunger_effect["burstParticles"] >= 1, "Plunger Shot hit should emit suction particles")
+        assert_true(plunger_effect["torsoSpeed"] > 0.05, "Plunger Shot should tug Buddy with a small impulse")
+        assert_true(money_to_int(plunger_effect["cash"]) > before_cash, "Plunger Shot should score cash")
+        tool_effects["plunger"] = plunger_effect
+
+        page.evaluate(
+            """
+            () => {
+              const challenge = document.querySelector('#challengeMode');
+              challenge.value = 'suction';
+              challenge.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            """
+        )
+        torso = center_buddy()
+        page.click('.tool-button[data-tool="plunger"]')
+        for offset in [-42, -18, 8, 34]:
+            page.mouse.move(stage_x(torso["x"] - 245), stage_y(torso["y"] + offset))
+            page.mouse.down()
+            page.mouse.move(stage_x(torso["x"] + 16), stage_y(torso["y"] + offset), steps=5)
+            page.mouse.up()
+            page.wait_for_timeout(360)
+        suction_challenge = page.evaluate(
+            """
+            () => {
+              const save = JSON.parse(localStorage.getItem('buddyLab2026.save.v1'));
+              return {
+                selected: document.querySelector('#challengeMode')?.value,
+                summary: document.querySelector('#replayStrip')?.textContent,
+                best: save.challengeBests?.suction?.elapsed,
+                suctionBodies: Matter.Composite.allBodies(window.__buddyLabDebug.state.buddy)
+                  .filter((body) => body.plugin?.suctionTime > 0).length,
+                cash: document.querySelector('#cash')?.textContent
+              };
+            }
+            """
+        )
+        assert_true(suction_challenge["selected"] == "suction", "Suction Drill challenge should stay selected")
+        assert_true("Suction Drill" in suction_challenge["summary"] and "Complete" in suction_challenge["summary"], "Suction Drill should complete from Plunger Shot hooks")
+        assert_true(isinstance(suction_challenge["best"], (int, float)) and suction_challenge["best"] > 0, "Suction Drill best time should be saved")
+        assert_true(suction_challenge["suctionBodies"] >= 1, "Suction Drill should leave visible suction body status")
+        assert_true("NaN" not in suction_challenge["cash"], "Suction Drill reward should keep cash finite")
+        tool_effects["suctionChallenge"] = suction_challenge
 
         torso = center_buddy()
         page.click('.tool-button[data-tool="rubber"]')
