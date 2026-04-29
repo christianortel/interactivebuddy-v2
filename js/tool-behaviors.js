@@ -24,6 +24,13 @@ export function createBallBody(Bodies, position, radius) {
     friction: 0.14,
     density: 0.0015,
     label: "prop_ball",
+    plugin: {
+      cosmetic: {
+        type: "ball-basic",
+        shine: "#ffffff",
+        rim: "#678279"
+      }
+    },
     render: { fillStyle: "#e8f7f4", strokeStyle: "#678279", lineWidth: 2 }
   });
 }
@@ -69,6 +76,12 @@ export function createPaintballBody(Bodies, position, color = randomPaintColor()
     friction: 0.3,
     density: 0.0006,
     label: "prop_paintball",
+    plugin: {
+      cosmetic: {
+        type: "paintball-splat",
+        color
+      }
+    },
     render: { fillStyle: color }
   });
 }
@@ -190,6 +203,13 @@ export function createGrenadeBody(Bodies, position) {
     friction: 0.9,
     density: 0.004,
     label: "prop_grenade",
+    plugin: {
+      cosmetic: {
+        type: "grenade-shell",
+        pin: "#ffc857",
+        band: "#1d2724"
+      }
+    },
     render: { fillStyle: "#40504b", strokeStyle: "#b7c2bc", lineWidth: 1 }
   });
 }
@@ -200,6 +220,14 @@ export function createTrampolineBody(Bodies, position) {
     restitution: 1.35,
     friction: 0.08,
     label: "trampoline",
+    plugin: {
+      cosmetic: {
+        type: "trampoline-pad",
+        bounce: "high",
+        stripe: "#e8f7f4",
+        spring: "#102018"
+      }
+    },
     render: { fillStyle: "#55d9cf", strokeStyle: "#102018", lineWidth: 2 }
   });
 }
@@ -210,6 +238,13 @@ export function createGiftBody(Bodies, position) {
     friction: 0.6,
     density: 0.0012,
     label: "prop_gift",
+    plugin: {
+      cosmetic: {
+        type: "gift-box",
+        ribbon: "#e46e5f",
+        bow: "#fff4d7"
+      }
+    },
     render: { fillStyle: "#ffc857", strokeStyle: "#e46e5f", lineWidth: 3 }
   });
 }
@@ -220,6 +255,13 @@ export function createTeslaBody(Bodies, position) {
     friction: 0.8,
     density: 0.0022,
     label: "prop_tesla",
+    plugin: {
+      cosmetic: {
+        type: "tesla-coil",
+        coil: "#55d9cf",
+        core: "#f1ff8b"
+      }
+    },
     render: { fillStyle: "#27322f", strokeStyle: "#55d9cf", lineWidth: 3 }
   });
 }

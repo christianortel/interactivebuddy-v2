@@ -65,6 +65,12 @@ def run(url):
               fpsText: document.querySelector('#fpsCounter')?.textContent,
               matterLoaded: Boolean(window.Matter?.Engine),
               scriptSources: [...document.scripts].map((script) => script.getAttribute('src')).filter(Boolean),
+              toolIds: [...document.querySelectorAll('.tool-button')].map((button) => button.dataset.tool),
+              auditIds: Object.keys(window.__buddyLabDebug.toolEffectAudit || {}),
+              auditComplete: [...document.querySelectorAll('.tool-button')].every((button) => {
+                const audit = window.__buddyLabDebug.toolEffectAudit?.[button.dataset.tool];
+                return audit && audit.cosmetic && audit.visual && audit.coverage && Array.isArray(audit.scoring) && audit.scoring.length > 0;
+              }),
               roomPreviewPack: document.querySelector('#roomPreview')?.dataset.roomPack,
               roomPreviewName: document.querySelector('#roomPreview .room-preview__name')?.textContent,
               roomPreviewMotif: document.querySelector('#roomPreview .room-thumbnail--large')?.dataset.motif,
@@ -88,6 +94,8 @@ def run(url):
         assert_true(initial["matterLoaded"], "Matter.js should load before the app starts")
         assert_true("vendor/matter.min.js" in initial["scriptSources"], "Matter.js should be loaded from the local vendor runtime")
         assert_true(not any(src.startswith(("http://", "https://", "//")) for src in initial["scriptSources"]), "Runtime scripts should not load from a CDN")
+        assert_true(sorted(initial["toolIds"]) == sorted(initial["auditIds"]), "Every shipped tool should have effect audit metadata")
+        assert_true(initial["auditComplete"], "Tool effect audit metadata should include cosmetic, visual, scoring, and coverage fields")
         assert_true(initial["assetPack"] == "base", "Default asset pack should be base")
         assert_true("neon-lab" in initial["assetPackOptions"], "Local Neon Lab asset pack should load")
         assert_true("retro-office" in initial["assetPackOptions"], "Local Retro Office asset pack should load")
@@ -742,13 +750,20 @@ def run(url):
             () => ({
               cash: document.querySelector('#cash')?.textContent,
               xp: document.querySelector('#xp')?.textContent,
-              combo: document.querySelector('#combo')?.textContent
+              combo: document.querySelector('#combo')?.textContent,
+              balls: window.__buddyLabDebug.state.props.filter((body) => body.label === 'prop_ball').length,
+              ballCosmetic: window.__buddyLabDebug.state.props.find((body) => body.label === 'prop_ball')?.plugin?.cosmetic?.type || '',
+              replayHasThrow: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'throw'),
+              replayHasToy: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('toy'))
             })
             """
         )
         assert_true("NaN" not in scored["cash"], "Scoring cash should stay finite")
         assert_true("NaN" not in scored["xp"], "Scoring XP should stay finite")
         assert_true(money_to_int(scored["cash"]) > money_to_int(initial["cash"]), "Interaction should earn cash")
+        assert_true(scored["balls"] >= 1, "Ball launch should spawn a ball prop")
+        assert_true(scored["ballCosmetic"] == "ball-basic", "Ball should carry explicit cosmetic metadata")
+        assert_true(scored["replayHasThrow"] and scored["replayHasToy"], "Ball should record throw/toy scoring tags")
         result["checks"]["scoring"] = scored
 
         page.evaluate(
@@ -985,6 +1000,60 @@ def run(url):
         tool_effects = {}
 
         torso = center_buddy()
+        page.click('.tool-button[data-tool="trampoline"]')
+        before_cash = money_to_int(torso["cash"])
+        page.mouse.click(stage_x(torso["x"]), stage_y(torso["y"] + 125))
+        page.wait_for_timeout(250)
+        trampoline_effect = page.evaluate(
+            """
+            () => {
+              const pads = window.__buddyLabDebug.state.props.filter((body) => body.label === 'trampoline');
+              return {
+                pads: pads.length,
+                cosmetic: pads.at(-1)?.plugin?.cosmetic?.type || '',
+                bounce: pads.at(-1)?.plugin?.cosmetic?.bounce || '',
+                cash: document.querySelector('#cash')?.textContent,
+                replayHasBuild: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'build'),
+                replayHasBuilder: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('builder'))
+              };
+            }
+            """
+        )
+        assert_true(trampoline_effect["pads"] >= 1, "Trampoline should place a pad")
+        assert_true(trampoline_effect["cosmetic"] == "trampoline-pad", "Trampoline should carry explicit cosmetic metadata")
+        assert_true(trampoline_effect["bounce"] == "high", "Trampoline should document its high-bounce builder role")
+        assert_true(trampoline_effect["replayHasBuild"] and trampoline_effect["replayHasBuilder"], "Trampoline should record build/builder tags")
+        assert_true(money_to_int(trampoline_effect["cash"]) > before_cash, "Trampoline placement should score cash")
+        tool_effects["trampoline"] = trampoline_effect
+
+        torso = center_buddy()
+        page.click('.tool-button[data-tool="gift"]')
+        before_cash = money_to_int(torso["cash"])
+        page.mouse.click(stage_x(torso["x"] + 45), stage_y(torso["y"]))
+        page.wait_for_timeout(300)
+        gift_effect = page.evaluate(
+            """
+            () => {
+              const gifts = window.__buddyLabDebug.state.props.filter((body) => body.label === 'prop_gift');
+              return {
+                gifts: gifts.length,
+                cosmetic: gifts.at(-1)?.plugin?.cosmetic?.type || '',
+                cash: document.querySelector('#cash')?.textContent,
+                mood: window.__buddyLabDebug.state.mood,
+                replayHasGift: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'gift'),
+                replayHasHappy: window.__buddyLabDebug.state.replayLog.some((entry) => entry.tags?.includes('happy'))
+              };
+            }
+            """
+        )
+        assert_true(gift_effect["gifts"] >= 1, "Gift Box should place a gift prop")
+        assert_true(gift_effect["cosmetic"] == "gift-box", "Gift Box should carry explicit cosmetic metadata")
+        assert_true(gift_effect["mood"] == "Happy", "Gift Box should set happy mood")
+        assert_true(gift_effect["replayHasGift"] and gift_effect["replayHasHappy"], "Gift Box should record gift/happy tags")
+        assert_true("NaN" not in gift_effect["cash"] and money_to_int(gift_effect["cash"]) != before_cash, "Gift Box should update finite cash")
+        tool_effects["gift"] = gift_effect
+
+        torso = center_buddy()
         page.click('.tool-button[data-tool="rope"]')
         before_cash = money_to_int(torso["cash"])
         page.mouse.click(stage_x(torso["x"]), stage_y(torso["y"]))
@@ -1012,6 +1081,7 @@ def run(url):
             """
             () => ({
               coils: window.__buddyLabDebug.state.coils.length,
+              cosmetic: window.__buddyLabDebug.state.coils.at(-1)?.body?.plugin?.cosmetic?.type || '',
               bolts: window.__buddyLabDebug.state.particles.filter((particle) => particle.type === 'bolt').length,
               cash: document.querySelector('#cash')?.textContent,
               replayHasShock: window.__buddyLabDebug.state.replayLog.some((entry) => entry.text === 'shock')
@@ -1019,6 +1089,7 @@ def run(url):
             """
         )
         assert_true(tesla_effect["coils"] >= 1, "Tesla should place a coil")
+        assert_true(tesla_effect["cosmetic"] == "tesla-coil", "Tesla should carry explicit cosmetic metadata")
         assert_true(tesla_effect["bolts"] >= 1, "Tesla should emit bolt particles near Buddy")
         assert_true(tesla_effect["replayHasShock"], "Tesla should record a shock event")
         assert_true(money_to_int(tesla_effect["cash"]) > before_cash, "Tesla should score cash")
@@ -1028,6 +1099,7 @@ def run(url):
         page.click('.tool-button[data-tool="grenade"]')
         before_cash = money_to_int(torso["cash"])
         page.mouse.click(stage_x(torso["x"] + 45), stage_y(torso["y"]))
+        grenade_cosmetic = page.evaluate("() => window.__buddyLabDebug.state.grenades.at(-1)?.body?.plugin?.cosmetic?.type || ''")
         page.evaluate(
             """
             () => {
@@ -1056,6 +1128,7 @@ def run(url):
             })
             """
         )
+        assert_true(grenade_cosmetic == "grenade-shell", "Grenade should carry explicit cosmetic metadata before detonation")
         assert_true(grenade_effect["grenades"] == 0 and grenade_effect["liveGrenadeProps"] == 0, "Grenade should explode and remove its prop")
         assert_true(grenade_effect["replayHasExplosion"], "Grenade should record an explosion event")
         assert_true(money_to_int(grenade_effect["cash"]) > before_cash, "Grenade explosion should score cash")

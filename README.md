@@ -86,7 +86,7 @@ To validate a standalone pack before adding it to the live manifest:
 python .\tests\validate-asset-packs.py --root . --pack assets/packs/template/pack.json
 ```
 
-Asset-pack authoring details and a starter template live in `docs/asset-packs.md`. Content parity tracking and exact-skin/private-import guidance live in `docs/content-completion-matrix.md`.
+Asset-pack authoring details and a starter template live in `docs/asset-packs.md`. Content parity tracking and exact-skin/private-import guidance live in `docs/content-completion-matrix.md`. Weapon cosmetics/effects coverage lives in `docs/weapon-cosmetics-effects-audit.md`.
 
 ## Audit Queue
 
@@ -160,6 +160,7 @@ Done:
 - Added and verified Projectile Variant Polish: Cork Popper is a new legally distinct aim-and-release projectile with a dedicated Matter body factory, `cork-popper` cosmetic overlay, launch scoring, Buddy-hit collision scoring, pop impulse, Cork Shots mission coverage, and direct browser regression for spawned cork bodies, hit state, replay tags, particles, cosmetics, movement, and finite cash gain. Verification also hardened the regression by clearing leftover prop bodies before Hand flick checks and made Black Hole keep the intended afraid mood while active. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Offline Local Play Foundation: Matter.js 0.19.0 is now vendored under `vendor/` with its license, `index.html` loads the local runtime instead of jsdelivr, and browser regression verifies the app boots from the local vendor file with no CDN dependency.
 - Added and verified Elemental Variant Polish: Pulse Beam is a low-flash held energy tool with narrow beam visuals, temporary lit body status metadata, steady push/torque physics, `light`/`pulseBeam` scoring tags, Pulse Check mission/challenge coverage, saved best challenge time, and browser regression for particles, pulsed bodies, mood, movement, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Weapon Cosmetics And Effects Audit: every shipped tool now has a `TOOL_EFFECT_AUDIT` entry with cosmetic/effect identity, visible hook, scoring tags, and coverage notes; older simple props now expose explicit cosmetic metadata; Ball, Trampoline, and Gift received direct browser assertions; and the audit table in `docs/weapon-cosmetics-effects-audit.md` tracks all 24 shipped tools. Full `tests/run-regression.ps1 -Visual` passes.
 
 Done assets:
 
@@ -196,6 +197,7 @@ Done assets:
 - `assets/packs/classic-desktop/skins/desk-pal.svg`
 - `docs/asset-packs.md`
 - `docs/content-completion-matrix.md`
+- `docs/weapon-cosmetics-effects-audit.md`
 - `main.js`
 - `tests/browser-regression.py`
 - `vendor/README.md`
@@ -209,7 +211,7 @@ In progress:
 Next improvements:
 
 - After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Weapon Cosmetics And Effects Audit`: confirm every shipped weapon/tool has explicit cosmetic metadata, visible effect hooks, scoring tags, and direct browser coverage before starting another content expansion.
+- Next queue item is `Skin Physics Expansion`: add more skin physics only when tied to real skin choices, measurable Matter body changes, shop-path regression, and matrix status.
 - Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
 
 Process notes:
@@ -225,6 +227,7 @@ Process notes:
 - For projectile visual variants, assert both normal tool use and challenge use so cosmetic rotation stays tied to real gameplay.
 - For elemental variants, verify five surfaces together: direct tool effect, replay tags, challenge completion, mission rotation, and visible non-flashy particles/status overlays.
 - For weapon/effect audits, build a gap table first, then close missing metadata, visuals, scoring tags, and regression assertions tool by tool.
+- Keep `docs/weapon-cosmetics-effects-audit.md`, `TOOL_EFFECT_AUDIT`, unit checks, and browser checks synchronized whenever tools change.
 - For mode menu work, only add entries that alter real simulation or settings state, then assert default, active state, save migration, and reload behavior.
 - For room browser work, assert built-in room population, direct browser selection, active state, private import insertion, and reload restoration.
 - For prop polish work, every spawned prop factory should expose cosmetic metadata that unit tests and real throw regression both assert.

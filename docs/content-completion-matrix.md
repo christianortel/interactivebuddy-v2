@@ -54,6 +54,7 @@ Because the original Flash content list is fragmented online, every exact old it
 | Nice/good powers | Gift Box | Partial | Browser regression through shop/scoring | Add money/confetti/boombox variants. |
 | Alternate physics modes | Slow motion, ceiling toggle, Gravity submenu, liquid types, Robot heavy physics, Gelatin bouncy physics | Shipped | Browser regression for settings, gravity, skin physics, and liquids | Add more skin physics only after more skins justify it. |
 | Scripting engine / modding | JSON asset packs and private imports | Partial | Unit and browser regression | Add scriptable tool schema later. |
+| Weapon cosmetics/effects audit | Every shipped tool has `TOOL_EFFECT_AUDIT` metadata, visible effect identity, scoring tags, and direct regression coverage | Shipped | Unit checks, browser regression, and `docs/weapon-cosmetics-effects-audit.md` | Keep synchronized as new tools ship. |
 
 ## Skins
 
@@ -103,11 +104,10 @@ Private import only:
 
 ## Next Content Batches
 
-1. `Weapon Cosmetics And Effects Audit`: confirm every shipped weapon/tool has explicit cosmetic metadata, visible effect hooks, scoring tags, and direct browser coverage.
-2. `Skin Physics Expansion`: add more skin physics only after more skins justify it.
-3. `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, and regression coverage.
-4. `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only after elemental variant queues stabilize.
-5. `Projectile Preset Expansion`: add another projectile only after the elemental queue and classic parity checks stay stable.
+1. `Skin Physics Expansion`: add more skin physics only after more skins justify it, with measurable Matter body changes and shop-path regression.
+2. `Room Preset Expansion`: add another room only when it includes an original motif, pack metadata, preview thumbnails, and regression coverage.
+3. `Nice Tool Expansion`: add a money/confetti/boombox-style nice tool only after elemental variant queues stabilize.
+4. `Projectile Preset Expansion`: add another projectile only after the elemental queue and classic parity checks stay stable.
 
 ## Audit Rules
 
@@ -116,3 +116,4 @@ Private import only:
 - Run `tests/run-regression.ps1 -Visual` before moving a content batch from `Planned` to `Shipped`.
 - Keep exact old skins out of bundled packs unless rights are explicitly documented.
 - Keep offline play intact by avoiding CDN/runtime network dependencies in shipped browser code.
+- Keep `TOOL_EFFECT_AUDIT` and `docs/weapon-cosmetics-effects-audit.md` complete before adding new tools.

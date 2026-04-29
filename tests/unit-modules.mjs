@@ -5,6 +5,7 @@ import { createChallengeController, formatProgress } from "../js/challenges.js";
 import { FeedbackEngine } from "../js/feedback.js";
 import { createProgressionController } from "../js/progression.js";
 import { readJson, writeJson } from "../js/storage.js";
+import { TOOL_DEFS, TOOL_EFFECT_AUDIT } from "../js/content.js";
 import {
   createAnvilBody,
   createBallBody,
@@ -89,8 +90,17 @@ assert.equal(isInstantPlacementTool("grenade"), true);
 assert.equal(isInstantPlacementTool("fan"), false);
 assert.equal(randomPaintColor(() => 0), "#ff7161");
 assert.equal(randomPaintColor(() => 0.999), "#e7a8ff");
+assert.deepEqual(Object.keys(TOOL_EFFECT_AUDIT).sort(), TOOL_DEFS.map((tool) => tool.id).sort());
+TOOL_DEFS.forEach((tool) => {
+  const audit = TOOL_EFFECT_AUDIT[tool.id];
+  assert.equal(typeof audit.cosmetic, "string", `${tool.id} should document cosmetic/effect metadata`);
+  assert.equal(typeof audit.visual, "string", `${tool.id} should document visible effect hooks`);
+  assert.equal(typeof audit.coverage, "string", `${tool.id} should document regression coverage`);
+  assert.ok(Array.isArray(audit.scoring) && audit.scoring.length > 0, `${tool.id} should document scoring tags`);
+});
 
 assert.equal(createBallBody(fakeBodies, { x: 10, y: 20 }, 18).label, "prop_ball");
+assert.equal(createBallBody(fakeBodies, { x: 10, y: 20 }, 18).plugin.cosmetic.type, "ball-basic");
 assert.equal(createBeachBallBody(fakeBodies, { x: 10, y: 20 }).label, "prop_beachball");
 assert.equal(createBeachBallBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "beach-ball-striped");
 assert.equal(createBowlingBallBody(fakeBodies, { x: 10, y: 20 }).label, "prop_bowling");
@@ -102,6 +112,7 @@ assert.equal(createBrickBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type,
 assert.equal(createAnvilBody(fakeBodies, { x: 10, y: 20 }).density, 0.009);
 assert.equal(createAnvilBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "stage-weight-anvil");
 assert.equal(createPaintballBody(fakeBodies, { x: 10, y: 20 }, "#fff").render.fillStyle, "#fff");
+assert.equal(createPaintballBody(fakeBodies, { x: 10, y: 20 }, "#fff").plugin.cosmetic.type, "paintball-splat");
 assert.equal(createFoamDartBody(fakeBodies, { x: 10, y: 20 }).label, "prop_foamdart");
 assert.equal(createFoamDartBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "foam-dart");
 assert.equal(createCorkBody(fakeBodies, { x: 10, y: 20 }).label, "prop_cork");
@@ -110,9 +121,13 @@ assert.equal(createRubberPelletBody(fakeBodies, { x: 10, y: 20 }).label, "prop_r
 assert.equal(createRubberPelletBody(fakeBodies, { x: 10, y: 20 }, 1).plugin.cosmetic.variant, "safety-orange");
 assert.equal(getRubberPelletVariant(2).id, "mint-blue");
 assert.equal(createGrenadeBody(fakeBodies, { x: 10, y: 20 }).label, "prop_grenade");
+assert.equal(createGrenadeBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "grenade-shell");
 assert.equal(createTrampolineBody(fakeBodies, { x: 10, y: 20 }).isStatic, true);
+assert.equal(createTrampolineBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "trampoline-pad");
 assert.equal(createGiftBody(fakeBodies, { x: 10, y: 20 }).label, "prop_gift");
+assert.equal(createGiftBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "gift-box");
 assert.equal(createTeslaBody(fakeBodies, { x: 10, y: 20 }).label, "prop_tesla");
+assert.equal(createTeslaBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "tesla-coil");
 assert.equal(formatProgress(2), "2");
 assert.equal(formatProgress(2.25), "2.3");
 assert.equal(finiteOr(4, 1), 4);

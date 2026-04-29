@@ -4,7 +4,8 @@ import {
   DEFAULT_SKIN_DEFS,
   LIQUID_TYPES,
   MISSION_POOL,
-  TOOL_DEFS
+  TOOL_DEFS,
+  TOOL_EFFECT_AUDIT
 } from "./js/content.js";
 import { createAssetPackController } from "./js/asset-packs.js";
 import { createChallengeController } from "./js/challenges.js";
@@ -300,7 +301,7 @@ const mouseConstraint = MouseConstraint.create(engine, {
 });
 
 World.add(engine.world, mouseConstraint);
-window.__buddyLabDebug = { engine, render, state };
+window.__buddyLabDebug = { engine, render, state, toolEffectAudit: TOOL_EFFECT_AUDIT };
 
 await bootGame();
 
@@ -3124,8 +3125,114 @@ function drawPropCosmetics(ctx) {
       drawFoamDartCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "cork-popper") {
       drawCorkCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "ball-basic") {
+      drawBallCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "trampoline-pad") {
+      drawTrampolineCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "gift-box") {
+      drawGiftCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "tesla-coil") {
+      drawTeslaCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "grenade-shell") {
+      drawGrenadeCosmetic(ctx, body, cosmetic);
     }
   }
+}
+
+function drawBallCosmetic(ctx, body, cosmetic) {
+  const radius = body.circleRadius || 18;
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.fillStyle = cosmetic.shine;
+  ctx.globalAlpha = 0.65;
+  ctx.beginPath();
+  ctx.arc(-radius * 0.35, -radius * 0.42, radius * 0.18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = cosmetic.rim;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 0.78, 0.25, Math.PI * 1.1);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawTrampolineCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.stripe;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-62, -3);
+  ctx.lineTo(62, -3);
+  ctx.stroke();
+  ctx.strokeStyle = cosmetic.spring;
+  ctx.lineWidth = 1.5;
+  for (let x = -56; x <= 56; x += 28) {
+    ctx.beginPath();
+    ctx.moveTo(x - 6, 7);
+    ctx.lineTo(x + 6, 7);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawGiftCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.ribbon;
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(-17, 0);
+  ctx.lineTo(17, 0);
+  ctx.moveTo(0, -17);
+  ctx.lineTo(0, 17);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.bow;
+  ctx.beginPath();
+  ctx.ellipse(-6, -20, 6, 4, -0.35, 0, Math.PI * 2);
+  ctx.ellipse(6, -20, 6, 4, 0.35, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawTeslaCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.coil;
+  ctx.lineWidth = 2;
+  for (let y = -18; y <= 18; y += 9) {
+    ctx.beginPath();
+    ctx.moveTo(-13, y);
+    ctx.lineTo(13, y);
+    ctx.stroke();
+  }
+  ctx.fillStyle = cosmetic.core;
+  ctx.beginPath();
+  ctx.arc(0, -25, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawGrenadeCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.band;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, 0, 9, Math.PI * 0.15, Math.PI * 1.85);
+  ctx.stroke();
+  ctx.strokeStyle = cosmetic.pin;
+  ctx.beginPath();
+  ctx.moveTo(-3, -14);
+  ctx.lineTo(8, -19);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function drawBeachBallCosmetic(ctx, body, cosmetic) {

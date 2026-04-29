@@ -25,6 +25,33 @@ export const TOOL_DEFS = [
   { id: "blackhole", name: "Black Hole", icon: "@", category: "Force", cost: 2100, description: "Hold to pull everything into orbital chaos." }
 ];
 
+export const TOOL_EFFECT_AUDIT = {
+  hand: { cosmetic: "buddy contact highlight and classic cursor affordance", visual: "grab stroke, tickle burst, ragdoll motion", scoring: ["throw", "tickle", "hand"], coverage: "browser hand flick and wall recovery" },
+  ball: { cosmetic: "ball-basic round prop metadata", visual: "springy thrown ball body", scoring: ["throw", "blunt", "toy"], coverage: "browser ball launch scoring" },
+  beachball: { cosmetic: "beach-ball-striped prop metadata", visual: "striped beach ball overlay", scoring: ["beachball", "propVariant"], coverage: "browser prop throw regression" },
+  bowling: { cosmetic: "bowling-classic prop metadata", visual: "highlight and finger-hole overlay", scoring: ["bowling", "propVariant"], coverage: "browser prop throw regression" },
+  brick: { cosmetic: "foam-brick-lined prop metadata", visual: "mortar and chip overlay", scoring: ["throw", "object"], coverage: "browser prop throw regression" },
+  glove: { cosmetic: "glove-laced prop metadata", visual: "cuff and lace overlay", scoring: ["punch", "propVariant"], coverage: "browser prop throw regression" },
+  fan: { cosmetic: "tool field cone", visual: "cyan force cone and wind replay tag", scoring: ["wind", "force"], coverage: "browser toolEffects fan" },
+  paintball: { cosmetic: "paintball-splat projectile metadata", visual: "paint decal and skin tint", scoring: ["paintball", "paint"], coverage: "browser toolEffects paintball" },
+  foamdart: { cosmetic: "foam-dart projectile metadata", visual: "tip, fin, and sticky body state", scoring: ["dart", "dartHit", "foamDart"], coverage: "browser toolEffects foamdart" },
+  corkpopper: { cosmetic: "cork-popper projectile metadata", visual: "ring, fleck, and cap overlay", scoring: ["cork", "corkHit", "corkPopper"], coverage: "browser toolEffects corkpopper" },
+  rubber: { cosmetic: "rubber-pellet rotating variant metadata", visual: "striped/dotted pellet variants and burst HUD", scoring: ["rubber", "beadCannon"], coverage: "browser toolEffects rubber and Bead Cannon challenge" },
+  heatcone: { cosmetic: "reduced-flash ember field", visual: "orange cone particles and fear mood", scoring: ["heat", "elemental"], coverage: "browser toolEffects heatcone" },
+  sparkwand: { cosmetic: "cursor arc field", visual: "yellow bolt particles and stun impulse", scoring: ["spark", "sparkWand"], coverage: "browser Spark Drill regression" },
+  frostpuff: { cosmetic: "temporary frost body status", visual: "blue mist and chilled body overlay", scoring: ["frost", "frostPuff", "cold"], coverage: "browser Frost Test regression" },
+  goomist: { cosmetic: "temporary goo body status", visual: "green mist and slippery body overlay", scoring: ["goo", "gooMist", "slippery"], coverage: "browser Slip Test regression" },
+  pulsebeam: { cosmetic: "temporary pulse body status", visual: "narrow low-flash yellow beam", scoring: ["pulse", "pulseBeam", "light"], coverage: "browser Pulse Check regression" },
+  grenade: { cosmetic: "grenade-shell prop metadata", visual: "timed body, burst particles, camera shake", scoring: ["armed", "explosion"], coverage: "browser toolEffects grenade" },
+  trampoline: { cosmetic: "trampoline-pad builder metadata", visual: "cyan static pad with high restitution", scoring: ["build", "builder"], coverage: "browser toolEffects trampoline" },
+  anvil: { cosmetic: "stage-weight-anvil prop metadata", visual: "bevel, shadow, and stamp overlay", scoring: ["throw", "heavy"], coverage: "browser prop throw regression" },
+  rope: { cosmetic: "elastic rope constraint line", visual: "ceiling tether and constraint physics", scoring: ["tether", "builder", "force"], coverage: "browser toolEffects rope" },
+  water: { cosmetic: "liquid room fill", visual: "water/slime/oil band with buoyancy", scoring: ["liquid", "builder"], coverage: "browser liquid use and Liquid Control challenge" },
+  gift: { cosmetic: "gift-box prop metadata", visual: "gift body and happy mood", scoring: ["gift", "happy"], coverage: "browser toolEffects gift" },
+  tesla: { cosmetic: "tesla-coil prop metadata", visual: "coil body and bolt particles", scoring: ["shock", "stun"], coverage: "browser toolEffects tesla" },
+  blackhole: { cosmetic: "gravity ring field", visual: "dark pull ring and green orbit arc", scoring: ["gravity", "force"], coverage: "browser toolEffects blackhole" }
+};
+
 export const DEFAULT_SKIN_DEFS = [
   { id: "classic", name: "Classic Buddy", cost: 0, color: "#d6ded9", accent: "#f5faf7", description: "Soft gray lab-room original." },
   { id: "neon", name: "Neon Mascot", cost: 180, color: "#99f17f", accent: "#55d9cf", description: "Brighter reactions and glow-tinted impacts." },
