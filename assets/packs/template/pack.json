@@ -1,0 +1,36 @@
+{
+  "id": "template-pack",
+  "name": "Template Pack",
+  "description": "Copy this folder to start a new Buddy Lab asset pack.",
+  "room": {
+    "background": "#33413c",
+    "grid": "#c8d8d0",
+    "floor": "#202a26",
+    "accent": "#98f17f",
+    "motif": "grid"
+  },
+  "skins": [
+    {
+      "id": "template-pack:sample",
+      "name": "Sample Buddy",
+      "cost": 100,
+      "color": "#d6ded9",
+      "accent": "#98f17f",
+      "texture": "assets/packs/template/skins/sample.svg",
+      "textureScale": 0.72,
+      "description": "Example texture-backed skin. Replace this with your own art."
+    }
+  ],
+  "audioPacks": {
+    "templateTone": {
+      "name": "Template Tone",
+      "master": 0.16,
+      "pitch": 1.0,
+      "toneWave": "triangle",
+      "impactWave": "triangle",
+      "zapWave": "square",
+      "noiseFilter": 1.0,
+      "decay": 1.0
+    }
+  }
+}

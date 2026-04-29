@@ -1,0 +1,46 @@
+{
+  "id": "retro-office",
+  "name": "Retro Office",
+  "description": "Muted desktop-toy colors with softer office-machine audio character.",
+  "room": {
+    "background": "#8f9c93",
+    "grid": "#dfe8e2",
+    "floor": "#657268",
+    "accent": "#ffc857",
+    "motif": "office"
+  },
+  "skins": [
+    {
+      "id": "retro-office:intern",
+      "name": "Office Intern",
+      "cost": 220,
+      "color": "#e7e5d8",
+      "accent": "#4d6a7a",
+      "texture": "assets/packs/retro-office/skins/intern.svg",
+      "textureScale": 0.74,
+      "description": "Buttoned-up desk buddy from the Retro Office asset pack."
+    },
+    {
+      "id": "retro-office:crt",
+      "name": "CRT Buddy",
+      "cost": 700,
+      "color": "#b6c4ba",
+      "accent": "#2f4239",
+      "texture": "assets/packs/retro-office/skins/crt.svg",
+      "textureScale": 0.7,
+      "description": "Chunky monitor-inspired shell with subdued highlights."
+    }
+  ],
+  "audioPacks": {
+    "officeClick": {
+      "name": "Office Click",
+      "master": 0.13,
+      "pitch": 0.78,
+      "toneWave": "triangle",
+      "impactWave": "triangle",
+      "zapWave": "square",
+      "noiseFilter": 0.62,
+      "decay": 1.45
+    }
+  }
+}

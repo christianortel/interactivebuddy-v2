@@ -1,0 +1,15 @@
+.playwright-browsers/
+.playwright-local/
+.python-packages/
+.tmp-pip/
+.venv/
+.wheels/
+__pycache__/
+*.pyc
+.chrome-cache/
+.chrome-cdp-profile*/
+.chrome-profile/
+.edge-cache/
+.edge-profile/
+tests/artifacts/
+verification-screenshot.png

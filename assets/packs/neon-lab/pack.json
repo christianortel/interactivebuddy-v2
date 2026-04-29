@@ -1,0 +1,46 @@
+{
+  "id": "neon-lab",
+  "name": "Neon Lab",
+  "description": "Bright arcade skins and sharper synthesized feedback for high-energy sandbox sessions.",
+  "room": {
+    "background": "#20343a",
+    "grid": "#7ff4ff",
+    "floor": "#152428",
+    "accent": "#98f17f",
+    "motif": "neon"
+  },
+  "skins": [
+    {
+      "id": "neon-lab:circuit",
+      "name": "Circuit Buddy",
+      "cost": 260,
+      "color": "#6fffe2",
+      "accent": "#f1ff8b",
+      "texture": "assets/packs/neon-lab/skins/circuit.svg",
+      "textureScale": 0.72,
+      "description": "Glow-lined lab suit loaded from the Neon Lab asset pack."
+    },
+    {
+      "id": "neon-lab:hazmat",
+      "name": "Neon Hazmat",
+      "cost": 620,
+      "color": "#d4ff61",
+      "accent": "#55d9cf",
+      "texture": "assets/packs/neon-lab/skins/hazmat.svg",
+      "textureScale": 0.76,
+      "description": "High-visibility suit for liquid and shock experiments."
+    }
+  ],
+  "audioPacks": {
+    "neonPulse": {
+      "name": "Neon Pulse",
+      "master": 0.18,
+      "pitch": 1.42,
+      "toneWave": "square",
+      "impactWave": "sawtooth",
+      "zapWave": "square",
+      "noiseFilter": 1.55,
+      "decay": 0.72
+    }
+  }
+}

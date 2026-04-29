@@ -1,0 +1,230 @@
+# Buddy Lab 2026
+
+A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: grab a soft ragdoll buddy, try tools, earn cash/XP from varied reactions, unlock more tools and skins, and keep experimenting.
+
+## Current Playable Slice
+
+- Matter.js ragdoll buddy built from rigid bodies and spring constraints.
+- Classic top menu bar plus a modern HUD, mission panel, shop, and bottom tool rail.
+- Tools: Open Hand, Ball, Bowling Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Tesla Coil, and Black Hole.
+- Local asset packs: JSON manifests can add skins, audio packs, and room palettes.
+- Texture-backed pack skins: local SVG skin assets can be applied to the ragdoll bodies.
+- Economy: cash, XP, combo timer, anti-grind yield decay, unlockable tools, unlockable skins, and local persistence.
+- Reactions: mood state, face indicator, impact scoring, airborne scoring, shock/explosion/fan/paint/gift/tickle/water/rope tags, camera shake, replay strip, particle effects, Web Audio feedback with selectable packs, and supported-device haptics.
+- Quality toggles: reduced flash, slapstick mode, audio, haptics, slow motion, ceiling toggle, reset, save/load scene preset.
+
+## Running Locally
+
+Serve the folder and open the local URL:
+
+```powershell
+python -m http.server 5173
+```
+
+Then visit `http://localhost:5173`.
+
+Matter.js is loaded from a CDN, so the first run needs network access.
+
+## Controls
+
+- `1`-`9`: select tools.
+- Left drag with Hand: grab and fling.
+- Quick tap with Hand: tickle.
+- Ball/Paintball: drag to aim, release to fire.
+- Fan/Black Hole: hold on the stage.
+- Paintball/Foam Dart: drag to aim and release.
+- Grenade/Gift/Trampoline/Tesla: click to place.
+- Heat Cone/Spark Wand/Frost Puff/Goo Mist: hold near Buddy for elemental effects.
+- Rope: click near Buddy to attach an elastic ceiling tether.
+- Water: click to set liquid height; click near the floor to drain.
+- Modes > Gravity: switch between Normal, Low Gravity, and Heavy Gravity physics.
+- Modes > Debug > FPS Counter: show or hide the debug FPS overlay.
+- Export: saves the recent rolling WebM replay buffer from the canvas when supported.
+- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Spark Drill, Frost Test, Slip Test, and Clip Export.
+- Rubber Blaster shows a burst/cooldown readout and feeds the Bead Cannon challenge.
+- Settings > Asset pack shows a live room-palette preview and selectable room browser for loaded rooms.
+- `R`: reset scene.
+
+## Regression Check
+
+With the local server running:
+
+```powershell
+python .\tests\browser-regression.py --url http://localhost:5173
+```
+
+Or start the static server and run the check in one command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-regression.ps1
+```
+
+To include visual screenshot capture:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-regression.ps1 -Visual
+```
+
+The check covers page health, asset-pack loading, mission coverage, audio/liquid settings, tool selection, scoring, challenge completion, shop buying, radial wheel behavior, and replay export. The visual pass compares stage, radial-wheel, shop, and textured-skin screenshots against `tests/baselines/visual`.
+The runner also executes lightweight module unit checks before browser tests. It preflights Python Playwright before browser automation so missing local browser dependencies fail early.
+
+To intentionally refresh visual baselines after a reviewed UI change:
+
+```powershell
+python .\tests\visual-regression.py --url http://localhost:5173 --output .\tests\artifacts\visual --baseline .\tests\baselines\visual --update-baseline
+```
+
+To validate asset packs only:
+
+```powershell
+python .\tests\validate-asset-packs.py --root .
+```
+
+To validate a standalone pack before adding it to the live manifest:
+
+```powershell
+python .\tests\validate-asset-packs.py --root . --pack assets/packs/template/pack.json
+```
+
+Asset-pack authoring details and a starter template live in `docs/asset-packs.md`. Content parity tracking and exact-skin/private-import guidance live in `docs/content-completion-matrix.md`.
+
+## Audit Queue
+
+Done:
+
+- Built the HTML shell for menus, HUD, stage overlays, missions, shop, settings, and tool rail.
+- Replaced styling with responsive game UI that keeps the old menu-bar reference while using a denser 2026 layout.
+- Upgraded gameplay JS with tools, scoring, unlocks, skins, missions, persistence, effects, and settings.
+- Ran `node --check main.js` successfully.
+- Verified in a headless browser at `http://localhost:5173`: no console/page errors, 9 tools rendered, 3 missions rendered, 11 shop items rendered, scoring stayed finite, and interactions updated cash/XP.
+- Added real Web Audio and haptics feedback hooks: impacts, explosions, shock, tickle/gift, paint, unlocks, selection clicks, and fan wind now route through settings-aware feedback. Verified the audio/haptics toggles and browser load.
+- Added and verified a dedicated radial tool wheel: right-click opens it on desktop, touch long-press opens it on touch devices, locked states are visible, and selecting a tool updates the active tool.
+- Added and verified rope/liquid/export systems: Elastic Rope attaches a ceiling tether to the nearest limb, Water Fill applies visible liquid plus buoyancy/drag scoring, and Export records an 8-second WebM replay path when supported.
+- Added and ran automated browser regression checks for tool selection, scoring, shop buying, and radial wheel behavior.
+- Added and verified real rolling replay buffering: the canvas records short chunks continuously, keeps the recent replay window in memory, and Export creates a WebM link from that buffer without waiting through a new recording. Regression now covers replay export.
+- Added and verified selectable audio packs on top of the synthesized fallback: Classic, Arcade, Sci-Fi, and Soft adjust pitch, waveform, noise filtering, decay, and master level. Regression covers pack persistence.
+- Added and verified richer liquid types: Water, Slime, and Oil have separate visuals, buoyancy, drag, angular damping, and temporary friction behavior. Regression covers Slime selection and placement.
+- Added and verified stronger mission coverage for newer systems: rope tethering, liquid use, radial wheel opens, and replay export now have mission cards, and mission refreshes cycle through those coverage cards.
+- Added and verified local asset-pack loading from `assets/packs/manifest.json`: packs can add skins, audio-pack definitions, and room palettes. Regression confirms Neon Lab and Retro Office load, asset-pack audio choices appear, selection persists, and pack skins enter the shop.
+- Added and verified dedicated challenge modes: Juggle Lab, Tether Tricks, Liquid Control, and Clip Export use the gameplay event stream, show HUD progress, pay rewards, and persist the selected mode. Regression completes Liquid Control and verifies all mode choices exist.
+- Split static content definitions out of the prototype runtime: tool definitions, built-in skins, audio packs, liquid types, missions, and challenge modes now live in `js/content.js`. Regression stayed green after the module split.
+- Added and verified CI-friendly regression startup: `tests/run-regression.ps1` starts the static Python server, waits for readiness, runs Playwright regression, and stops the server. `.github/workflows/browser-regression.yml` runs the same path in CI.
+- Added and verified a real visual skin atlas path for asset packs: pack skins can declare local SVG `texture` paths and Matter sprite scale metadata. Regression buys/equips Circuit Buddy and confirms the buddy bodies receive `circuit.svg` sprites.
+- Continued module extraction: save/load JSON helpers now live in `js/storage.js`, with regression confirming save behavior still works.
+- Added and verified challenge result summaries and per-challenge best scores: completed challenges show a replay-strip summary, save best elapsed time per mode, and display best time in the HUD. Regression confirms Liquid Control records a best.
+- Added and verified save-file version migration tests: saves now include `version: 2`, legacy saves are migrated with defaults for asset packs, haptics, liquids, challenge mode, best scores, and baseline free tools. Regression seeds a legacy save and verifies migration.
+- Added and verified save import/export UI: File > Export Save creates a JSON snapshot link, File > Import Save reads a local JSON snapshot, migrates it, persists it, and reloads into the imported progression/settings state. Regression covers both export and import.
+- Added and verified visual regression screenshot capture: `tests/visual-regression.py` captures the main stage, radial wheel, shop panel, and textured skin state. `tests/run-regression.ps1 -Visual` runs browser regression plus screenshot capture.
+- Added and verified a lightweight asset-pack schema validator: `tests/validate-asset-packs.py` checks manifest entries, pack metadata, room palettes, skin fields, texture file existence, texture scales, and audio pack parameters. The regression runner now validates packs before browser tests.
+- Added and verified asset-pack authoring documentation and a non-live template pack: `docs/asset-packs.md`, `assets/packs/template/pack.json`, and `assets/packs/template/skins/sample.svg`. The validator now supports standalone `--pack` checks, and the regression runner validates the template pack before browser tests.
+- Added and verified baseline visual diff thresholds: `tests/visual-regression.py` now supports baseline updates, pixel-diff comparison, threshold failures, and diff artifact output. `tests/run-regression.ps1 -Visual` compares against `tests/baselines/visual`, and the full visual runner passes.
+- Continued module extraction by moving Web Audio feedback into `js/feedback.js`. `main.js` now injects settings, audio-pack lookup, and user-activation checks into `FeedbackEngine`, keeping audio behavior separate from the gameplay runtime. `node --check` and the full `-Visual` regression runner pass.
+- Continued module extraction by moving shop and purchase progression into `js/progression.js`. The controller owns shop rendering, tool unlock purchases, and skin buy/equip flow through injected runtime callbacks. `node --check` and the full `-Visual` regression runner pass.
+- Continued module extraction by moving focused tool-behavior helpers into `js/tool-behaviors.js`: instant-placement classification plus Matter body factories for ball, paintball, grenade, trampoline, gift, and tesla. `node --check` and the full `-Visual` regression runner pass.
+- Continued module extraction by moving HUD/control DOM lookup into `js/ui-bindings.js`. `main.js` now consumes named UI binding factories while keeping render behavior unchanged. `node --check` and the full `-Visual` regression runner pass.
+- Added direct lightweight unit checks for extracted modules in `tests/unit-modules.mjs`. The checks cover asset-pack sanitization/registration, challenge/mission progression, feedback no-audio safety, progression transactions, storage JSON behavior, tool body factories, tool classification, transfer save import/export, transfer replay export, and UI binding lookup. The regression runner now executes these checks before asset validation and browser regression.
+- Completed replay/save import-export extraction by moving replay buffer/export, save snapshot export, and save snapshot import into `js/transfer.js`. Full `tests/run-regression.ps1 -Visual` now passes with Playwright restored, covering save migration, save export/import, replay export, and visual baselines.
+- Completed challenge/mission progression extraction by moving mission selection/rendering, mission reward progression, challenge timers, challenge completion, best-time tracking, and challenge HUD labels into `js/challenges.js`. Full `tests/run-regression.ps1 -Visual` passes, covering mission coverage, Liquid Control completion, rewards, and saved best times.
+- Completed asset-pack loading/registration extraction by moving manifest loading, pack sanitization, skin registration, audio-pack registration, and duplicate-pack handling into `js/asset-packs.js`. Full `tests/run-regression.ps1 -Visual` passes, covering local pack loading, asset-pack audio, pack skins, and textured skin rendering.
+- Added and verified a classic-inspired content expansion with legally distinct assets: Foam Brick and Stage Weight tools, the Classic Arcade asset pack, three original retro-style skins, and the Cabinet Thunk audio preset. Full `tests/run-regression.ps1 -Visual` passes with 13 tools, 20 shop items, Classic Arcade pack loading, and the expanded radial wheel.
+- Added and verified custom local skin-pack import support: File > Import Skin Pack accepts Buddy Lab asset-pack JSON, registers user-provided private skins/audio/rooms, supports embedded data-URL textures, selects the imported pack, persists it in the save payload, and restores it after reload. Full `tests/run-regression.ps1 -Visual` passes with import/reload coverage.
+- Added and verified a focused physics-feel tune: stronger prone self-righting, a small upward recovery force near the floor, and buddy wall-bound recovery that gently translates the ragdoll back inside the room while damping stuck velocities. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified focused asset-pack import documentation: `docs/asset-packs.md` now explains private skin-pack imports, wrapper JSON, embedded `textureDataUrl` textures, local persistence through `customAssetPacks`, and why bundled packs should stay original unless rights are secured. Asset-pack validation passes.
+- Added and verified deeper grab-feel tuning plus direct throw regression for the classic-inspired props: Hand drags now add temporary friction-air damping, angular damping, pull correction, and release flick velocity; browser regression now throws Foam Brick and Stage Weight through the real UI and verifies spawned prop bodies, meaningful velocity, finite scoring, and cash gain. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified direct Hand grab/release and wall-recovery browser coverage: regression drags Buddy with the Hand tool, confirms release flick scoring and body velocity, forces an out-of-bounds ragdoll state, and verifies recovery brings the buddy back inside the stage with damped velocity. Wall recovery now uses a stronger 18px horizontal recovery margin. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified end-to-end browser coverage for imported embedded texture skins: the private pack regression now imports a `textureDataUrl` skin, persists the pack through reload, buys/equips the skin, and confirms data-URL sprites are applied to the buddy bodies. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified focused behavior regression for the remaining shipped effect tools: Rope attaches constraints, Tesla places coils and emits bolt/shock events, Grenade explodes and removes its prop, Paintball applies decals/tint, Fan moves Buddy with wind scoring, and Black Hole pulls Buddy while setting afraid mood. The Fan shop purchase check now uses a deterministic shop-row click after asserting the Buy state. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified a living content completion matrix: `docs/content-completion-matrix.md` maps old Interactive Buddy-era systems, tools, skins, rooms, audio, and modes to current shipped equivalents, planned legally distinct replacements, or private-import-only exact skins. The matrix defines bundling rules, next content batches, and audit rules for future work.
+- Added and verified the Classic Props content batch: Bowling Ball and Boxing Glove are legally distinct aim-and-release tools with dedicated Matter body factories, throw scoring, shop entries, unit coverage, browser throw regression, and matrix status updates. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified the Classic Projectiles content batch: Rubber Blaster is a legally distinct rapid-fire projectile tool that fires bouncy pellets while held, scores projectile/blunt events, appears in the shop/radial wheel, has unit coverage, and is covered by browser regression for multi-pellet firing, velocity, replay events, and cash gain. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified the Elemental Starter content batch: Heat Cone is a reduced-flash-safe held elemental tool with ember cone visuals, heat/elemental/fear scoring, gentle warm push, haptic/audio feedback, shop/radial integration, and browser regression for heat events, ember particles, mood, movement, and cash gain. Tesla bolt lifetime was also lengthened to make the existing shock visual effect stable under regression. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Classic Skin Pack 2: Gloom Friend, Fruit Clock, and Everyday Pal are original legally distinct texture skins in the Classic Arcade pack. Asset validation confirms all SVG paths, and browser regression verifies shop presence plus buying/equipping Gloom Friend as a texture-backed skin. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified the Room Pack content batch: Classic Desktop is a manifest-backed gray desktop room pack with the Desk Pal texture skin and Desktop Tap audio preset. Asset validation confirms the pack, and browser regression verifies room selection persistence, palette registration, audio option loading, and shop skin presence. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Prop Variants challenge hooks: Bowling Ball now emits `bowling` plus shared `propVariant` events, Boxing Glove emits `punch` plus shared `propVariant` events, new Lane Test/Glove Work/Prop Variants mission cards listen to those hooks, and the new Prop Tricks challenge completes from real Bowling/Glove throws. Challenge options are now rebuilt from `CHALLENGE_MODES` so future challenge modes appear automatically. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Projectile Variants challenge/UI hooks: Rubber Blaster now emits a shared `beadCannon` event, displays a stable burst/cooldown HUD pill, has a Bead Cannon mission card, and completes the new Bead Cannon challenge from real rapid-fire pellet use. Browser regression covers the HUD status, event tag, mission coverage, challenge completion, saved best time, pellet count, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Elemental Variants: Spark Wand is a handheld shock tool distinct from Tesla Coil, emits cursor-to-buddy bolt arcs, applies small stun impulses, records `sparkWand`/elemental events, feeds the Spark Drill mission and challenge, saves best challenge time, and is covered by browser regression for particles, mood, movement, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Mode Parity: Modes now has an old-style nested Debug submenu with an FPS Counter toggle, the FPS overlay updates from the simulation loop, the setting migrates off for legacy saves, persists to localStorage, restores after reload, and saved slow-motion/ceiling mode state is applied during boot. Browser regression covers submenu structure, toggle feedback, live FPS text, persistence, reload restoration, and migration default. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Room Preview: Settings > Asset pack now renders a live four-swatch room-palette preview for the selected pack, updates when built-in packs change, updates when private packs are imported, and exposes preview metadata for regression. Browser regression covers Base Lab, Classic Desktop, Neon Lab, and imported Private Pack preview state. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Prop Cosmetics: Bowling Ball now carries a `bowling-classic` cosmetic skin with rendered lane-ball highlight and finger-hole details, while Boxing Glove carries a `glove-laced` cosmetic skin with rendered cuff and lace details. Unit checks cover cosmetic metadata from the body factories, browser regression verifies real spawned props carry the expected cosmetic IDs, and the full visual runner passes.
+- Added and verified Projectile Polish: Rubber Blaster pellets now cycle three visible variants (`charcoal-lime`, `safety-orange`, and `mint-blue`) with per-variant colors plus stripe/dot overlays. Unit checks cover the variant factory, browser regression verifies real Rubber Blaster and Bead Cannon runs spawn multiple/all variants, and the full visual runner passes.
+- Added and verified Elemental Polish: Frost Puff is a reduced-flash held cold tool with frost cone visuals, temporary chilled body overlays, velocity damping, `cold`/`frostPuff` scoring tags, the Frost Test mission and challenge, saved best challenge time, and browser regression for particles, frosted bodies, mood, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Mode Polish: Modes now includes an old-style Gravity submenu with Normal, Low Gravity, and Heavy Gravity entries that change real Matter.js gravity, persist through migrated/current saves, restore after reload, and expose active `aria-pressed` menu state. Browser regression covers default gravity, migration default, Low Gravity selection, active state, saved value, engine gravity value, and reload restoration. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Room Polish: Settings > Asset pack now includes a compact room browser with palette buttons for every loaded built-in and private-imported room pack. Selecting a room from the browser updates the dropdown, preview, room palette, toast, and saved asset-pack state; private room browser entries persist through reload. Browser regression covers default room browser population, Classic Desktop browser selection, active/pressed state, imported Private Pack browser insertion, and reload restoration. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Prop Polish: Foam Brick now carries `foam-brick-lined` cosmetic metadata with mortar/chip overlay details, Stage Weight now carries `stage-weight-anvil` cosmetic metadata with bevel/stamp overlay details, and the existing Spark Wand stun impulse was slightly strengthened to remove a regression flake. Unit checks cover the new factory metadata, browser regression requires all four classic prop throws to carry cosmetic IDs, and the full visual runner passes.
+- Added and verified Projectile Expansion: Foam Dart is a new aim-and-release projectile with a dedicated Matter body factory, `foam-dart` cosmetic overlay, launch scoring, sticky buddy-hit state, Dart Board mission coverage, and direct browser regression for spawned dart bodies, stuck state, hit/launch replay events, shared `foamDart` tags, particles, cosmetics, and finite cash gain. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Elemental Expansion: Goo Mist is a reduced-flash held elemental tool with green mist visuals, temporary slippery body coating, lowered friction, sideways shove, `goo`/`slippery`/`gooMist` scoring tags, Slip Test mission/challenge coverage, saved best challenge time, and browser regression for particles, coated bodies, friction state, mood, movement, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Physics Variant Polish: Robot now applies a `robot-heavy` physics variant with higher density and lower bounce, while Gelatin Blob applies a `gelatin-bouncy` physics variant with lower density and higher bounce. Skin physics is applied on equip and new buddy spawn, falls back to standard physics for other skins, and browser regression verifies Robot/Gelatin through the real shop path with saved selection, variant metadata, density changes, restitution changes, and equipped state. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Room Expansion: room packs now carry motif metadata and Settings > Asset pack renders richer mini-room thumbnails with grid, floor, accent, buddy silhouette, and motif-specific lab/neon/office/arcade/desktop details while retaining palette swatches. Built-in packs and private imported packs preserve thumbnail motifs through selection and reload. Unit checks cover sanitized motif retention, asset validation covers updated pack JSON, and browser regression asserts default, Classic Desktop, and private-import thumbnail motifs. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Prop Expansion: Beach Ball is a new legally distinct light/bouncy prop with a dedicated Matter body factory, `beach-ball-striped` cosmetic metadata and render overlay, aim-and-release launch behavior, `beachball` mission hook, shared `propVariant` scoring/challenge support, and browser regression for tool unlock, spawn speed, cosmetic metadata, replay tags, mission coverage, finite cash, and visual runner stability. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Classic Buddy Feel: the default buddy now starts in the old lower-left stage position at a smaller classic scale, uses looser/damped ragdoll constraints for a floppier early-web-toy feel, and renders a glossy gray segmented overlay with a simple mood-aware face while preserving the 15-body physics skeleton. Browser regression asserts classic body metadata, lower-left spawn, smaller head scale, and damping, and the full visual runner passes.
+- Added and verified Projectile Variant Polish: Cork Popper is a new legally distinct aim-and-release projectile with a dedicated Matter body factory, `cork-popper` cosmetic overlay, launch scoring, Buddy-hit collision scoring, pop impulse, Cork Shots mission coverage, and direct browser regression for spawned cork bodies, hit state, replay tags, particles, cosmetics, movement, and finite cash gain. Verification also hardened the regression by clearing leftover prop bodies before Hand flick checks and made Black Hole keep the intended afraid mood while active. Full `tests/run-regression.ps1 -Visual` passes.
+
+Done assets:
+
+- `assets/packs/neon-lab/pack.json`
+- `assets/packs/neon-lab/skins/circuit.svg`
+- `assets/packs/neon-lab/skins/hazmat.svg`
+- `assets/packs/retro-office/pack.json`
+- `assets/packs/retro-office/skins/intern.svg`
+- `assets/packs/retro-office/skins/crt.svg`
+- `assets/packs/template/pack.json`
+- `assets/packs/template/skins/sample.svg`
+- `tests/baselines/visual/stage.png`
+- `tests/baselines/visual/radial-wheel.png`
+- `tests/baselines/visual/shop.png`
+- `tests/baselines/visual/textured-skin.png`
+- `js/feedback.js`
+- `js/progression.js`
+- `js/tool-behaviors.js`
+- `js/ui-bindings.js`
+- `js/transfer.js`
+- `js/challenges.js`
+- `js/asset-packs.js`
+- `js/content.js`
+- `tests/unit-modules.mjs`
+- `.gitignore`
+- `assets/packs/classic-arcade/pack.json`
+- `assets/packs/classic-arcade/skins/dance-kid.svg`
+- `assets/packs/classic-arcade/skins/campaign-pal.svg`
+- `assets/packs/classic-arcade/skins/moon-boot.svg`
+- `assets/packs/classic-arcade/skins/gloom-friend.svg`
+- `assets/packs/classic-arcade/skins/fruit-clock.svg`
+- `assets/packs/classic-arcade/skins/everyday-pal.svg`
+- `assets/packs/classic-desktop/pack.json`
+- `assets/packs/classic-desktop/skins/desk-pal.svg`
+- `docs/asset-packs.md`
+- `docs/content-completion-matrix.md`
+- `main.js`
+- `tests/browser-regression.py`
+
+In progress:
+
+- None.
+
+Next improvements:
+
+- After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
+- Next queue item is `Elemental Variant Polish`: add one more elemental variant only after defining status metadata, real physics/state change, replay tags, mission or challenge hooks, regression coverage, accessibility behavior, and matrix status before moving on.
+
+Process notes:
+
+- Finish one queue item completely before moving to the next.
+- Verify with `node --check` plus browser regression after gameplay changes.
+- When verification exposes weak behavior, fix the behavior first and update this tracker after the fix passes.
+- Prefer small module extractions with dependency injection and direct regression coverage over broad rewrites.
+- After a queue group is cleared, start the next queue with testability gaps before adding new gameplay surface area.
+- Do not mark an extraction complete unless the full runner passes or the tracker explicitly records the verification blocker.
+- For UI preview work, cover default content, built-in pack switching, and private import behavior before marking the queue item done.
+- For cosmetic-only work, attach explicit metadata that regression can assert, then verify the rendered overlay through the full visual runner.
+- For projectile visual variants, assert both normal tool use and challenge use so cosmetic rotation stays tied to real gameplay.
+- For elemental variants, verify five surfaces together: direct tool effect, replay tags, challenge completion, mission rotation, and visible non-flashy particles/status overlays.
+- For mode menu work, only add entries that alter real simulation or settings state, then assert default, active state, save migration, and reload behavior.
+- For room browser work, assert built-in room population, direct browser selection, active state, private import insertion, and reload restoration.
+- For prop polish work, every spawned prop factory should expose cosmetic metadata that unit tests and real throw regression both assert.
+- For projectile expansion, cover factory metadata, direct launch behavior, collision behavior, replay tags, mission coverage, and visual particles before marking the item done.
+- For elemental expansion, assert status-state metadata plus a real physics change, not just particles and score events.
+- For physics variant polish, test skin selection through the shop and assert measurable Matter body values, not only selected skin IDs.
+- For room expansion, assert motif metadata in sanitized packs plus actual DOM thumbnails for default, built-in selected, private-imported, and reload paths.
+- For prop expansion, add the new prop to both direct throw regression and mission coverage; require cosmetic metadata plus replay event/tag assertions.
+- For classic buddy feel work, verify both appearance metadata and measurable physics/spawn values so visual style changes do not silently detach from the ragdoll behavior.
+- For projectile variant polish, isolate prior projectile bodies before direct collision tests and assert both launch and hit events so path blockage cannot hide a weak behavior.

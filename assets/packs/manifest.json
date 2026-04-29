@@ -1,0 +1,24 @@
+{
+  "packs": [
+    {
+      "id": "neon-lab",
+      "name": "Neon Lab",
+      "path": "assets/packs/neon-lab/pack.json"
+    },
+    {
+      "id": "retro-office",
+      "name": "Retro Office",
+      "path": "assets/packs/retro-office/pack.json"
+    },
+    {
+      "id": "classic-arcade",
+      "name": "Classic Arcade",
+      "path": "assets/packs/classic-arcade/pack.json"
+    },
+    {
+      "id": "classic-desktop",
+      "name": "Classic Desktop",
+      "path": "assets/packs/classic-desktop/pack.json"
+    }
+  ]
+}

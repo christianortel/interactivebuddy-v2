@@ -1,0 +1,36 @@
+{
+  "id": "classic-desktop",
+  "name": "Classic Desktop",
+  "description": "A quiet gray desktop-room pack inspired by early sandbox toy rooms.",
+  "room": {
+    "background": "#9aa59d",
+    "grid": "#eef4ed",
+    "floor": "#56615a",
+    "accent": "#f3f0dc",
+    "motif": "desktop"
+  },
+  "skins": [
+    {
+      "id": "classic-desktop:desk-pal",
+      "name": "Desk Pal",
+      "cost": 360,
+      "color": "#d7ddd8",
+      "accent": "#f3f0dc",
+      "texture": "assets/packs/classic-desktop/skins/desk-pal.svg",
+      "textureScale": 0.72,
+      "description": "An original neutral desktop outfit for classic gray-room sessions."
+    }
+  ],
+  "audioPacks": {
+    "desktopTap": {
+      "name": "Desktop Tap",
+      "master": 0.15,
+      "pitch": 0.9,
+      "toneWave": "triangle",
+      "impactWave": "triangle",
+      "zapWave": "square",
+      "noiseFilter": 0.74,
+      "decay": 1.22
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "id": "classic-arcade",
+  "name": "Classic Arcade",
+  "description": "Original retro-inspired skins and audio for classic sandbox sessions.",
+  "room": {
+    "background": "#8f9a91",
+    "grid": "#f3f6ef",
+    "floor": "#5d6960",
+    "accent": "#c8ff9a",
+    "motif": "arcade"
+  },
+  "skins": [
+    {
+      "id": "classic-arcade:dance-kid",
+      "name": "Awkward Dance Buddy",
+      "cost": 260,
+      "color": "#efe3d1",
+      "accent": "#7d5a3b",
+      "texture": "assets/packs/classic-arcade/skins/dance-kid.svg",
+      "textureScale": 0.72,
+      "description": "A legally distinct retro school-dance costume."
+    },
+    {
+      "id": "classic-arcade:campaign-pal",
+      "name": "Campaign Pal",
+      "cost": 420,
+      "color": "#d7e7ff",
+      "accent": "#e45f5f",
+      "texture": "assets/packs/classic-arcade/skins/campaign-pal.svg",
+      "textureScale": 0.72,
+      "description": "A handmade election-button outfit for slapstick rallies."
+    },
+    {
+      "id": "classic-arcade:moon-boot",
+      "name": "Moon Boot Buddy",
+      "cost": 560,
+      "color": "#f4f1dd",
+      "accent": "#6e8ca0",
+      "texture": "assets/packs/classic-arcade/skins/moon-boot.svg",
+      "textureScale": 0.72,
+      "description": "A puffy boot explorer suit with extra visual bounce."
+    },
+    {
+      "id": "classic-arcade:gloom-friend",
+      "name": "Gloom Friend",
+      "cost": 610,
+      "color": "#d9d1df",
+      "accent": "#a77bd6",
+      "texture": "assets/packs/classic-arcade/skins/gloom-friend.svg",
+      "textureScale": 0.72,
+      "description": "An original moody outfit for dramatic sandbox reactions."
+    },
+    {
+      "id": "classic-arcade:fruit-clock",
+      "name": "Fruit Clock",
+      "cost": 680,
+      "color": "#f2d7d4",
+      "accent": "#d9415d",
+      "texture": "assets/packs/classic-arcade/skins/fruit-clock.svg",
+      "textureScale": 0.72,
+      "description": "A legally distinct fruit-and-clock mascot costume."
+    },
+    {
+      "id": "classic-arcade:everyday-pal",
+      "name": "Everyday Pal",
+      "cost": 520,
+      "color": "#e5ded4",
+      "accent": "#537aa3",
+      "texture": "assets/packs/classic-arcade/skins/everyday-pal.svg",
+      "textureScale": 0.72,
+      "description": "A plain friendly outfit inspired by everyday avatars."
+    }
+  ],
+  "audioPacks": {
+    "cabinetThunk": {
+      "name": "Cabinet Thunk",
+      "master": 0.2,
+      "pitch": 0.94,
+      "toneWave": "triangle",
+      "impactWave": "sawtooth",
+      "zapWave": "square",
+      "noiseFilter": 0.86,
+      "decay": 1.08
+    }
+  }
+}
