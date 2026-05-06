@@ -1,0 +1,47 @@
+{
+  "id": "interactive-buddy-private",
+  "name": "Interactive Buddy Private",
+  "description": "Local private replacement pack for the offline fan build.",
+  "room": {
+    "background": "#87968e",
+    "grid": "#e8f7f4",
+    "floor": "#64736b",
+    "accent": "#98f17f",
+    "motif": "desktop"
+  },
+  "skins": [
+    {
+      "id": "interactive-buddy-private:default",
+      "name": "Private Default",
+      "cost": 0,
+      "color": "#d6ded9",
+      "accent": "#f5faf7",
+      "textureDataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMjQiIGZpbGw9IiNkNmRlZDkiLz48L3N2Zz4=",
+      "textureScale": 0.72,
+      "description": "Private default buddy texture."
+    }
+  ],
+  "audioPacks": {
+    "interactiveBuddyPrivate": {
+      "name": "Interactive Buddy Private",
+      "master": 0.22,
+      "pitch": 1,
+      "toneWave": "triangle",
+      "impactWave": "triangle",
+      "zapWave": "square",
+      "noiseFilter": 1,
+      "decay": 1,
+      "samples": {
+        "impact": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "explosion": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "shock": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "tickle": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "gift": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "boombox": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "paint": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "unlock": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "select": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
+      }
+    }
+  }
+}

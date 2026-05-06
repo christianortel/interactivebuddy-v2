@@ -12,17 +12,44 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Install Node dependencies
+        run: npm ci
 
       - name: Install Playwright
         run: |
           python -m pip install --upgrade pip
           python -m pip install playwright
           python -m playwright install --with-deps chromium
+          npx playwright install chromium
+
+      - name: Run static checks
+        shell: pwsh
+        run: |
+          npm run build
+          npm run test:unit
+          npm run test:assets
+          npm run test:runtime
+          npm run test:static-smoke
+
+      - name: Run CDP browser smoke
+        shell: pwsh
+        run: |
+          $env:BUDDY_CHROME_PATH = node ./tests/resolve-playwright-chromium.mjs
+          npm run test:browser-smoke
 
       - name: Run browser regression
         shell: pwsh
-        run: ./tests/run-regression.ps1
+        run: |
+          npm run build
+          ./tests/run-regression.ps1

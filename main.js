@@ -12,6 +12,45 @@ import { createChallengeController } from "./js/challenges.js";
 import { FeedbackEngine } from "./js/feedback.js";
 import { createProgressionController } from "./js/progression.js";
 import { readJson, writeJson } from "./js/storage.js";
+import { isPrimaryPointerButton, isResetKey, isTouchPointerType } from "./src/input/InputManager.ts";
+import { getAssetPackImportToast, getAssetPackOption, getAssetPackSelectedToast, getAudioPackOption, getAudioPackSelectedToast, getSelectedAssetPackId, getSelectedAudioPackId, parseImportedAssetPackText, resolveAssetPack, resolveAudioPack } from "./src/runtime/assetPackRuntime.ts";
+import { getChallengeModeId, getChallengeModeOption } from "./src/runtime/challengeState.ts";
+import { getClampedOverlayPosition, getOverlayCssPosition, screenPointToWorld } from "./src/runtime/coordinates.ts";
+import { advanceTimedEffectLife, decayShakeAmount, getBoltMidpoint, getBurstParticle, getConfettiBurstParticle, getExplosionArmScore, getExplosionBaseForce, getExplosionBurstCount, getExplosionFalloff, getExplosionForceMagnitude, getExplosionRadius, getExplosionScore, getExplosionScoreBase, getExplosionTriggerTime, getImpactBurstCount, getMoneySparkleParticle, getMusicNoteParticle, getParticleAlpha, getParticlePositionAfterDelta, getParticleVelocityYAfterGravity, getShakeOffset, getShakeTransform, getTreatCrumbParticle, increaseShakeAmount, shouldKeepDecal, shouldKeepTimedEffect } from "./src/runtime/effectsMath.ts";
+import { getGiftCost } from "./src/runtime/economyMath.ts";
+import { canUseHaptics, getFeedbackPlayback, getFeedbackPulsePattern } from "./src/runtime/feedbackMapping.ts";
+import { getFpsCounterPresentation, getFpsSamplePresentation, getHudActionToast, getHudCorePresentation, getPowerControlPresentation, getToastHiddenPresentation, getToastPresentation } from "./src/runtime/hudPresentation.ts";
+import { getCanvasFitStyles } from "./src/runtime/layout.ts";
+import { getClampedLiquidLevel, getLiquidAngularDampingFactor, getLiquidBuoyancyForce, getLiquidDragForce, getLiquidDrainScore, getLiquidDrainToast, getLiquidFillScore, getLiquidFillToast, getLiquidFriction, getLiquidScore, getLiquidScoreCooldown, getLiquidSelectedToast, getLiquidSubmersion, getLiquidWaveY, getSelectedLiquidTypeId, resolveLiquidType, shouldDrainLiquid } from "./src/runtime/liquidMath.ts";
+import { getBooleanModeButtonStates, getCeilingToggleToast, getCeilingY, getFpsCounterToggleToast, getGravityModeButtonState, getGravityModeConfig, getGravityModeToast, getRopeAnchorX, getRopeAnchorY, getRopeLength, getRopeStiffness, getSlowMoTimeScale, getSlowMoToggleToast, normalizeGravityMode, shouldPruneRopes } from "./src/runtime/modeSettings.ts";
+import { getMoodHudPresentation } from "./src/runtime/moodPresentation.ts";
+import { clampImpactScore, clampVector, getClampedLaunchDistance, getCombinedBounds, getDampedAngularVelocity, getDirectionOrFallback, getDistanceWithMinimum, getEquivalentMass, getFiniteMass, getFrameScale, getGrabCorrectionMagnitude, getGrabFrictionAir, getHandDragElapsed, getHandDragFlickScale, getHandFlickAngularVelocity, getHorizontalSpinSign, getImpactScore, getLaunchSpeed, getNextWallRecoveryCooldown, getPoweredRadius, getProjectileImpulseMagnitude, getRecoveredVelocityComponent, getScaledVelocity, getSelfRightingAngularVelocity, getSelfRightingForce, getSignedAngularVelocity, getSpinAngularVelocity, getThrowScale, getVectorAngle, getVelocityAfterDirectionalImpulse, getWallRecoveryOffset, isNearFloor, scaleStaticImpactScore, shouldApplySelfRighting, shouldReplaceNearest, shouldSkipWallRecovery, shouldUseLaunchDirection, shouldUseStepFlick } from "./src/runtime/physicsMath.ts";
+import {
+  advanceAirborneBank,
+  calculateReward,
+  calculateXpGain,
+  decayToolHeat,
+  getChallengeRecordAmount,
+  getAirborneScore,
+  getComboMultiplier,
+  getFeedbackIntensity,
+  getScoreAntiGrind,
+  incrementToolHeat,
+  shouldAwardAirborne,
+  shouldSkipAirborneForSpawnGrace
+} from "./src/runtime/scoringMath.ts";
+import { getRoomApplyPresentation, getRoomBrowserButtonPresentation, getRoomPreviewShellPresentation, getRoomSwatchPresentation, getRoomSwatches, getRoomThumbnailPresentation } from "./src/runtime/roomPresentation.ts";
+import { createRuntimeSavePayload, createScenePreset, getScenePresetLoadToast, getScenePresetSaveToast, migrateRuntimeSave, parseStoredScenePreset } from "./src/runtime/saveState.ts";
+import { getAppliedSkinPhysics, getClassicFaceRenderGeometry, getClassicPartRenderGeometry, getRuntimeSkin, getRuntimeSkinPhysics, getSkinBodyRender } from "./src/runtime/skinRuntime.ts";
+import {
+  getRuntimeTool,
+  getRuntimeToolCategories,
+  getRuntimeToolsByCategory,
+  getToolIdForNumberKey
+} from "./src/runtime/toolCatalog.ts";
+import { advanceConveyorPhase, getAnvilThrowScore, getBallThrowScore, getBeachBallThrowScore, getBlackHoleCooldown, getBlackHoleOrbitForceMagnitude, getBlackHolePullForceMagnitude, getBlackHoleRadius, getBlackHoleScore, getBoomboxAngularVelocity, getBoomboxBeatInterval, getBoomboxFalloff, getBoomboxInitialBeat, getBoomboxLife, getBoomboxNoteCount, getBoomboxPlacementScore, getBoomboxPulseForce, getBoomboxRange, getBoomboxScore, getBoomboxSide, getBowlingBallThrowScore, getBoxingGloveThrowScore, getBrickThrowScore, getBumperPlacementScore, getCannonballFireScore, getConeFalloff, getConfettiForceMagnitude, getConfettiLiftVector, getConfettiPopperRange, getConfettiScore, getConveyorCooldown, getConveyorDirection, getConveyorForce, getConveyorPlacementScore, getConveyorScore, getCorkPopperFireScore, getCorkPopperHitScore, getCrateThrowScore, getFanForceMagnitude, getFanRadius, getFanScore, getFanScoreCooldown, getFoamDartFireScore, getFoamDartHitScore, getFrostAngularVelocityScale, getFrostEffectDuration, getFrostPuffCooldown, getFrostPuffForce, getFrostPuffParticle, getFrostPuffRadius, getFrostPuffScore, getFrostVelocityScale, getGiftScore, getGooAngularVelocity, getGooEffectDuration, getGooFriction, getGooFrictionAir, getGooMistCooldown, getGooMistForce, getGooMistParticle, getGooMistRadius, getGooMistScore, getHandFlickScore, getHeatConeCooldown, getHeatConeForce, getHeatConeParticle, getHeatConeRadius, getHeatConeScore, getMagnetAngularVelocity, getMagnetCooldown, getMagnetForceMagnitude, getMagnetRadius, getMagnetRingEffect, getMagnetScore, getMoneyDropScore, getNudgeFalloff, getNudgeForce, getNudgeSide, getPaintballFireScore, getPaintballHitScore, getPlatformPlacementScore, getPlungerShotFireScore, getPlungerShotHitScore, getPlungerSuctionDuration, getPulseAngularVelocity, getPulseBeamCooldown, getPulseBeamFalloff, getPulseBeamForce, getPulseBeamParticle, getPulseBeamRadius, getPulseBeamScore, getPulseBeamSideDistance, getPulseEffectDuration, getRandomTossVelocity, getRepulsorAngularVelocity, getRepulsorCooldown, getRepulsorForceMagnitude, getRepulsorRadius, getRepulsorRingEffect, getRepulsorScore, getRopeAttachScore, getRubberCooldown, getRubberPelletSpeed, getRubberScore, getSparkWandAngularVelocity, getSparkWandCooldown, getSparkWandForceMagnitude, getSparkWandJitter, getSparkWandRange, getSparkWandScore, getStarShotFireScore, getStarShotHitScore, getTeslaForceMagnitude, getTeslaPlacementScore, getTeslaPulseInterval, getTeslaRange, getTeslaScore, getTeslaTargetLimit, getTickleImpulseMagnitude, getTickleScore, getTrampolinePlacementScore, getTreatScore, getVacuumCooldown, getVacuumForceMagnitude, getVacuumRadius, getVacuumRingEffect, getVacuumScore, incrementRubberBurstShots, isMagneticBodyLabel, shouldConveyorAffectBody, shouldSpawnSparkWandIdleBurst } from "./src/runtime/toolActionMath.ts";
+import { getCircularCosmeticArc, getCosmeticPolarPoint, getCosmeticPolarSegment, getExplosiveArmedToast, getLockedToolToast, getMenuCategoryPresentation, getMouseConstraintConfig, getRadialToolButtonPresentation, getRadialToolButtonState, getRadialWheelCenterLabel, getRadialWheelVisibilityPresentation, getRuntimeToolMetaLabel, getShopMenuButtonPresentation, getToolButtonState, getToolRailButtonPresentation, getToolSelectionPanel, getToolUseToast } from "./src/runtime/toolPresentation.ts";
+import { decrementTimer, extendTimer, isTimerExpired } from "./src/runtime/timerMath.ts";
 import {
   createAnvilBody,
   createBallBody,
@@ -20,16 +59,27 @@ import {
   createBowlingBallBody,
   createBoxingGloveBody,
   createBrickBody,
+  createCannonballBody,
   createConfettiPopperBody,
   createCorkBody,
+  createCrateBody,
+  createFirecrackerBody,
   createFoamDartBody,
   createGiftBody,
   createGrenadeBody,
+  createLargeBombBody,
+  createMineBody,
+  createMoneyDropBody,
   createPaintballBody,
+  createBumperBody,
+  createConveyorBody,
   createPlungerBody,
+  createPlatformBody,
   createRubberPelletBody,
   createStarBody,
+  createStickyBombBody,
   createTeslaBody,
+  createTreatBody,
   createTrampolineBody,
   isInstantPlacementTool
 } from "./js/tool-behaviors.js";
@@ -58,6 +108,7 @@ const COMBO_WINDOW_MS = 4200;
 const MAX_PROPS = 85;
 const REPLAY_BUFFER_MS = 20000;
 const ASSET_PACK_MANIFEST_URL = "assets/packs/manifest.json";
+const PRIVATE_ASSET_PACK_MANIFEST_URL = "assets/private/manifest.json";
 const SAVE_VERSION = 2;
 const STORAGE_KEY = "buddyLab2026.save.v1";
 const CLASSIC_BUDDY_SCALE = 0.78;
@@ -81,18 +132,6 @@ const CLASSIC_PART_ORDER = {
   buddy_pelvis: 7,
   buddy_torso: 8,
   buddy_head: 9
-};
-const GRAVITY_MODES = {
-  normal: { label: "Normal", value: 1 },
-  low: { label: "Low Gravity", value: 0.45 },
-  heavy: { label: "Heavy Gravity", value: 1.55 }
-};
-const SKIN_PHYSICS = {
-  classic: { density: 1, frictionAir: 1, restitution: 1, label: "standard" },
-  robot: { density: 1.45, frictionAir: 1.35, restitution: 0.72, label: "robot-heavy" },
-  gelatin: { density: 0.82, frictionAir: 0.72, restitution: 1.75, label: "gelatin-bouncy" },
-  astronaut: { density: 0.9, frictionAir: 0.55, restitution: 1.12, label: "astronaut-float" },
-  "classic-arcade:moon-boot": { density: 0.96, frictionAir: 0.82, restitution: 1.46, label: "moon-boot-spring" }
 };
 
 let SKIN_DEFS = [...DEFAULT_SKIN_DEFS];
@@ -125,7 +164,7 @@ const controls = getControlBindings();
 
 const feedback = new FeedbackEngine({
   getSettings: () => state.settings,
-  getPack: () => AUDIO_PACKS[state.settings.audioPack] || AUDIO_PACKS.classic,
+  getPack: () => resolveAudioPack(AUDIO_PACKS, state.settings.audioPack),
   hasUserActivation
 });
 
@@ -177,7 +216,7 @@ const state = {
   comboTimer: 0,
   mood: "Calm",
   moodTimer: 0,
-  power: Number(hud.power.value),
+  power: getPowerControlPresentation(hud.power.value).power,
   tool: "hand",
   unlockedTools: new Set(["hand", "ball", "rope", "water"]),
   unlockedSkins: new Set(["classic"]),
@@ -197,6 +236,10 @@ const state = {
   aimVector: null,
   fanScoreCooldown: 0,
   blackHoleCooldown: 0,
+  vacuumCooldown: 0,
+  repulsorCooldown: 0,
+  magnetCooldown: 0,
+  conveyorCooldown: 0,
   teslaCooldown: 0,
   rubberCooldown: 0,
   rubberBurstShots: 0,
@@ -246,7 +289,10 @@ const assetPackFlow = createAssetPackController({
   state,
   skinDefs: SKIN_DEFS,
   audioPacks: AUDIO_PACKS,
-  manifestUrl: ASSET_PACK_MANIFEST_URL
+  manifests: [
+    { url: ASSET_PACK_MANIFEST_URL },
+    { url: PRIVATE_ASSET_PACK_MANIFEST_URL, optional: true }
+  ]
 });
 
 const progression = createProgressionController({
@@ -364,21 +410,13 @@ function loadGame() {
     }
   });
   state.settings = { ...state.settings, ...(migrated.settings || {}) };
-  if (!state.assetPacks.some((pack) => pack.id === state.settings.assetPack)) {
-    state.settings.assetPack = "base";
-  }
-  if (!AUDIO_PACKS[state.settings.audioPack]) {
-    state.settings.audioPack = "classic";
-  }
-  if (!LIQUID_TYPES[state.settings.liquidType]) {
-    state.settings.liquidType = "water";
-  }
+  state.settings.assetPack = getSelectedAssetPackId(state.assetPacks, state.settings.assetPack);
+  state.settings.audioPack = getSelectedAudioPackId(AUDIO_PACKS, state.settings.audioPack);
+  state.settings.liquidType = getSelectedLiquidTypeId(LIQUID_TYPES, state.settings.liquidType);
   state.liquid.type = state.settings.liquidType;
   state.challenge.bests = save.challengeBests || {};
   state.challenge.bests = migrated.challengeBests || {};
-  if (CHALLENGE_MODES[migrated.challengeMode]) {
-    state.challenge.mode = migrated.challengeMode;
-  }
+  state.challenge.mode = getChallengeModeId(CHALLENGE_MODES, migrated.challengeMode);
   state.tool = state.unlockedTools.has(migrated.tool) ? migrated.tool : "hand";
   if (migrated.version !== save.version) {
     saveGame();
@@ -386,32 +424,7 @@ function loadGame() {
 }
 
 function migrateSave(save) {
-  const settings = { ...(save.settings || {}) };
-  return {
-    version: SAVE_VERSION,
-    cash: save.cash,
-    xp: save.xp,
-    unlockedTools: save.unlockedTools || ["hand", "ball", "rope", "water"],
-    unlockedSkins: save.unlockedSkins || ["classic"],
-    selectedSkin: save.selectedSkin || "classic",
-    settings: {
-      reducedFlash: Boolean(settings.reducedFlash),
-      slapstick: settings.slapstick !== false,
-      audio: settings.audio !== false,
-      haptics: settings.haptics !== false,
-      assetPack: settings.assetPack || "base",
-      audioPack: settings.audioPack || "classic",
-      liquidType: settings.liquidType || "water",
-      slowMo: Boolean(settings.slowMo),
-      ceilingOpen: Boolean(settings.ceilingOpen),
-      gravityMode: GRAVITY_MODES[settings.gravityMode] ? settings.gravityMode : "normal",
-      fpsCounter: Boolean(settings.fpsCounter)
-    },
-    customAssetPacks: Array.isArray(save.customAssetPacks) ? save.customAssetPacks : [],
-    challengeMode: save.challengeMode || "free",
-    challengeBests: save.challengeBests || {},
-    tool: save.tool || "hand"
-  };
+  return migrateRuntimeSave(save, SAVE_VERSION);
 }
 
 function saveGame() {
@@ -419,19 +432,18 @@ function saveGame() {
 }
 
 function createSavePayload() {
-  return {
-    version: SAVE_VERSION,
+  return createRuntimeSavePayload({
     cash: state.cash,
     xp: state.xp,
-    unlockedTools: [...state.unlockedTools],
-    unlockedSkins: [...state.unlockedSkins],
+    unlockedTools: state.unlockedTools,
+    unlockedSkins: state.unlockedSkins,
     selectedSkin: state.selectedSkin,
     settings: state.settings,
     customAssetPacks: state.customAssetPacks,
     challengeMode: state.challenge.mode,
     challengeBests: state.challenge.bests,
     tool: state.tool
-  };
+  }, SAVE_VERSION);
 }
 
 function createStageBounds() {
@@ -589,14 +601,16 @@ function createBuddy(x, y, scale = 1) {
 
 function setupInteractions() {
   window.addEventListener("resize", resizeStage);
+  setupMenuInteractions();
 
   hud.radialWheel.addEventListener("pointerdown", (event) => {
     event.stopPropagation();
   });
 
   hud.power.addEventListener("input", (event) => {
-    state.power = Number(event.target.value);
-    hud.powerReadout.textContent = String(state.power);
+    const powerView = getPowerControlPresentation(event.target.value);
+    state.power = powerView.power;
+    hud.powerReadout.textContent = powerView.label;
   });
 
   controls.reset.addEventListener("click", resetScene);
@@ -604,7 +618,7 @@ function setupInteractions() {
   controls.exportReplay.addEventListener("click", exportReplayVideo);
   controls.newBuddy.addEventListener("click", () => {
     spawnNewBuddy();
-    toast("New buddy spawned.");
+    toast(getHudActionToast("newBuddy"));
   });
   controls.replay.addEventListener("click", showReplay);
   controls.saveScene.addEventListener("click", savePreset);
@@ -631,10 +645,10 @@ function setupInteractions() {
   controls.goreToggle.checked = state.settings.slapstick;
   controls.audioToggle.checked = state.settings.audio;
   controls.hapticsToggle.checked = state.settings.haptics;
-  controls.assetPack.value = state.settings.assetPack;
-  controls.audioPack.value = AUDIO_PACKS[state.settings.audioPack] ? state.settings.audioPack : "classic";
-  controls.liquidType.value = LIQUID_TYPES[state.settings.liquidType] ? state.settings.liquidType : "water";
-  controls.challengeMode.value = CHALLENGE_MODES[state.challenge.mode] ? state.challenge.mode : "free";
+  controls.assetPack.value = getSelectedAssetPackId(state.assetPacks, state.settings.assetPack);
+  controls.audioPack.value = getSelectedAudioPackId(AUDIO_PACKS, state.settings.audioPack);
+  controls.liquidType.value = getSelectedLiquidTypeId(LIQUID_TYPES, state.settings.liquidType);
+  controls.challengeMode.value = getChallengeModeId(CHALLENGE_MODES, state.challenge.mode);
   updateFpsCounterVisibility();
   updateModeButtonStates();
   controls.reducedFlash.addEventListener("change", () => {
@@ -664,41 +678,38 @@ function setupInteractions() {
     selectRoomPack(controls.assetPack.value);
   });
   controls.audioPack.addEventListener("change", () => {
-    state.settings.audioPack = AUDIO_PACKS[controls.audioPack.value] ? controls.audioPack.value : "classic";
+    state.settings.audioPack = getSelectedAudioPackId(AUDIO_PACKS, controls.audioPack.value);
     feedback.resume();
     feedback.play("unlock", 0.75);
-    toast(`${feedback.pack().name} audio pack selected.`);
+    toast(getAudioPackSelectedToast(feedback.pack().name));
     saveGame();
   });
   controls.liquidType.addEventListener("change", () => {
-    state.settings.liquidType = LIQUID_TYPES[controls.liquidType.value] ? controls.liquidType.value : "water";
+    state.settings.liquidType = getSelectedLiquidTypeId(LIQUID_TYPES, controls.liquidType.value);
     state.liquid.type = state.settings.liquidType;
-    toast(`${getLiquidType().name} selected.`);
+    toast(getLiquidSelectedToast(getLiquidType().name));
     saveGame();
   });
 
   window.addEventListener("keydown", (event) => {
-    const number = Number(event.key);
-    if (number >= 1 && number <= TOOL_DEFS.length) {
+    const toolId = getToolIdForNumberKey(TOOL_DEFS, event.key);
+    if (toolId) {
       feedback.resume();
-      const tool = TOOL_DEFS[number - 1];
-      if (tool) {
-        trySelectTool(tool.id);
-      }
+      trySelectTool(toolId);
     }
-    if (event.key === "r" || event.key === "R") {
+    if (isResetKey(event.key)) {
       resetScene();
     }
   });
 
   canvas.addEventListener("pointerdown", (event) => {
-    if (event.button !== 0) {
+    if (!isPrimaryPointerButton(event.button)) {
       return;
     }
     feedback.resume();
     hideRadialWheel();
     const worldPoint = screenToWorld(event);
-    if (event.pointerType === "touch") {
+    if (isTouchPointerType(event.pointerType)) {
       scheduleTouchWheel(event, worldPoint);
     }
     state.pointerDown = true;
@@ -708,21 +719,39 @@ function setupInteractions() {
     state.pointerDownTime = performance.now();
     state.aimVector = null;
 
-    if (event.pointerType === "touch" && isInstantPlacementTool(state.tool)) {
+    if (isTouchPointerType(event.pointerType) && isInstantPlacementTool(state.tool)) {
       state.pendingTouchInstant = { tool: state.tool, point: worldPoint };
       return;
     }
 
-    if (state.tool === "grenade") {
+    if (state.tool === "firecracker") {
+      spawnFirecracker(worldPoint);
+    } else if (state.tool === "grenade") {
       spawnGrenade(worldPoint);
-    } else if (state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper" || state.tool === "plunger" || state.tool === "starshot") {
+    } else if (state.tool === "mine") {
+      spawnMine(worldPoint);
+    } else if (state.tool === "stickybomb") {
+      spawnStickyBomb(worldPoint);
+    } else if (state.tool === "largebomb") {
+      spawnLargeBomb(worldPoint);
+    } else if (state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper" || state.tool === "plunger" || state.tool === "starshot" || state.tool === "cannonball") {
       state.aimVector = { start: worldPoint, end: worldPoint };
-    } else if (state.tool === "ball" || state.tool === "beachball" || state.tool === "bowling" || state.tool === "brick" || state.tool === "glove" || state.tool === "anvil") {
+    } else if (state.tool === "ball" || state.tool === "beachball" || state.tool === "bowling" || state.tool === "brick" || state.tool === "crate" || state.tool === "glove" || state.tool === "anvil") {
       state.aimVector = { start: worldPoint, end: worldPoint };
     } else if (state.tool === "trampoline") {
       placeTrampoline(worldPoint);
+    } else if (state.tool === "platform") {
+      placePlatform(worldPoint);
+    } else if (state.tool === "bumper") {
+      placeBumper(worldPoint);
+    } else if (state.tool === "conveyor") {
+      placeConveyor(worldPoint);
     } else if (state.tool === "gift") {
       placeGift(worldPoint);
+    } else if (state.tool === "moneydrop") {
+      placeMoneyDrop(worldPoint);
+    } else if (state.tool === "treat") {
+      placeTreat(worldPoint);
     } else if (state.tool === "confetti") {
       placeConfettiPopper(worldPoint);
     } else if (state.tool === "boombox") {
@@ -735,6 +764,12 @@ function setupInteractions() {
       setLiquidLevel(worldPoint);
     } else if (state.tool === "blackhole") {
       setMood("Afraid", 900);
+    } else if (state.tool === "vacuum") {
+      setMood("Surprised", 900);
+    } else if (state.tool === "repulsor") {
+      setMood("Afraid", 900);
+    } else if (state.tool === "magnet") {
+      setMood("Curious", 900);
     } else if (state.tool === "fan") {
       setMood("Curious", 900);
     } else if (state.tool === "rubber") {
@@ -773,7 +808,7 @@ function setupInteractions() {
   });
 
   window.addEventListener("pointerup", (event) => {
-    if (event.button !== 0 || !state.pointerDown) {
+    if (!isPrimaryPointerButton(event.button) || !state.pointerDown) {
       return;
     }
     clearTouchWheelTimer();
@@ -799,6 +834,8 @@ function setupInteractions() {
       spawnBowlingBall(state.pointerStart, endPoint);
     } else if (state.tool === "brick") {
       spawnBrick(state.pointerStart, endPoint);
+    } else if (state.tool === "crate") {
+      spawnCrate(state.pointerStart, endPoint);
     } else if (state.tool === "glove") {
       spawnBoxingGlove(state.pointerStart, endPoint);
     } else if (state.tool === "anvil") {
@@ -813,6 +850,8 @@ function setupInteractions() {
       firePlungerShot(state.pointerStart, endPoint);
     } else if (state.tool === "starshot") {
       fireStarShot(state.pointerStart, endPoint);
+    } else if (state.tool === "cannonball") {
+      fireCannonball(state.pointerStart, endPoint);
     } else if (state.tool === "hand" && elapsed < 210 && distance < 12) {
       tickleAt(endPoint);
     }
@@ -843,6 +882,42 @@ function setupInteractions() {
   });
 }
 
+function setupMenuInteractions() {
+  const menus = [...document.querySelectorAll(".menu")];
+  const closeMenus = (except = null) => {
+    menus.forEach((menu) => {
+      if (menu !== except) {
+        menu.classList.remove("is-open");
+      }
+    });
+  };
+
+  menus.forEach((menu) => {
+    const trigger = menu.querySelector(":scope > button");
+    if (!trigger) {
+      return;
+    }
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const isOpen = menu.classList.contains("is-open");
+      closeMenus(menu);
+      menu.classList.toggle("is-open", !isOpen);
+    });
+  });
+
+  document.addEventListener("pointerdown", (event) => {
+    if (!event.target.closest?.(".menu")) {
+      closeMenus();
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMenus();
+    }
+  });
+}
+
 function setupPhysicsEvents() {
   Events.on(engine, "collisionStart", (event) => {
     for (const pair of event.pairs) {
@@ -867,19 +942,16 @@ function setupPhysicsEvents() {
       }
       const massA = getFiniteMass(bodyA);
       const massB = getFiniteMass(bodyB);
-      const equivalentMass = (massA * massB) / Math.max(massA + massB, 0.01);
-      let impactScore = speed * equivalentMass * 1.9;
-      if (other.isStatic) {
-        impactScore *= other.label === "trampoline" ? 1.15 : 0.38;
-      }
+      const equivalentMass = getEquivalentMass(massA, massB);
+      const impactScore = scaleStaticImpactScore(getImpactScore(speed, equivalentMass), other.isStatic, other.label);
       if (impactScore < 1) {
         continue;
       }
-      const clamped = Math.min(impactScore, 46);
+      const clamped = clampImpactScore(impactScore);
       if (performance.now() >= state.spawnGraceUntil) {
         addScore(clamped, "impact", ["blunt"]);
       }
-      spawnBurst(pair.collision.supports[0] || (buddyA ? bodyA.position : bodyB.position), getSkin().accent, Math.min(10, Math.round(speed)));
+      spawnBurst(pair.collision.supports[0] || (buddyA ? bodyA.position : bodyB.position), getSkin().accent, getImpactBurstCount(speed));
 
       if (state.tool === "blackhole" && state.pointerDown) {
         setMood("Afraid", 1100);
@@ -903,6 +975,15 @@ function setupPhysicsEvents() {
     if (state.tool === "blackhole" && state.pointerDown) {
       applyBlackHole(delta);
     }
+    if (state.tool === "vacuum" && state.pointerDown) {
+      applyVacuum(delta);
+    }
+    if (state.tool === "repulsor" && state.pointerDown) {
+      applyRepulsor(delta);
+    }
+    if (state.tool === "magnet" && state.pointerDown) {
+      applyMagnet(delta);
+    }
     if (state.tool === "rubber" && state.pointerDown) {
       updateRubberBlaster(delta);
     }
@@ -924,6 +1005,7 @@ function setupPhysicsEvents() {
     updateGrenades();
     updateTesla(delta);
     updateBoomboxes(delta);
+    updateConveyors(delta);
     updateLiquid(delta);
     updateParticles(delta);
     updateAirborne(delta);
@@ -941,7 +1023,7 @@ function setupPhysicsEvents() {
     state.grabbedBody = event.body;
     event.body.plugin = event.body.plugin || {};
     event.body.plugin.grabFrictionAir = event.body.frictionAir;
-    event.body.frictionAir = Math.max(event.body.frictionAir || 0, 0.045);
+    event.body.frictionAir = getGrabFrictionAir(event.body.frictionAir);
     setMood("Curious", 700);
   });
 
@@ -957,14 +1039,14 @@ function setupPhysicsEvents() {
     }
     const stepFlick = Vector.sub(state.pointerCurrent, state.pointerPrevious);
     const drag = Vector.sub(state.pointerCurrent, state.pointerStart);
-    const elapsed = Math.max(16, performance.now() - state.pointerDownTime);
-    const totalFlick = Vector.mult(drag, Math.min(1, 140 / elapsed));
-    const flickSource = Vector.magnitude(stepFlick) > Vector.magnitude(totalFlick) ? stepFlick : totalFlick;
+    const elapsed = getHandDragElapsed(performance.now() - state.pointerDownTime);
+    const totalFlick = Vector.mult(drag, getHandDragFlickScale(elapsed));
+    const flickSource = shouldUseStepFlick(Vector.magnitude(stepFlick), Vector.magnitude(totalFlick)) ? stepFlick : totalFlick;
     const flick = clampVector(flickSource, 32);
     if (Vector.magnitude(flick) > 2.5) {
       Body.setVelocity(body, Vector.add(body.velocity, Vector.mult(flick, 0.28)));
-      Body.setAngularVelocity(body, body.angularVelocity + Math.max(-0.35, Math.min(0.35, flick.x * 0.012)));
-      addScore(3 + Vector.magnitude(flick) * 0.08, "throw", ["blunt", "hand"]);
+      Body.setAngularVelocity(body, getHandFlickAngularVelocity(body.angularVelocity, flick.x));
+      addScore(getHandFlickScore(Vector.magnitude(flick)), "throw", ["blunt", "hand"]);
       setMood("Excited", 1100);
     }
     state.grabbedBody = null;
@@ -976,27 +1058,19 @@ function updateGrabAssist(delta) {
   if (state.tool !== "hand" || !body || !isBuddyBody(body)) {
     return;
   }
-  const frameScale = Math.max(0.5, Math.min(1.6, delta / 16.67));
+  const frameScale = getFrameScale(delta);
   Body.setAngularVelocity(body, body.angularVelocity * Math.pow(0.82, frameScale));
   const offset = Vector.sub(state.pointerCurrent, body.position);
   const distance = Vector.magnitude(offset);
   if (distance > 42) {
-    const correction = Vector.mult(Vector.normalise(offset), Math.min(0.0014, distance * 0.000012) * body.mass);
+    const correction = Vector.mult(Vector.normalise(offset), getGrabCorrectionMagnitude(distance, body.mass));
     Body.applyForce(body, body.position, correction);
   }
 }
 
-function clampVector(vector, maxMagnitude) {
-  const magnitude = Vector.magnitude(vector);
-  if (!Number.isFinite(magnitude) || magnitude <= maxMagnitude) {
-    return vector;
-  }
-  return Vector.mult(Vector.normalise(vector), maxMagnitude);
-}
-
 function tickTimers(delta) {
   if (state.comboTimer > 0) {
-    state.comboTimer = Math.max(0, state.comboTimer - delta);
+    state.comboTimer = decrementTimer(state.comboTimer, delta);
     if (state.comboTimer === 0) {
       state.comboCount = 0;
     }
@@ -1015,6 +1089,18 @@ function tickTimers(delta) {
   if (state.blackHoleCooldown > 0) {
     state.blackHoleCooldown -= delta;
   }
+  if (state.vacuumCooldown > 0) {
+    state.vacuumCooldown -= delta;
+  }
+  if (state.repulsorCooldown > 0) {
+    state.repulsorCooldown -= delta;
+  }
+  if (state.magnetCooldown > 0) {
+    state.magnetCooldown -= delta;
+  }
+  if (state.conveyorCooldown > 0) {
+    state.conveyorCooldown -= delta;
+  }
   if (state.teslaCooldown > 0) {
     state.teslaCooldown -= delta;
   }
@@ -1022,7 +1108,7 @@ function tickTimers(delta) {
     state.rubberCooldown -= delta;
   }
   if (state.rubberBurstWindow > 0) {
-    state.rubberBurstWindow = Math.max(0, state.rubberBurstWindow - delta);
+    state.rubberBurstWindow = decrementTimer(state.rubberBurstWindow, delta);
     if (state.rubberBurstWindow === 0) {
       state.rubberBurstShots = 0;
     }
@@ -1046,12 +1132,12 @@ function tickTimers(delta) {
     state.liquidScoreCooldown -= delta;
   }
   if (state.shake > 0) {
-    state.shake = Math.max(0, state.shake - delta * 0.03);
+    state.shake = decayShakeAmount(state.shake, delta);
   }
   if (state.toastTimer > 0) {
     state.toastTimer -= delta;
-    if (state.toastTimer <= 0) {
-      hud.toast.classList.remove("toast--visible");
+    if (isTimerExpired(state.toastTimer)) {
+      hud.toast.classList.remove(getToastHiddenPresentation().visibleClass);
     }
   }
 
@@ -1063,7 +1149,7 @@ function tickTimers(delta) {
   updateStarredBodies(delta);
 
   for (const [tool, heat] of state.toolHeat.entries()) {
-    const next = Math.max(0, heat - delta / 8500);
+    const next = decayToolHeat(heat, delta);
     if (next <= 0.01) {
       state.toolHeat.delete(tool);
     } else {
@@ -1075,18 +1161,13 @@ function tickTimers(delta) {
 function buildToolUi() {
   hud.toolRail.innerHTML = "";
   TOOL_DEFS.forEach((tool, index) => {
+    const buttonView = getToolRailButtonPresentation(tool, index);
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "tool-button";
-    button.dataset.tool = tool.id;
-    button.title = `${index + 1}. ${tool.description}`;
-    button.innerHTML = `
-      <span class="tool-button__icon">${tool.icon}</span>
-      <span class="tool-button__copy">
-        <strong>${tool.name}</strong>
-        <span>${tool.category}</span>
-      </span>
-    `;
+    button.className = buttonView.className;
+    button.dataset.tool = buttonView.toolId;
+    button.title = buttonView.title;
+    button.innerHTML = buttonView.markup;
     button.addEventListener("click", () => trySelectTool(tool.id));
     hud.toolRail.appendChild(button);
   });
@@ -1094,17 +1175,16 @@ function buildToolUi() {
 }
 
 function buildRadialWheel() {
-  hud.radialWheel.innerHTML = '<div class="radial-wheel__center">Tools</div>';
-  const radius = 92;
+  hud.radialWheel.innerHTML = `<div class="radial-wheel__center">${getRadialWheelCenterLabel()}</div>`;
   TOOL_DEFS.forEach((tool, index) => {
-    const angle = -Math.PI / 2 + (index / TOOL_DEFS.length) * Math.PI * 2;
+    const buttonView = getRadialToolButtonPresentation(tool, index, TOOL_DEFS.length);
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "radial-wheel__button";
-    button.dataset.tool = tool.id;
-    button.style.transform = `translate(${Math.cos(angle) * radius}px, ${Math.sin(angle) * radius}px)`;
-    button.textContent = tool.icon;
-    button.title = `${tool.name}: ${tool.description}`;
+    button.className = buttonView.className;
+    button.dataset.tool = buttonView.toolId;
+    button.style.transform = buttonView.transform;
+    button.textContent = buttonView.icon;
+    button.title = buttonView.title;
     button.addEventListener("click", (event) => {
       event.stopPropagation();
       trySelectTool(tool.id);
@@ -1117,16 +1197,18 @@ function buildRadialWheel() {
 
 function buildMenus() {
   hud.itemMenu.innerHTML = "";
-  const categories = [...new Set(TOOL_DEFS.map((tool) => tool.category))];
+  const categories = getRuntimeToolCategories(TOOL_DEFS);
   categories.forEach((category) => {
+    const categoryView = getMenuCategoryPresentation(category);
     const label = document.createElement("span");
-    label.className = "menu__category";
-    label.textContent = category;
+    label.className = categoryView.className;
+    label.textContent = categoryView.label;
     hud.itemMenu.appendChild(label);
-    TOOL_DEFS.filter((tool) => tool.category === category).forEach((tool) => {
+    getRuntimeToolsByCategory(TOOL_DEFS, category).forEach((tool) => {
+      const buttonView = getShopMenuButtonPresentation(tool, state.unlockedTools.has(tool.id));
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = state.unlockedTools.has(tool.id) ? tool.name : `${tool.name} - $${tool.cost}`;
+      button.textContent = buttonView.text;
       button.addEventListener("click", () => trySelectTool(tool.id));
       hud.itemMenu.appendChild(button);
     });
@@ -1134,29 +1216,32 @@ function buildMenus() {
 
   hud.skinMenu.innerHTML = "";
   SKIN_DEFS.forEach((skin) => {
+    const buttonView = getShopMenuButtonPresentation(skin, state.unlockedSkins.has(skin.id));
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = state.unlockedSkins.has(skin.id) ? skin.name : `${skin.name} - $${skin.cost}`;
+    button.textContent = buttonView.text;
     button.addEventListener("click", () => buyOrSelectSkin(skin.id));
     hud.skinMenu.appendChild(button);
   });
 
   controls.challengeMode.innerHTML = "";
   Object.entries(CHALLENGE_MODES).forEach(([id, mode]) => {
+    const optionView = getChallengeModeOption(id, mode);
     const option = document.createElement("option");
-    option.value = id;
-    option.textContent = mode.name === "Free" ? "Free Play" : mode.name;
+    option.value = optionView.value;
+    option.textContent = optionView.label;
     controls.challengeMode.appendChild(option);
   });
-  controls.challengeMode.value = CHALLENGE_MODES[state.challenge.mode] ? state.challenge.mode : "free";
+  controls.challengeMode.value = getChallengeModeId(CHALLENGE_MODES, state.challenge.mode);
 }
 
 function buildAssetPackUi() {
   controls.assetPack.innerHTML = "";
   state.assetPacks.forEach((pack) => {
+    const optionView = getAssetPackOption(pack);
     const option = document.createElement("option");
-    option.value = pack.id;
-    option.textContent = pack.name;
+    option.value = optionView.value;
+    option.textContent = optionView.label;
     controls.assetPack.appendChild(option);
   });
   controls.assetPack.value = getAssetPack(state.settings.assetPack).id;
@@ -1169,46 +1254,43 @@ function renderRoomPreview(packId = state.settings.assetPack) {
   }
   const pack = getAssetPack(packId);
   const room = pack.room || {};
+  const preview = getRoomPreviewShellPresentation(pack);
   controls.roomPreview.innerHTML = "";
-  controls.roomPreview.dataset.roomPack = pack.id;
+  controls.roomPreview.dataset.roomPack = preview.packId;
 
   const name = document.createElement("strong");
-  name.className = "room-preview__name";
-  name.textContent = pack.name;
+  name.className = preview.nameClassName;
+  name.textContent = preview.name;
   controls.roomPreview.appendChild(name);
 
   controls.roomPreview.appendChild(createRoomThumbnail(pack, "room-thumbnail--large"));
 
   const swatches = document.createElement("div");
-  swatches.className = "room-preview__swatches";
-  [
-    ["Background", room.background],
-    ["Grid", room.grid],
-    ["Floor", room.floor],
-    ["Accent", room.accent]
-  ].forEach(([label, color]) => {
+  swatches.className = preview.swatchesClassName;
+  getRoomSwatches(room).forEach((roomSwatch) => {
+    const swatchView = getRoomSwatchPresentation(roomSwatch);
     const swatch = document.createElement("span");
-    swatch.className = "room-preview__swatch";
-    swatch.style.background = color || "#87968e";
-    swatch.title = `${label}: ${color || "#87968e"}`;
-    swatch.setAttribute("aria-label", swatch.title);
+    swatch.className = swatchView.className;
+    swatch.style.background = swatchView.background;
+    swatch.title = swatchView.title;
+    swatch.setAttribute("aria-label", swatchView.ariaLabel);
     swatches.appendChild(swatch);
   });
   controls.roomPreview.appendChild(swatches);
 
   const browser = document.createElement("div");
-  browser.className = "room-browser";
+  browser.className = preview.browserClassName;
   state.assetPacks.forEach((roomPack) => {
+    const buttonView = getRoomBrowserButtonPresentation(roomPack, pack.id);
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "room-browser__button";
-    button.dataset.roomPack = roomPack.id;
-    const isActive = roomPack.id === pack.id;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
+    button.className = buttonView.className;
+    button.dataset.roomPack = buttonView.packId;
+    button.classList.toggle("is-active", buttonView.active);
+    button.setAttribute("aria-pressed", buttonView.ariaPressed);
     const label = document.createElement("span");
-    label.className = "room-browser__name";
-    label.textContent = roomPack.name;
+    label.className = buttonView.labelClassName;
+    label.textContent = buttonView.label;
     button.appendChild(label);
     button.appendChild(createRoomThumbnail(roomPack, "room-thumbnail--mini"));
     button.addEventListener("click", () => selectRoomPack(roomPack.id));
@@ -1218,28 +1300,21 @@ function renderRoomPreview(packId = state.settings.assetPack) {
 }
 
 function createRoomThumbnail(pack, sizeClass) {
-  const room = pack.room || {};
+  const thumbnailView = getRoomThumbnailPresentation(pack, sizeClass);
   const thumbnail = document.createElement("span");
-  thumbnail.className = `room-thumbnail ${sizeClass}`;
-  thumbnail.dataset.motif = getRoomMotif(pack);
-  thumbnail.setAttribute("aria-label", `${pack.name} room thumbnail`);
-  thumbnail.style.setProperty("--room-bg", room.background || "#87968e");
-  thumbnail.style.setProperty("--room-grid", room.grid || "#e8f7f4");
-  thumbnail.style.setProperty("--room-floor", room.floor || "#64736b");
-  thumbnail.style.setProperty("--room-accent", room.accent || "#98f17f");
+  thumbnail.className = thumbnailView.className;
+  thumbnail.dataset.motif = thumbnailView.motif;
+  thumbnail.setAttribute("aria-label", thumbnailView.ariaLabel);
+  Object.entries(thumbnailView.styles).forEach(([property, value]) => {
+    thumbnail.style.setProperty(property, value);
+  });
 
-  ["grid", "floor", "accent", "buddy"].forEach((part) => {
+  thumbnailView.layerClassNames.forEach((className) => {
     const layer = document.createElement("i");
-    layer.className = `room-thumbnail__${part}`;
+    layer.className = className;
     thumbnail.appendChild(layer);
   });
   return thumbnail;
-}
-
-function getRoomMotif(pack) {
-  const rawMotif = pack.room?.motif || pack.id || "grid";
-  const motif = String(rawMotif).toLowerCase().replace(/[^a-z0-9-]/g, "-");
-  return motif || "grid";
 }
 
 function selectRoomPack(packId) {
@@ -1247,19 +1322,20 @@ function selectRoomPack(packId) {
   controls.assetPack.value = state.settings.assetPack;
   renderRoomPreview();
   applyRoomPack();
-  toast(`${getAssetPack().name} asset pack selected.`);
+  toast(getAssetPackSelectedToast(getAssetPack().name));
   saveGame();
 }
 
 function buildAudioPackUi() {
   controls.audioPack.innerHTML = "";
   Object.entries(AUDIO_PACKS).forEach(([id, pack]) => {
+    const optionView = getAudioPackOption(id, pack, pack.assetPack ? getAssetPack(pack.assetPack) : undefined);
     const option = document.createElement("option");
-    option.value = id;
-    option.textContent = pack.assetPack ? `${pack.name} (${getAssetPack(pack.assetPack).name})` : pack.name;
+    option.value = optionView.value;
+    option.textContent = optionView.label;
     controls.audioPack.appendChild(option);
   });
-  controls.audioPack.value = AUDIO_PACKS[state.settings.audioPack] ? state.settings.audioPack : "classic";
+  controls.audioPack.value = getSelectedAudioPackId(AUDIO_PACKS, state.settings.audioPack);
 }
 
 function renderShop() {
@@ -1301,7 +1377,7 @@ function getChallengeMode() {
 function trySelectTool(toolId) {
   if (!state.unlockedTools.has(toolId)) {
     const tool = getTool(toolId);
-    toast(`${tool.name} is locked. Buy it for $${tool.cost}.`);
+    toast(getLockedToolToast(tool));
     return;
   }
   selectTool(toolId);
@@ -1312,25 +1388,26 @@ function selectTool(toolId) {
   state.tool = tool.id;
   document.querySelectorAll(".tool-button").forEach((button) => {
     const id = button.dataset.tool;
-    button.classList.toggle("tool-button--active", id === toolId);
-    button.classList.toggle("tool-button--locked", !state.unlockedTools.has(id));
+    const buttonState = getToolButtonState(id, toolId, state.unlockedTools.has(id));
+    button.classList.toggle("tool-button--active", buttonState.active);
+    button.classList.toggle("tool-button--locked", buttonState.locked);
   });
-  hud.toolName.textContent = tool.name;
-  hud.toolDescription.textContent = tool.description;
+  const toolPanel = getToolSelectionPanel(tool);
+  hud.toolName.textContent = toolPanel.name;
+  hud.toolDescription.textContent = toolPanel.description;
   updateUnlockButtons();
 
-  if (toolId === "hand") {
+  const mouseConfig = getMouseConstraintConfig(toolId);
+  if (mouseConfig.stopWind) {
     feedback.stopWind();
-    mouseConstraint.collisionFilter.mask = 0xffffffff;
-    mouseConstraint.constraint.stiffness = 0.72;
-    mouseConstraint.constraint.damping = 0.18;
-  } else {
-    if (toolId !== "fan") {
-      feedback.stopWind();
-    }
+  }
+  if (mouseConfig.clearBody) {
     mouseConstraint.constraint.bodyB = null;
-    mouseConstraint.collisionFilter.mask = 0x00000000;
-    mouseConstraint.constraint.stiffness = 0.001;
+  }
+  mouseConstraint.collisionFilter.mask = mouseConfig.mask;
+  mouseConstraint.constraint.stiffness = mouseConfig.stiffness;
+  if (mouseConfig.damping !== undefined) {
+    mouseConstraint.constraint.damping = mouseConfig.damping;
   }
   feedback.play("select", 0.5);
   saveGame();
@@ -1362,14 +1439,13 @@ function clearTouchWheelTimer() {
 
 function showRadialWheel(clientX, clientY) {
   const stage = canvas.parentElement.getBoundingClientRect();
-  const wheelSize = 250;
-  const half = wheelSize / 2;
-  const localX = Math.max(half + 8, Math.min(stage.width - half - 8, clientX - stage.left));
-  const localY = Math.max(half + 8, Math.min(stage.height - half - 8, clientY - stage.top));
-  hud.radialWheel.style.left = `${localX}px`;
-  hud.radialWheel.style.top = `${localY}px`;
-  hud.radialWheel.classList.add("radial-wheel--open");
-  state.radialOpen = true;
+  const position = getClampedOverlayPosition(stage, { clientX, clientY }, 250);
+  const cssPosition = getOverlayCssPosition(position);
+  const wheelVisibility = getRadialWheelVisibilityPresentation(true);
+  hud.radialWheel.style.left = cssPosition.left;
+  hud.radialWheel.style.top = cssPosition.top;
+  hud.radialWheel.classList.add(wheelVisibility.openClass);
+  state.radialOpen = wheelVisibility.radialOpen;
   updateUnlockButtons();
   recordMission("radialWheel", 1);
   feedback.play("select", 0.7);
@@ -1379,17 +1455,36 @@ function hideRadialWheel() {
   if (!state.radialOpen) {
     return;
   }
-  hud.radialWheel.classList.remove("radial-wheel--open");
-  state.radialOpen = false;
+  const wheelVisibility = getRadialWheelVisibilityPresentation(false);
+  hud.radialWheel.classList.remove(wheelVisibility.openClass);
+  state.radialOpen = wheelVisibility.radialOpen;
 }
 
 function executeInstantTool(toolId, point) {
-  if (toolId === "grenade") {
+  if (toolId === "firecracker") {
+    spawnFirecracker(point);
+  } else if (toolId === "grenade") {
     spawnGrenade(point);
+  } else if (toolId === "mine") {
+    spawnMine(point);
+  } else if (toolId === "stickybomb") {
+    spawnStickyBomb(point);
+  } else if (toolId === "largebomb") {
+    spawnLargeBomb(point);
   } else if (toolId === "trampoline") {
     placeTrampoline(point);
+  } else if (toolId === "platform") {
+    placePlatform(point);
+  } else if (toolId === "bumper") {
+    placeBumper(point);
+  } else if (toolId === "conveyor") {
+    placeConveyor(point);
   } else if (toolId === "gift") {
     placeGift(point);
+  } else if (toolId === "moneydrop") {
+    placeMoneyDrop(point);
+  } else if (toolId === "treat") {
+    placeTreat(point);
   } else if (toolId === "confetti") {
     placeConfettiPopper(point);
   } else if (toolId === "boombox") {
@@ -1413,191 +1508,387 @@ function buyOrSelectSkin(skinId) {
 
 function screenToWorld(event) {
   const rect = canvas.getBoundingClientRect();
-  return {
-    x: ((event.clientX - rect.left) / rect.width) * STAGE_WIDTH,
-    y: ((event.clientY - rect.top) / rect.height) * STAGE_HEIGHT
-  };
+  return screenPointToWorld(rect, event, { width: STAGE_WIDTH, height: STAGE_HEIGHT });
 }
 
 function resizeStage() {
   const card = canvas.parentElement;
   const bounds = card.getBoundingClientRect();
-  const targetRatio = STAGE_WIDTH / STAGE_HEIGHT;
-  const availableRatio = bounds.width / bounds.height;
-  if (availableRatio > targetRatio) {
-    canvas.style.width = `${Math.floor(bounds.height * targetRatio)}px`;
-    canvas.style.height = "100%";
-    canvas.style.marginLeft = `${Math.floor((bounds.width - bounds.height * targetRatio) / 2)}px`;
-    canvas.style.marginTop = "0";
-  } else {
-    canvas.style.width = "100%";
-    canvas.style.height = `${Math.floor(bounds.width / targetRatio)}px`;
-    canvas.style.marginLeft = "0";
-    canvas.style.marginTop = `${Math.floor((bounds.height - bounds.width / targetRatio) / 2)}px`;
-  }
+  const styles = getCanvasFitStyles(bounds, { width: STAGE_WIDTH, height: STAGE_HEIGHT });
+  canvas.style.width = styles.width;
+  canvas.style.height = styles.height;
+  canvas.style.marginLeft = styles.marginLeft;
+  canvas.style.marginTop = styles.marginTop;
 }
 
 function spawnBall(start, end) {
   const direction = Vector.sub(end, start);
-  const distance = Math.min(Vector.magnitude(direction), 280);
-  const radius = 18 + (state.power / 100) * 14;
+  const distance = getClampedLaunchDistance(Vector.magnitude(direction), 280);
+  const radius = getPoweredRadius(state.power, 18, 14);
   const ball = createBallBody(Bodies, start, radius);
-  const launch = distance > 2 ? Vector.normalise(direction) : { x: 0, y: -1 };
-  const scale = (distance / 280) * (0.55 + state.power / 70);
+  const launch = shouldUseLaunchDirection(distance, 2) ? Vector.normalise(direction) : { x: 0, y: -1 };
+  const scale = getThrowScale(distance, 280, 0.55, state.power, 70);
   Body.setVelocity(ball, Vector.mult(launch, 10 * scale));
   registerProp(ball);
-  addScore(4 + state.power * 0.04, "throw", ["blunt", "toy"]);
+  addScore(getBallThrowScore(state.power), "throw", ["blunt", "toy"]);
   setMood("Happy", 1300);
 }
 
 function spawnBeachBall(start, end) {
   const direction = Vector.sub(end, start);
-  const distance = Math.min(Vector.magnitude(direction), 280);
+  const distance = getClampedLaunchDistance(Vector.magnitude(direction), 280);
   const beachBall = createBeachBallBody(Bodies, start);
-  const launch = distance > 2 ? Vector.normalise(direction) : { x: 1, y: -0.25 };
-  const scale = (distance / 280) * (0.74 + state.power / 82);
+  const launch = shouldUseLaunchDirection(distance, 2) ? Vector.normalise(direction) : { x: 1, y: -0.25 };
+  const scale = getThrowScale(distance, 280, 0.74, state.power, 82);
   Body.setVelocity(beachBall, Vector.mult(launch, 11.4 * scale));
-  Body.setAngularVelocity(beachBall, 0.22 * Math.sign(launch.x || 1));
+  Body.setAngularVelocity(beachBall, getSignedAngularVelocity(launch.x, 0.22));
   registerProp(beachBall);
-  addScore(5.4 + state.power * 0.04, "beachball", ["blunt", "toy", "bounce", "propVariant"]);
+  addScore(getBeachBallThrowScore(state.power), "beachball", ["blunt", "toy", "bounce", "propVariant"]);
   setMood("Happy", 1300);
 }
 
 function spawnBowlingBall(start, end) {
   const direction = Vector.sub(end, start);
-  const distance = Math.min(Vector.magnitude(direction), 260);
+  const distance = getClampedLaunchDistance(Vector.magnitude(direction), 260);
   const bowling = createBowlingBallBody(Bodies, start);
-  const launch = distance > 2 ? Vector.normalise(direction) : { x: 1, y: -0.15 };
-  const scale = (distance / 260) * (0.36 + state.power / 95);
+  const launch = shouldUseLaunchDirection(distance, 2) ? Vector.normalise(direction) : { x: 1, y: -0.15 };
+  const scale = getThrowScale(distance, 260, 0.36, state.power, 95);
   Body.setVelocity(bowling, Vector.mult(launch, 9.4 * scale));
-  Body.setAngularVelocity(bowling, 0.18 * Math.sign(launch.x || 1));
+  Body.setAngularVelocity(bowling, getSignedAngularVelocity(launch.x, 0.18));
   registerProp(bowling);
-  addScore(7 + state.power * 0.05, "bowling", ["blunt", "heavy", "toy", "propVariant"]);
+  addScore(getBowlingBallThrowScore(state.power), "bowling", ["blunt", "heavy", "toy", "propVariant"]);
   setMood("Surprised", 1300);
 }
 
 function spawnBrick(start, end) {
   const direction = Vector.sub(end, start);
-  const distance = Math.min(Vector.magnitude(direction), 260);
+  const distance = getClampedLaunchDistance(Vector.magnitude(direction), 260);
   const brick = createBrickBody(Bodies, start);
-  const launch = distance > 2 ? Vector.normalise(direction) : { x: 1, y: -0.35 };
-  const scale = (distance / 260) * (0.42 + state.power / 82);
+  const launch = shouldUseLaunchDirection(distance, 2) ? Vector.normalise(direction) : { x: 1, y: -0.35 };
+  const scale = getThrowScale(distance, 260, 0.42, state.power, 82);
   Body.setVelocity(brick, Vector.mult(launch, 10.5 * scale));
-  Body.setAngularVelocity(brick, 0.08 * Math.sign(launch.x || 1));
+  Body.setAngularVelocity(brick, getSignedAngularVelocity(launch.x, 0.08));
   registerProp(brick);
-  addScore(6 + state.power * 0.045, "throw", ["blunt", "object"]);
+  addScore(getBrickThrowScore(state.power), "throw", ["blunt", "object"]);
+  setMood("Surprised", 1200);
+}
+
+function spawnCrate(start, end) {
+  const direction = Vector.sub(end, start);
+  const distance = getClampedLaunchDistance(Vector.magnitude(direction), 250);
+  const crate = createCrateBody(Bodies, start);
+  const launch = shouldUseLaunchDirection(distance, 2) ? Vector.normalise(direction) : { x: 1, y: -0.22 };
+  const scale = getThrowScale(distance, 250, 0.38, state.power, 88);
+  Body.setVelocity(crate, Vector.mult(launch, 9.2 * scale));
+  Body.setAngularVelocity(crate, getSignedAngularVelocity(launch.x, 0.07));
+  registerProp(crate);
+  addScore(getCrateThrowScore(state.power), "crate", ["blunt", "object", "propVariant"]);
   setMood("Surprised", 1200);
 }
 
 function spawnBoxingGlove(start, end) {
   const direction = Vector.sub(end, start);
-  const distance = Math.min(Vector.magnitude(direction), 250);
+  const distance = getClampedLaunchDistance(Vector.magnitude(direction), 250);
   const glove = createBoxingGloveBody(Bodies, start);
-  const launch = distance > 2 ? Vector.normalise(direction) : { x: 1, y: -0.1 };
-  const scale = (distance / 250) * (0.62 + state.power / 80);
+  const launch = shouldUseLaunchDirection(distance, 2) ? Vector.normalise(direction) : { x: 1, y: -0.1 };
+  const scale = getThrowScale(distance, 250, 0.62, state.power, 80);
   Body.setVelocity(glove, Vector.mult(launch, 12 * scale));
-  Body.setAngularVelocity(glove, 0.12 * Math.sign(launch.x || 1));
+  Body.setAngularVelocity(glove, getSignedAngularVelocity(launch.x, 0.12));
   registerProp(glove);
-  addScore(5 + state.power * 0.04, "punch", ["blunt", "punch", "toy", "propVariant"]);
+  addScore(getBoxingGloveThrowScore(state.power), "punch", ["blunt", "punch", "toy", "propVariant"]);
   setMood("Excited", 1000);
 }
 
 function spawnAnvil(start, end) {
   const direction = Vector.sub(end, start);
-  const distance = Math.min(Vector.magnitude(direction), 220);
+  const distance = getClampedLaunchDistance(Vector.magnitude(direction), 220);
   const anvil = createAnvilBody(Bodies, start);
-  const launch = distance > 2 ? Vector.normalise(direction) : { x: 0.2, y: 1 };
-  const scale = (distance / 220) * (0.28 + state.power / 105);
+  const launch = shouldUseLaunchDirection(distance, 2) ? Vector.normalise(direction) : { x: 0.2, y: 1 };
+  const scale = getThrowScale(distance, 220, 0.28, state.power, 105);
   Body.setVelocity(anvil, Vector.mult(launch, 8.2 * scale));
-  Body.setAngularVelocity(anvil, 0.025 * Math.sign(launch.x || 1));
+  Body.setAngularVelocity(anvil, getSignedAngularVelocity(launch.x, 0.025));
   registerProp(anvil);
-  addScore(9 + state.power * 0.06, "throw", ["blunt", "heavy", "object"]);
+  addScore(getAnvilThrowScore(state.power), "throw", ["blunt", "heavy", "object"]);
   setMood("Afraid", 1300);
 }
 
 function firePaintball(start, end) {
   const direction = Vector.sub(end, start);
-  const launch = Vector.magnitude(direction) > 4 ? Vector.normalise(direction) : { x: 1, y: 0 };
+  const launch = shouldUseLaunchDirection(Vector.magnitude(direction)) ? Vector.normalise(direction) : { x: 1, y: 0 };
   const paint = createPaintballBody(Bodies, start);
   paint.plugin = { projectile: "paintball", color: paint.render.fillStyle, born: performance.now() };
-  Body.setVelocity(paint, Vector.mult(launch, 16 + state.power * 0.11));
+  Body.setVelocity(paint, Vector.mult(launch, getLaunchSpeed(state.power, 16, 0.11)));
   registerProp(paint);
-  addScore(2, "paintball", ["projectile"]);
+  addScore(getPaintballFireScore(), "paintball", ["projectile"]);
 }
 
 function fireFoamDart(start, end) {
   const direction = Vector.sub(end, start);
-  const launch = Vector.magnitude(direction) > 4 ? Vector.normalise(direction) : { x: 1, y: 0 };
+  const launch = shouldUseLaunchDirection(Vector.magnitude(direction)) ? Vector.normalise(direction) : { x: 1, y: 0 };
   const dart = createFoamDartBody(Bodies, start);
   dart.plugin = { ...dart.plugin, projectile: "foamdart", born: performance.now() };
-  Body.setAngle(dart, Math.atan2(launch.y, launch.x));
-  Body.setVelocity(dart, Vector.mult(launch, 17 + state.power * 0.1));
+  Body.setAngle(dart, getVectorAngle(launch));
+  Body.setVelocity(dart, Vector.mult(launch, getLaunchSpeed(state.power, 17, 0.1)));
   registerProp(dart);
-  addScore(2.6, "dart", ["projectile", "foamDart"]);
+  addScore(getFoamDartFireScore(), "dart", ["projectile", "foamDart"]);
 }
 
 function fireCorkPopper(start, end) {
   const direction = Vector.sub(end, start);
-  const launch = Vector.magnitude(direction) > 4 ? Vector.normalise(direction) : { x: 1, y: 0 };
+  const launch = shouldUseLaunchDirection(Vector.magnitude(direction)) ? Vector.normalise(direction) : { x: 1, y: 0 };
   const cork = createCorkBody(Bodies, start);
   cork.plugin = { ...cork.plugin, projectile: "corkpopper", born: performance.now() };
-  Body.setAngle(cork, Math.atan2(launch.y, launch.x));
-  Body.setVelocity(cork, Vector.mult(launch, 14.5 + state.power * 0.085));
-  Body.setAngularVelocity(cork, 0.22 * Math.sign(launch.x || 1));
+  Body.setAngle(cork, getVectorAngle(launch));
+  Body.setVelocity(cork, Vector.mult(launch, getLaunchSpeed(state.power, 14.5, 0.085)));
+  Body.setAngularVelocity(cork, getSignedAngularVelocity(launch.x, 0.22));
   registerProp(cork);
-  addScore(2.2, "cork", ["projectile", "corkPopper"]);
+  addScore(getCorkPopperFireScore(), "cork", ["projectile", "corkPopper"]);
 }
 
 function firePlungerShot(start, end) {
   const direction = Vector.sub(end, start);
-  const launch = Vector.magnitude(direction) > 4 ? Vector.normalise(direction) : { x: 1, y: 0 };
+  const launch = shouldUseLaunchDirection(Vector.magnitude(direction)) ? Vector.normalise(direction) : { x: 1, y: 0 };
   const plunger = createPlungerBody(Bodies, start);
   plunger.plugin = { ...plunger.plugin, projectile: "plunger", born: performance.now() };
-  Body.setAngle(plunger, Math.atan2(launch.y, launch.x));
-  Body.setVelocity(plunger, Vector.mult(launch, 15.5 + state.power * 0.09));
-  Body.setAngularVelocity(plunger, 0.14 * Math.sign(launch.x || 1));
+  Body.setAngle(plunger, getVectorAngle(launch));
+  Body.setVelocity(plunger, Vector.mult(launch, getLaunchSpeed(state.power, 15.5, 0.09)));
+  Body.setAngularVelocity(plunger, getSignedAngularVelocity(launch.x, 0.14));
   registerProp(plunger);
-  addScore(2.4, "plunger", ["projectile", "plungerShot"]);
+  addScore(getPlungerShotFireScore(), "plunger", ["projectile", "plungerShot"]);
 }
 
 function fireStarShot(start, end) {
   const direction = Vector.sub(end, start);
-  const launch = Vector.magnitude(direction) > 4 ? Vector.normalise(direction) : { x: 1, y: 0 };
+  const launch = shouldUseLaunchDirection(Vector.magnitude(direction)) ? Vector.normalise(direction) : { x: 1, y: 0 };
   const star = createStarBody(Bodies, start);
   star.plugin = { ...star.plugin, projectile: "starshot", born: performance.now() };
-  Body.setAngle(star, Math.atan2(launch.y, launch.x));
-  Body.setVelocity(star, Vector.mult(launch, 16.5 + state.power * 0.1));
-  Body.setAngularVelocity(star, 0.32 * Math.sign(launch.x || 1));
+  Body.setAngle(star, getVectorAngle(launch));
+  Body.setVelocity(star, Vector.mult(launch, getLaunchSpeed(state.power, 16.5, 0.1)));
+  Body.setAngularVelocity(star, getSignedAngularVelocity(launch.x, 0.32));
   registerProp(star);
-  addScore(2.5, "star", ["projectile", "starShot"]);
+  addScore(getStarShotFireScore(), "star", ["projectile", "starShot"]);
+}
+
+function fireCannonball(start, end) {
+  const direction = Vector.sub(end, start);
+  const launch = shouldUseLaunchDirection(Vector.magnitude(direction)) ? Vector.normalise(direction) : { x: 1, y: 0 };
+  const cannonball = createCannonballBody(Bodies, start);
+  cannonball.plugin = { ...cannonball.plugin, projectile: "cannonball", born: performance.now() };
+  Body.setVelocity(cannonball, Vector.mult(launch, getLaunchSpeed(state.power, 12.5, 0.075)));
+  Body.setAngularVelocity(cannonball, getSignedAngularVelocity(launch.x, 0.11));
+  registerProp(cannonball);
+  addScore(getCannonballFireScore(), "cannonball", ["projectile", "heavy", "blunt"]);
+  setMood("Afraid", 900);
+}
+
+function spawnFirecracker(position) {
+  const firecracker = createFirecrackerBody(Bodies, position);
+  Body.setAngularVelocity(firecracker, 0.08);
+  registerExplosive(firecracker, {
+    delay: 850,
+    radius: 115,
+    baseForce: 0.00078,
+    scoreBase: 7,
+    armedReason: "firecracker",
+    armedTags: ["explosive", "firecracker"],
+    color: "#ffc857",
+    shake: 7,
+    toastText: getExplosiveArmedToast("firecracker")
+  });
 }
 
 function spawnGrenade(position) {
   const grenade = createGrenadeBody(Bodies, position);
-  registerProp(grenade);
-  state.grenades.push({ body: grenade, explodeAt: performance.now() + 1700, exploded: false });
-  addScore(2, "armed", ["explosive"]);
-  toast("Grenade armed.");
+  registerExplosive(grenade, {
+    delay: 1700,
+    radius: getExplosionRadius(undefined, state.power),
+    baseForce: getExplosionBaseForce(undefined, state.power),
+    scoreBase: 13,
+    armedReason: "armed",
+    armedTags: ["explosive"],
+    color: "#ffc857",
+    shake: 18,
+    toastText: getExplosiveArmedToast("grenade")
+  });
+}
+
+function spawnMine(position) {
+  const mine = createMineBody(Bodies, position);
+  registerExplosive(mine, {
+    delay: 2400,
+    radius: getExplosionRadius(undefined, state.power, 175, 1.55),
+    baseForce: getExplosionBaseForce(undefined, state.power, 0.00125, 0.8, 84),
+    scoreBase: 11,
+    armedReason: "mine",
+    armedTags: ["explosive", "mine"],
+    color: "#ff7161",
+    shake: 14,
+    toastText: getExplosiveArmedToast("mine")
+  });
+}
+
+function spawnStickyBomb(position) {
+  const stickyBomb = createStickyBombBody(Bodies, position);
+  const target = getNearestDynamicBody(position, 64);
+  let tether = null;
+  if (target) {
+    Body.setPosition(stickyBomb, {
+      x: target.position.x + 18,
+      y: target.position.y - 8
+    });
+    tether = Constraint.create({
+      bodyA: stickyBomb,
+      bodyB: target,
+      length: 8,
+      stiffness: 0.92,
+      damping: 0.18,
+      label: "sticky_bomb_tether",
+      render: {
+        visible: false
+      }
+    });
+    World.add(engine.world, tether);
+  }
+  registerExplosive(stickyBomb, {
+    delay: 1900,
+    radius: getExplosionRadius(undefined, state.power, 170, 1.65),
+    baseForce: getExplosionBaseForce(undefined, state.power, 0.00125, 0.8, 80),
+    scoreBase: 12,
+    armedReason: "stickybomb",
+    armedTags: ["explosive", "stickybomb"],
+    color: "#98f17f",
+    shake: 14,
+    toastText: getExplosiveArmedToast("stickybomb", Boolean(target)),
+    tether
+  });
+}
+
+function spawnLargeBomb(position) {
+  const largeBomb = createLargeBombBody(Bodies, position);
+  registerExplosive(largeBomb, {
+    delay: 2300,
+    radius: getExplosionRadius(undefined, state.power, 260, 2.8),
+    baseForce: getExplosionBaseForce(undefined, state.power, 0.00185, 0.8, 68),
+    scoreBase: 18,
+    armedReason: "largebomb",
+    armedTags: ["explosive", "largebomb"],
+    color: "#ffd06a",
+    shake: 24,
+    toastText: getExplosiveArmedToast("largebomb")
+  });
+}
+
+function registerExplosive(body, options) {
+  registerProp(body);
+  state.grenades.push({
+    body,
+    explodeAt: getExplosionTriggerTime(performance.now(), options.delay),
+    exploded: false,
+    ...options
+  });
+  addScore(getExplosionArmScore(), options.armedReason, options.armedTags);
+  toast(options.toastText);
+}
+
+function getNearestDynamicBody(position, maxDistance) {
+  let best = null;
+  let bestDistance = maxDistance;
+  Composite.allBodies(engine.world).forEach((body) => {
+    if (body.isStatic || body.label?.startsWith("prop_stickybomb")) {
+      return;
+    }
+    const distance = Vector.magnitude(Vector.sub(body.position, position));
+    if (shouldReplaceNearest(distance, bestDistance)) {
+      bestDistance = distance;
+      best = body;
+    }
+  });
+  return best;
 }
 
 function placeTrampoline(position) {
   const pad = createTrampolineBody(Bodies, position);
   registerProp(pad);
-  addScore(3, "build", ["builder"]);
+  addScore(getTrampolinePlacementScore(), "build", ["builder"]);
+}
+
+function placePlatform(position) {
+  const platform = createPlatformBody(Bodies, position);
+  registerProp(platform);
+  addScore(getPlatformPlacementScore(), "platform", ["builder", "platform"]);
+  toast(getToolUseToast("platformPlaced"));
+}
+
+function placeBumper(position) {
+  const bumper = createBumperBody(Bodies, position);
+  registerProp(bumper);
+  addScore(getBumperPlacementScore(), "bumper", ["builder", "bounce", "bumper"]);
+  toast(getToolUseToast("bumperPlaced"));
+}
+
+function placeConveyor(position) {
+  const conveyor = createConveyorBody(Bodies, position);
+  conveyor.plugin.conveyorDirection = getConveyorDirection(state.power);
+  registerProp(conveyor);
+  addScore(getConveyorPlacementScore(), "conveyor", ["builder", "force", "conveyor"]);
+  toast(getToolUseToast("conveyorPlaced"));
 }
 
 function placeGift(position) {
-  const cost = Math.min(25, Math.max(5, Math.round(state.cash * 0.04)));
+  const cost = getGiftCost(state.cash);
   if (state.cash < cost) {
-    toast("Need a little cash for a gift.");
+    toast(getToolUseToast("giftNeedCash"));
     return;
   }
   state.cash -= cost;
   const gift = createGiftBody(Bodies, position);
   registerProp(gift);
   setMood("Happy", 2600);
-  addScore(8, "gift", ["gift", "happy"]);
+  addScore(getGiftScore(), "gift", ["gift", "happy"]);
   recordMission("happy", 1);
+}
+
+function placeMoneyDrop(position) {
+  const money = createMoneyDropBody(Bodies, position);
+  registerProp(money);
+  Body.setVelocity(money, getRandomTossVelocity(Math.random(), 2.5, -3.2));
+  spawnMoneySparkles(position, 16);
+  nudgeBuddy(position, 165, 0.00048, -0.00028);
+  setMood("Happy", 2200);
+  addScore(getMoneyDropScore(), "moneydrop", ["moneydrop", "cash", "happy", "nice"]);
+  recordMission("happy", 1);
+  toast(getToolUseToast("moneyDrop"));
+}
+
+function placeTreat(position) {
+  const treat = createTreatBody(Bodies, position);
+  registerProp(treat);
+  Body.setVelocity(treat, getRandomTossVelocity(Math.random(), 3, -2.4));
+  spawnTreatCrumbs(position, 14);
+  nudgeBuddy(position, 150, 0.00032, -0.00048);
+  setMood("Happy", 2400);
+  addScore(getTreatScore(), "treat", ["treat", "happy", "nice"]);
+  recordMission("happy", 1);
+  toast(getToolUseToast("treatTossed"));
+}
+
+function nudgeBuddy(position, radius, horizontalForce, liftForce) {
+  if (!state.buddy) {
+    return false;
+  }
+  let touched = false;
+  Composite.allBodies(state.buddy).forEach((body) => {
+    const delta = Vector.sub(body.position, position);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 12);
+    if (distance > radius) {
+      return;
+    }
+    const falloff = getNudgeFalloff(distance, radius);
+    const side = getNudgeSide(delta.x);
+    Body.applyForce(body, body.position, getNudgeForce(side, horizontalForce, liftForce, falloff, body.mass));
+    touched = true;
+  });
+  return touched;
 }
 
 function placeConfettiPopper(position) {
@@ -1606,55 +1897,55 @@ function placeConfettiPopper(position) {
   let touchedBuddy = false;
   Composite.allBodies(state.buddy).forEach((body) => {
     const delta = Vector.sub(body.position, position);
-    const distance = Math.max(Vector.magnitude(delta), 12);
-    if (distance > 210) {
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 12);
+    if (distance > getConfettiPopperRange()) {
       return;
     }
     const away = Vector.normalise(delta);
-    const lift = { x: away.x * 0.55, y: Math.min(-0.65, away.y - 0.9) };
-    Body.applyForce(body, body.position, Vector.mult(Vector.normalise(lift), 0.00105 * body.mass * (1 - distance / 250)));
+    const lift = getConfettiLiftVector(away);
+    Body.applyForce(body, body.position, Vector.mult(Vector.normalise(lift), getConfettiForceMagnitude(body.mass, distance)));
     touchedBuddy = true;
   });
   spawnConfettiBurst(position, 34);
   setMood("Excited", 2300);
-  addScore(touchedBuddy ? 9.5 : 6.5, "confetti", ["confetti", "happy", "nice"]);
-  toast("Confetti popper fired.");
+  addScore(getConfettiScore(touchedBuddy), "confetti", ["confetti", "happy", "nice"]);
+  toast(getToolUseToast("confettiFired"));
 }
 
 function placeBoombox(position) {
   const boombox = createBoomboxBody(Bodies, position);
   registerProp(boombox);
-  state.boomboxes.push({ body: boombox, beat: 60, life: 5600 });
+  state.boomboxes.push({ body: boombox, beat: getBoomboxInitialBeat(), life: getBoomboxLife() });
   spawnMusicNotes(position, 7);
   setMood("Happy", 2400);
-  addScore(4.5, "boombox", ["boombox", "music", "happy", "nice"]);
-  toast("Boombox playing.");
+  addScore(getBoomboxPlacementScore(), "boombox", ["boombox", "music", "happy", "nice"]);
+  toast(getToolUseToast("boomboxPlaying"));
 }
 
 function placeTesla(position) {
   const coil = createTeslaBody(Bodies, position);
   registerProp(coil);
   state.coils.push({ body: coil, pulse: 0 });
-  addScore(4, "build", ["shock"]);
+  addScore(getTeslaPlacementScore(), "build", ["shock"]);
 }
 
 function attachRope(position) {
   const target = getNearestBuddyBody(position, 240);
   if (!target) {
-    toast("Rope needs a buddy limb.");
+    toast(getToolUseToast("ropeNeedsBuddy"));
     return;
   }
   const anchor = {
-    x: Math.max(42, Math.min(STAGE_WIDTH - 42, target.position.x)),
-    y: state.settings.ceilingOpen ? 28 : 8
+    x: getRopeAnchorX(target.position.x, STAGE_WIDTH),
+    y: getRopeAnchorY(state.settings.ceilingOpen)
   };
-  const length = Math.max(70, Vector.magnitude(Vector.sub(target.position, anchor)) * 0.78);
+  const length = getRopeLength(Vector.magnitude(Vector.sub(target.position, anchor)));
   const rope = Constraint.create({
     pointA: anchor,
     bodyB: target,
     pointB: { x: 0, y: 0 },
     length,
-    stiffness: 0.018 + state.power / 9000,
+    stiffness: getRopeStiffness(state.power),
     damping: 0.055,
     label: "elastic_rope",
     render: {
@@ -1666,33 +1957,32 @@ function attachRope(position) {
   });
   World.add(engine.world, rope);
   state.ropes.push(rope);
-  if (state.ropes.length > 6) {
+  if (shouldPruneRopes(state.ropes.length)) {
     const oldest = state.ropes.shift();
     World.remove(engine.world, oldest);
   }
-  addScore(5, "tether", ["builder", "force"]);
-  toast("Elastic rope attached.");
+  addScore(getRopeAttachScore(), "tether", ["builder", "force"]);
+  toast(getToolUseToast("ropeAttached"));
 }
 
 function setLiquidLevel(position) {
-  if (position.y > FLOOR_Y - 48 && state.liquid.enabled) {
+  if (shouldDrainLiquid(position.y, FLOOR_Y, state.liquid.enabled)) {
     state.liquid.enabled = false;
-    addScore(2, "liquid", [state.liquid.type]);
-    toast(`${getLiquidType().name} drained.`);
+    addScore(getLiquidDrainScore(), "liquid", [state.liquid.type]);
+    toast(getLiquidDrainToast(getLiquidType().name));
     return;
   }
   state.liquid.enabled = true;
   state.liquid.type = state.settings.liquidType;
-  state.liquid.level = Math.max(150, Math.min(FLOOR_Y - 35, position.y));
-  addScore(3, "liquid", [state.liquid.type, "builder"]);
-  toast(`${getLiquidType().name} level set.`);
+  state.liquid.level = getClampedLiquidLevel(position.y, FLOOR_Y);
+  addScore(getLiquidFillScore(), "liquid", [state.liquid.type, "builder"]);
+  toast(getLiquidFillToast(getLiquidType().name));
 }
 
 function applyFanForce() {
   feedback.startWind();
   const bodies = Composite.allBodies(engine.world);
-  const radius = 310;
-  const baseForce = 0.00011 * state.power;
+  const radius = getFanRadius();
   let touchedBuddy = false;
   const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
   const aim = Vector.magnitude(cursorVelocity) > 2 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
@@ -1702,7 +1992,7 @@ function applyFanForce() {
       continue;
     }
     const delta = Vector.sub(body.position, state.pointerCurrent);
-    const distance = Math.max(Vector.magnitude(delta), 5);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 5);
     if (distance > radius) {
       continue;
     }
@@ -1711,47 +2001,125 @@ function applyFanForce() {
     if (cone < 0.12) {
       continue;
     }
-    const falloff = (1 - distance / radius) * cone;
-    Body.applyForce(body, body.position, Vector.mult(dir, baseForce * falloff * body.mass));
+    Body.applyForce(body, body.position, Vector.mult(dir, getFanForceMagnitude(state.power, body.mass, distance, radius, cone)));
     if (isBuddyBody(body)) {
       touchedBuddy = true;
     }
   }
 
   if (touchedBuddy && state.fanScoreCooldown <= 0) {
-    addScore(3.3 + state.power * 0.035, "wind", ["wind", "force"]);
-    state.fanScoreCooldown = 320;
+    addScore(getFanScore(state.power), "wind", ["wind", "force"]);
+    state.fanScoreCooldown = getFanScoreCooldown();
     setMood("Curious", 900);
   }
 }
 
 function applyBlackHole() {
   const bodies = Composite.allBodies(engine.world);
-  const radius = 360 + state.power * 1.8;
+  const radius = getBlackHoleRadius(state.power);
   let touchedBuddy = false;
   for (const body of bodies) {
     if (body.isStatic) {
       continue;
     }
     const delta = Vector.sub(state.pointerCurrent, body.position);
-    const distance = Math.max(Vector.magnitude(delta), 24);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 24);
     if (distance > radius) {
       continue;
     }
     const tangent = { x: -delta.y, y: delta.x };
-    const pull = Vector.mult(Vector.normalise(delta), 0.00013 * state.power * body.mass * (1 - distance / radius));
-    const orbit = Vector.mult(Vector.normalise(tangent), 0.000025 * state.power * body.mass);
+    const pull = Vector.mult(Vector.normalise(delta), getBlackHolePullForceMagnitude(state.power, body.mass, distance, radius));
+    const orbit = Vector.mult(Vector.normalise(tangent), getBlackHoleOrbitForceMagnitude(state.power, body.mass));
     Body.applyForce(body, body.position, Vector.add(pull, orbit));
     if (isBuddyBody(body)) {
       touchedBuddy = true;
     }
   }
   if (touchedBuddy && state.blackHoleCooldown <= 0) {
-    addScore(6 + state.power * 0.06, "gravity", ["force", "fear"]);
+    addScore(getBlackHoleScore(state.power), "gravity", ["force", "fear"]);
     feedback.play("shock", 0.35);
-    state.blackHoleCooldown = 430;
+    state.blackHoleCooldown = getBlackHoleCooldown();
     setMood("Afraid", 1100);
   }
+}
+
+function applyVacuum() {
+  feedback.startWind();
+  const bodies = Composite.allBodies(engine.world);
+  const radius = getVacuumRadius(state.power);
+  let touchedBuddy = false;
+  for (const body of bodies) {
+    if (body.isStatic) {
+      continue;
+    }
+    const delta = Vector.sub(state.pointerCurrent, body.position);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 18);
+    if (distance > radius) {
+      continue;
+    }
+    const pull = Vector.mult(Vector.normalise(delta), getVacuumForceMagnitude(state.power, body.mass, distance, radius));
+    Body.applyForce(body, body.position, pull);
+    touchedBuddy = touchedBuddy || isBuddyBody(body);
+  }
+  if (touchedBuddy && state.vacuumCooldown <= 0) {
+    addScore(getVacuumScore(state.power), "vacuum", ["force", "vacuum"]);
+    state.vacuumCooldown = getVacuumCooldown();
+    setMood("Surprised", 1000);
+  }
+  state.particles.push({ type: "ring", kind: "vacuum", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getVacuumRingEffect(radius), color: "#55d9cf" });
+}
+
+function applyRepulsor() {
+  const bodies = Composite.allBodies(engine.world);
+  const radius = getRepulsorRadius(state.power);
+  let touchedBuddy = false;
+  for (const body of bodies) {
+    if (body.isStatic) {
+      continue;
+    }
+    const delta = Vector.sub(body.position, state.pointerCurrent);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 18);
+    if (distance > radius) {
+      continue;
+    }
+    const push = Vector.normalise(delta);
+    const force = getRepulsorForceMagnitude(state.power, body.mass, distance, radius);
+    Body.applyForce(body, body.position, Vector.mult(push, force));
+    Body.setAngularVelocity(body, getRepulsorAngularVelocity(body.angularVelocity, push.x));
+    touchedBuddy = touchedBuddy || isBuddyBody(body);
+  }
+  if (touchedBuddy && state.repulsorCooldown <= 0) {
+    addScore(getRepulsorScore(state.power), "repulsor", ["force", "repulsor"]);
+    state.repulsorCooldown = getRepulsorCooldown();
+    setMood("Afraid", 1000);
+  }
+  state.particles.push({ type: "ring", kind: "repulsor", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getRepulsorRingEffect(radius), color: "#f1ff8b" });
+}
+
+function applyMagnet() {
+  const radius = getMagnetRadius(state.power);
+  let movedProp = false;
+  state.props.forEach((body) => {
+    if (body.isStatic || !isMagneticBodyLabel(body.label)) {
+      return;
+    }
+    const delta = Vector.sub(state.pointerCurrent, body.position);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 20);
+    if (distance > radius) {
+      return;
+    }
+    const pull = Vector.normalise(delta);
+    const force = getMagnetForceMagnitude(state.power, body.mass, distance, radius);
+    Body.applyForce(body, body.position, Vector.mult(pull, force));
+    Body.setAngularVelocity(body, getMagnetAngularVelocity(body.angularVelocity, pull.x));
+    movedProp = true;
+  });
+  if (movedProp && state.magnetCooldown <= 0) {
+    addScore(getMagnetScore(state.power), "magnet", ["force", "magnet"]);
+    state.magnetCooldown = getMagnetCooldown();
+    setMood("Curious", 900);
+  }
+  state.particles.push({ type: "ring", kind: "magnet", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getMagnetRingEffect(radius), color: "#e7a8ff" });
 }
 
 function updateRubberBlaster() {
@@ -1759,26 +2127,26 @@ function updateRubberBlaster() {
     return;
   }
   const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
-  const aim = Vector.magnitude(cursorVelocity) > 1.4 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
+  const aim = shouldUseLaunchDirection(Vector.magnitude(cursorVelocity), 1.4) ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
   const pellet = createRubberPelletBody(Bodies, state.pointerCurrent, state.rubberBurstShots);
   pellet.plugin = { ...pellet.plugin, projectile: "rubber", born: performance.now() };
-  Body.setVelocity(pellet, Vector.mult(aim, 14 + state.power * 0.08));
+  Body.setVelocity(pellet, Vector.mult(aim, getRubberPelletSpeed(state.power)));
   registerProp(pellet);
-  state.rubberBurstShots = Math.min(99, state.rubberBurstShots + 1);
+  state.rubberBurstShots = incrementRubberBurstShots(state.rubberBurstShots);
   state.rubberBurstWindow = 1800;
-  addScore(1.8 + state.power * 0.012, "rubber", ["projectile", "blunt", "beadCannon"]);
+  addScore(getRubberScore(state.power), "rubber", ["projectile", "blunt", "beadCannon"]);
   spawnBurst(state.pointerCurrent, "#f1ff8b", 3);
-  state.rubberCooldown = Math.max(70, 180 - state.power * 0.75);
+  state.rubberCooldown = getRubberCooldown(state.power);
 }
 
 function applyHeatCone() {
-  const radius = 240;
+  const radius = getHeatConeRadius();
   const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
   const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
   let touchedBuddy = false;
   Composite.allBodies(state.buddy).forEach((body) => {
     const delta = Vector.sub(body.position, state.pointerCurrent);
-    const distance = Math.max(Vector.magnitude(delta), 8);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 8);
     if (distance > radius) {
       return;
     }
@@ -1787,52 +2155,35 @@ function applyHeatCone() {
     if (cone < 0.18) {
       return;
     }
-    const falloff = (1 - distance / radius) * cone;
-    Body.applyForce(body, body.position, {
-      x: dir.x * 0.000035 * state.power * body.mass * falloff,
-      y: -0.000018 * state.power * body.mass * falloff
-    });
+    const falloff = getConeFalloff(distance, radius, cone);
+    Body.applyForce(body, body.position, getHeatConeForce(dir, state.power, body.mass, falloff));
     touchedBuddy = true;
   });
 
   for (let i = 0; i < 2; i += 1) {
-    const spread = (Math.random() - 0.5) * 42;
-    state.particles.push({
-      type: "spark",
-      x: state.pointerCurrent.x + aim.x * 36 - aim.y * spread,
-      y: state.pointerCurrent.y + aim.y * 36 + aim.x * spread,
-      vx: aim.x * (0.055 + Math.random() * 0.035),
-      vy: aim.y * (0.055 + Math.random() * 0.035) - 0.018,
-      radius: 2 + Math.random() * 2.5,
-      color: "#ff8d66",
-      life: 280,
-      maxLife: 280
-    });
+    state.particles.push(getHeatConeParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 
   if (touchedBuddy && state.heatConeCooldown <= 0) {
-    addScore(4.2 + state.power * 0.04, "heat", ["heat", "elemental", "fear"]);
+    addScore(getHeatConeScore(state.power), "heat", ["heat", "elemental", "fear"]);
     setMood("Afraid", 1000);
-    state.heatConeCooldown = 360;
+    state.heatConeCooldown = getHeatConeCooldown();
   }
 }
 
 function applySparkWand() {
-  const target = getNearestBuddyBody(state.pointerCurrent, 280);
+  const target = getNearestBuddyBody(state.pointerCurrent, getSparkWandRange());
   if (!target) {
-    if (Math.random() < 0.24) {
+    if (shouldSpawnSparkWandIdleBurst(Math.random())) {
       spawnBurst(state.pointerCurrent, "#f1ff8b", 1);
     }
     return;
   }
 
   const away = Vector.normalise(Vector.sub(target.position, state.pointerCurrent));
-  const jitter = {
-    x: away.x + (Math.random() - 0.5) * 0.55,
-    y: away.y + (Math.random() - 0.5) * 0.55
-  };
-  Body.applyForce(target, target.position, Vector.mult(Vector.normalise(jitter), 0.0018 * target.mass));
-  Body.setAngularVelocity(target, target.angularVelocity + (Math.random() - 0.5) * 0.07);
+  const jitter = getSparkWandJitter(away, Math.random(), Math.random());
+  Body.applyForce(target, target.position, Vector.mult(Vector.normalise(jitter), getSparkWandForceMagnitude(target.mass)));
+  Body.setAngularVelocity(target, getSparkWandAngularVelocity(target.angularVelocity, Math.random()));
 
   state.particles.push({
     type: "bolt",
@@ -1844,20 +2195,20 @@ function applySparkWand() {
   });
 
   if (state.sparkWandCooldown <= 0) {
-    addScore(3.8 + state.power * 0.035, "spark", ["shock", "elemental", "sparkWand", "stun"]);
+    addScore(getSparkWandScore(state.power), "spark", ["shock", "elemental", "sparkWand", "stun"]);
     setMood("Stunned", 850);
-    state.sparkWandCooldown = 240;
+    state.sparkWandCooldown = getSparkWandCooldown();
   }
 }
 
 function applyFrostPuff() {
-  const radius = 220;
+  const radius = getFrostPuffRadius();
   const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
   const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
   let touchedBuddy = false;
   Composite.allBodies(state.buddy).forEach((body) => {
     const delta = Vector.sub(body.position, state.pointerCurrent);
-    const distance = Math.max(Vector.magnitude(delta), 8);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 8);
     if (distance > radius) {
       return;
     }
@@ -1866,15 +2217,12 @@ function applyFrostPuff() {
     if (cone < 0.12) {
       return;
     }
-    const falloff = (1 - distance / radius) * cone;
-    Body.setVelocity(body, Vector.mult(body.velocity, 0.965 - falloff * 0.05));
-    Body.setAngularVelocity(body, body.angularVelocity * (0.93 - falloff * 0.08));
-    Body.applyForce(body, body.position, {
-      x: dir.x * 0.000018 * state.power * body.mass * falloff,
-      y: -0.00001 * state.power * body.mass * falloff
-    });
+    const falloff = getConeFalloff(distance, radius, cone);
+    Body.setVelocity(body, Vector.mult(body.velocity, getFrostVelocityScale(falloff)));
+    Body.setAngularVelocity(body, body.angularVelocity * getFrostAngularVelocityScale(falloff));
+    Body.applyForce(body, body.position, getFrostPuffForce(dir, state.power, body.mass, falloff));
     body.plugin = body.plugin || {};
-    body.plugin.frostTime = Math.max(body.plugin.frostTime || 0, 1050);
+    body.plugin.frostTime = extendTimer(body.plugin.frostTime, getFrostEffectDuration());
     if (!body.plugin.frostRestoreFill) {
       body.plugin.frostRestoreFill = body.render.fillStyle;
       body.plugin.frostRestoreStroke = body.render.strokeStyle;
@@ -1885,24 +2233,13 @@ function applyFrostPuff() {
   });
 
   for (let i = 0; i < 2; i += 1) {
-    const spread = (Math.random() - 0.5) * 48;
-    state.particles.push({
-      type: "spark",
-      x: state.pointerCurrent.x + aim.x * 34 - aim.y * spread,
-      y: state.pointerCurrent.y + aim.y * 34 + aim.x * spread,
-      vx: aim.x * (0.035 + Math.random() * 0.025) - aim.y * spread * 0.0004,
-      vy: aim.y * (0.035 + Math.random() * 0.025) + aim.x * spread * 0.0004 - 0.026,
-      radius: 2 + Math.random() * 2.2,
-      color: "#baf7ff",
-      life: 340,
-      maxLife: 340
-    });
+    state.particles.push(getFrostPuffParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 
   if (touchedBuddy && state.frostPuffCooldown <= 0) {
-    addScore(3.9 + state.power * 0.035, "frost", ["cold", "elemental", "frostPuff", "stun"]);
+    addScore(getFrostPuffScore(state.power), "frost", ["cold", "elemental", "frostPuff", "stun"]);
     setMood("Surprised", 900);
-    state.frostPuffCooldown = 260;
+    state.frostPuffCooldown = getFrostPuffCooldown();
   }
 }
 
@@ -1914,7 +2251,7 @@ function updateFrostedBodies(delta) {
     if (!body.plugin?.frostTime) {
       return;
     }
-    body.plugin.frostTime = Math.max(0, body.plugin.frostTime - delta);
+    body.plugin.frostTime = decrementTimer(body.plugin.frostTime, delta);
     if (body.plugin.frostTime > 0) {
       return;
     }
@@ -1931,13 +2268,13 @@ function updateFrostedBodies(delta) {
 }
 
 function applyGooMist() {
-  const radius = 225;
+  const radius = getGooMistRadius();
   const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
   const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
   let touchedBuddy = false;
   Composite.allBodies(state.buddy).forEach((body) => {
     const delta = Vector.sub(body.position, state.pointerCurrent);
-    const distance = Math.max(Vector.magnitude(delta), 8);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 8);
     if (distance > radius) {
       return;
     }
@@ -1946,59 +2283,45 @@ function applyGooMist() {
     if (cone < 0.1) {
       return;
     }
-    const falloff = (1 - distance / radius) * cone;
+    const falloff = getConeFalloff(distance, radius, cone);
     const tangent = { x: -dir.y, y: dir.x };
-    Body.applyForce(body, body.position, {
-      x: (dir.x * 0.000014 + tangent.x * 0.000024) * state.power * body.mass * falloff,
-      y: (dir.y * 0.000006 - 0.000008) * state.power * body.mass * falloff
-    });
-    Body.setAngularVelocity(body, body.angularVelocity + 0.035 * falloff);
+    Body.applyForce(body, body.position, getGooMistForce(dir, tangent, state.power, body.mass, falloff));
+    Body.setAngularVelocity(body, getGooAngularVelocity(body.angularVelocity, falloff));
     body.plugin = body.plugin || {};
-    body.plugin.gooTime = Math.max(body.plugin.gooTime || 0, 1200);
+    body.plugin.gooTime = extendTimer(body.plugin.gooTime, getGooEffectDuration());
     if (!body.plugin.gooRestoreFill) {
       body.plugin.gooRestoreFill = body.render.fillStyle;
       body.plugin.gooRestoreStroke = body.render.strokeStyle;
       body.plugin.gooRestoreFriction = body.friction;
       body.plugin.gooRestoreFrictionAir = body.frictionAir;
     }
-    body.friction = Math.min(body.friction || 0.1, 0.08);
-    body.frictionAir = Math.min(body.frictionAir || 0.01, 0.006);
+    body.friction = getGooFriction(body.friction);
+    body.frictionAir = getGooFrictionAir(body.frictionAir);
     body.render.fillStyle = "#d8ffd1";
     body.render.strokeStyle = "#67c66b";
     touchedBuddy = true;
   });
 
   for (let i = 0; i < 2; i += 1) {
-    const spread = (Math.random() - 0.5) * 50;
-    state.particles.push({
-      type: "spark",
-      x: state.pointerCurrent.x + aim.x * 32 - aim.y * spread,
-      y: state.pointerCurrent.y + aim.y * 32 + aim.x * spread,
-      vx: aim.x * (0.028 + Math.random() * 0.026) - aim.y * spread * 0.0005,
-      vy: aim.y * (0.028 + Math.random() * 0.026) + aim.x * spread * 0.0005 + 0.012,
-      radius: 2.4 + Math.random() * 2.8,
-      color: "#98f17f",
-      life: 360,
-      maxLife: 360
-    });
+    state.particles.push(getGooMistParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 
   if (touchedBuddy && state.gooMistCooldown <= 0) {
-    addScore(4.1 + state.power * 0.034, "goo", ["goo", "slippery", "elemental", "gooMist"]);
+    addScore(getGooMistScore(state.power), "goo", ["goo", "slippery", "elemental", "gooMist"]);
     setMood("Curious", 950);
-    state.gooMistCooldown = 260;
+    state.gooMistCooldown = getGooMistCooldown();
   }
 }
 
 function applyPulseBeam() {
-  const radius = 315;
+  const radius = getPulseBeamRadius();
   const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
   const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
   let touchedBuddy = false;
 
   Composite.allBodies(state.buddy).forEach((body) => {
     const delta = Vector.sub(body.position, state.pointerCurrent);
-    const distance = Math.max(Vector.magnitude(delta), 8);
+    const distance = getDistanceWithMinimum(Vector.magnitude(delta), 8);
     if (distance > radius) {
       return;
     }
@@ -2007,19 +2330,15 @@ function applyPulseBeam() {
     if (alignment < 0.72) {
       return;
     }
-    const sideDistance = Math.abs(delta.x * -aim.y + delta.y * aim.x);
+    const sideDistance = getPulseBeamSideDistance(delta, aim);
     if (sideDistance > 58) {
       return;
     }
-    const falloff = (1 - distance / radius) * alignment * (1 - sideDistance / 70);
-    const force = 0.00006 * state.power * body.mass * Math.max(0.1, falloff);
-    Body.applyForce(body, body.position, {
-      x: aim.x * force,
-      y: aim.y * force - 0.00001 * state.power * body.mass * falloff
-    });
-    Body.setAngularVelocity(body, body.angularVelocity + 0.026 * falloff);
+    const falloff = getPulseBeamFalloff(distance, radius, alignment, sideDistance);
+    Body.applyForce(body, body.position, getPulseBeamForce(aim, state.power, body.mass, falloff));
+    Body.setAngularVelocity(body, getPulseAngularVelocity(body.angularVelocity, falloff));
     body.plugin = body.plugin || {};
-    body.plugin.pulseTime = Math.max(body.plugin.pulseTime || 0, 850);
+    body.plugin.pulseTime = extendTimer(body.plugin.pulseTime, getPulseEffectDuration());
     if (!body.plugin.pulseRestoreFill) {
       body.plugin.pulseRestoreFill = body.render.fillStyle;
       body.plugin.pulseRestoreStroke = body.render.strokeStyle;
@@ -2030,24 +2349,13 @@ function applyPulseBeam() {
   });
 
   for (let i = 0; i < 2; i += 1) {
-    const spread = (Math.random() - 0.5) * 32;
-    state.particles.push({
-      type: "spark",
-      x: state.pointerCurrent.x + aim.x * (45 + Math.random() * 74) - aim.y * spread,
-      y: state.pointerCurrent.y + aim.y * (45 + Math.random() * 74) + aim.x * spread,
-      vx: aim.x * 0.08 - aim.y * spread * 0.00045,
-      vy: aim.y * 0.08 + aim.x * spread * 0.00045 - 0.01,
-      radius: 1.8 + Math.random() * 1.9,
-      color: "#fff27a",
-      life: 260,
-      maxLife: 260
-    });
+    state.particles.push(getPulseBeamParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 
   if (touchedBuddy && state.pulseBeamCooldown <= 0) {
-    addScore(4.4 + state.power * 0.036, "pulse", ["light", "elemental", "pulseBeam", "force"]);
+    addScore(getPulseBeamScore(state.power), "pulse", ["light", "elemental", "pulseBeam", "force"]);
     setMood("Afraid", 850);
-    state.pulseBeamCooldown = 250;
+    state.pulseBeamCooldown = getPulseBeamCooldown();
   }
 }
 
@@ -2059,7 +2367,7 @@ function updatePulseBodies(delta) {
     if (!body.plugin?.pulseTime) {
       return;
     }
-    body.plugin.pulseTime = Math.max(0, body.plugin.pulseTime - delta);
+    body.plugin.pulseTime = decrementTimer(body.plugin.pulseTime, delta);
     if (body.plugin.pulseTime > 0) {
       return;
     }
@@ -2083,7 +2391,7 @@ function updateGooedBodies(delta) {
     if (!body.plugin?.gooTime) {
       return;
     }
-    body.plugin.gooTime = Math.max(0, body.plugin.gooTime - delta);
+    body.plugin.gooTime = decrementTimer(body.plugin.gooTime, delta);
     if (body.plugin.gooTime > 0) {
       return;
     }
@@ -2115,7 +2423,7 @@ function updateSuctionBodies(delta) {
     if (!body.plugin?.suctionTime) {
       return;
     }
-    body.plugin.suctionTime = Math.max(0, body.plugin.suctionTime - delta);
+    body.plugin.suctionTime = decrementTimer(body.plugin.suctionTime, delta);
     if (body.plugin.suctionTime === 0) {
       delete body.plugin.suctionTime;
     }
@@ -2130,7 +2438,7 @@ function updateStarredBodies(delta) {
     if (!body.plugin?.starSpinTime) {
       return;
     }
-    body.plugin.starSpinTime = Math.max(0, body.plugin.starSpinTime - delta);
+    body.plugin.starSpinTime = decrementTimer(body.plugin.starSpinTime, delta);
     if (body.plugin.starSpinTime === 0) {
       if (body.plugin.starRestoreStroke) {
         body.render.strokeStyle = body.plugin.starRestoreStroke;
@@ -2158,8 +2466,9 @@ function updateGrenades() {
 function explodeGrenade(grenade) {
   grenade.exploded = true;
   const origin = grenade.body.position;
-  const radius = 190 + state.power * 2.15;
-  const baseForce = 0.00145 * (0.8 + state.power / 72);
+  const radius = getExplosionRadius(grenade.radius, state.power);
+  const baseForce = getExplosionBaseForce(grenade.baseForce, state.power);
+  const scoreBase = getExplosionScoreBase(grenade.scoreBase);
   const bodies = Composite.allBodies(engine.world);
   let hitBuddy = false;
 
@@ -2168,27 +2477,30 @@ function explodeGrenade(grenade) {
       return;
     }
     const offset = Vector.sub(body.position, origin);
-    const distance = Math.max(Vector.magnitude(offset), 12);
+    const distance = getDistanceWithMinimum(Vector.magnitude(offset), 12);
     if (distance > radius) {
       return;
     }
-    const falloff = 1 - distance / radius;
+    const falloff = getExplosionFalloff(distance, radius);
     const direction = Vector.normalise(offset);
-    Body.applyForce(body, body.position, Vector.mult(direction, baseForce * falloff * body.mass));
+    Body.applyForce(body, body.position, Vector.mult(direction, getExplosionForceMagnitude(baseForce, falloff, body.mass)));
     if (isBuddyBody(body)) {
       hitBuddy = true;
-      addScore(13 * falloff * (state.power / 55), "explosion", ["explosive", "heat", "loud"]);
+      addScore(getExplosionScore(scoreBase, falloff, state.power), "explosion", ["explosive", "heat", "loud"]);
     }
   });
 
-  spawnBurst(origin, "#ffc857", 34);
+  spawnBurst(origin, grenade.color || "#ffc857", getExplosionBurstCount(radius));
   if (!state.settings.reducedFlash) {
-    addShake(18);
+    addShake(grenade.shake || 18);
   }
   if (hitBuddy) {
     setMood("Afraid", 2400);
   }
   recordMission("explosion", 1);
+  if (grenade.tether) {
+    World.remove(engine.world, grenade.tether);
+  }
   removeProp(grenade.body);
 }
 
@@ -2198,14 +2510,14 @@ function updateTesla(delta) {
     if (coil.pulse > 0) {
       continue;
     }
-    coil.pulse = 900;
+    coil.pulse = getTeslaPulseInterval();
     const targets = Composite.allBodies(engine.world)
-      .filter((body) => isBuddyBody(body) && Vector.magnitude(Vector.sub(body.position, coil.body.position)) < 180)
-      .slice(0, 3);
+      .filter((body) => isBuddyBody(body) && Vector.magnitude(Vector.sub(body.position, coil.body.position)) < getTeslaRange())
+      .slice(0, getTeslaTargetLimit());
     targets.forEach((body) => {
       const dir = Vector.normalise(Vector.sub(body.position, coil.body.position));
-      Body.applyForce(body, body.position, Vector.mult(dir, 0.0012 * body.mass));
-      addScore(4.5, "shock", ["shock", "stun"]);
+      Body.applyForce(body, body.position, Vector.mult(dir, getTeslaForceMagnitude(body.mass)));
+      addScore(getTeslaScore(), "shock", ["shock", "stun"]);
       state.particles.push({
         type: "bolt",
         a: { ...coil.body.position },
@@ -2231,28 +2543,58 @@ function updateBoomboxes(delta) {
     if (boombox.beat > 0) {
       continue;
     }
-    boombox.beat = 620;
+    boombox.beat = getBoomboxBeatInterval();
     let touchedBuddy = false;
     Composite.allBodies(state.buddy).forEach((body) => {
       const offset = Vector.sub(body.position, boombox.body.position);
-      const distance = Math.max(Vector.magnitude(offset), 16);
-      if (distance > 230) {
+      const distance = getDistanceWithMinimum(Vector.magnitude(offset), 16);
+      const range = getBoomboxRange();
+      if (distance > range) {
         return;
       }
-      const falloff = 1 - distance / 230;
-      const side = body.position.x >= boombox.body.position.x ? 1 : -1;
-      const pulse = { x: side * 0.00042 * falloff * body.mass, y: -0.00062 * falloff * body.mass };
+      const falloff = getBoomboxFalloff(distance, range);
+      const side = getBoomboxSide(body.position.x, boombox.body.position.x);
+      const pulse = getBoomboxPulseForce(side, falloff, body.mass);
       Body.applyForce(body, body.position, pulse);
-      Body.setAngularVelocity(body, body.angularVelocity + side * 0.006 * falloff);
+      Body.setAngularVelocity(body, getBoomboxAngularVelocity(body.angularVelocity, side, falloff));
       touchedBuddy = true;
     });
-    spawnMusicNotes(boombox.body.position, touchedBuddy ? 9 : 5);
-    addScore(touchedBuddy ? 4.8 : 2.4, "boombox", ["boombox", "music", "happy", "nice"]);
+    spawnMusicNotes(boombox.body.position, getBoomboxNoteCount(touchedBuddy));
+    addScore(getBoomboxScore(touchedBuddy), "boombox", ["boombox", "music", "happy", "nice"]);
     if (touchedBuddy) {
       setMood("Happy", 1100);
     }
   }
   state.boomboxes = state.boomboxes.filter((boombox) => boombox.life > 0 && state.props.includes(boombox.body));
+}
+
+function updateConveyors(delta) {
+  const conveyors = state.props.filter((body) => body.label === "conveyor");
+  if (!conveyors.length) {
+    return;
+  }
+  let touchedBuddy = false;
+  conveyors.forEach((conveyor) => {
+    const direction = conveyor.plugin?.conveyorDirection || 1;
+    const halfWidth = 98;
+    Composite.allBodies(engine.world).forEach((body) => {
+      if (body === conveyor || body.isStatic) {
+        return;
+      }
+      const dx = body.position.x - conveyor.position.x;
+      const dy = body.position.y - conveyor.position.y;
+      if (!shouldConveyorAffectBody(dx, dy, halfWidth)) {
+        return;
+      }
+      Body.applyForce(body, body.position, getConveyorForce(direction, state.power, body.mass));
+      touchedBuddy = touchedBuddy || isBuddyBody(body);
+    });
+    conveyor.plugin.conveyorPhase = advanceConveyorPhase(conveyor.plugin.conveyorPhase || 0, delta, direction);
+  });
+  if (touchedBuddy && state.conveyorCooldown <= 0) {
+    addScore(getConveyorScore(), "conveyor", ["force", "conveyor"]);
+    state.conveyorCooldown = getConveyorCooldown();
+  }
 }
 
 function updateLiquid(delta) {
@@ -2275,55 +2617,51 @@ function updateLiquid(delta) {
       body.friction = body.plugin.baseFriction;
       continue;
     }
-    const submersion = Math.min(1, depth / 120);
-    const buoyancy = -0.00021 * liquid.buoyancy * body.mass * submersion * (0.9 + state.power / 120);
-    const dragX = -body.velocity.x * 0.000035 * liquid.dragX * body.mass * submersion;
-    const dragY = -body.velocity.y * 0.000018 * liquid.dragY * body.mass * submersion;
+    const submersion = getLiquidSubmersion(depth);
+    const buoyancy = getLiquidBuoyancyForce(liquid.buoyancy, body.mass, submersion, state.power);
+    const dragX = getLiquidDragForce(body.velocity.x, liquid.dragX, body.mass, submersion, 0.000035);
+    const dragY = getLiquidDragForce(body.velocity.y, liquid.dragY, body.mass, submersion, 0.000018);
     Body.applyForce(body, body.position, { x: dragX, y: buoyancy + dragY });
-    Body.setAngularVelocity(body, body.angularVelocity * (1 - Math.min(0.04, delta * 0.00012 * liquid.angularDamping * submersion)));
-    if (state.liquid.type === "oil") {
-      body.friction = Math.min(body.friction, 0.18);
-    } else if (state.liquid.type === "slime") {
-      body.friction = Math.max(body.friction, 0.82);
-    } else {
-      body.friction = body.plugin.baseFriction;
-    }
+    Body.setAngularVelocity(body, body.angularVelocity * getLiquidAngularDampingFactor(delta, liquid.angularDamping, submersion));
+    body.friction = getLiquidFriction(state.liquid.type, body.friction, body.plugin.baseFriction);
     if (isBuddyBody(body)) {
       touchedBuddy = true;
     }
   }
   if (touchedBuddy && state.liquidScoreCooldown <= 0) {
-    addScore(4.5, "liquid", [state.liquid.type, "force"]);
-    state.liquidScoreCooldown = 850;
+    addScore(getLiquidScore(), "liquid", [state.liquid.type, "force"]);
+    state.liquidScoreCooldown = getLiquidScoreCooldown();
     setMood(liquid.mood, 900);
   }
 }
 
 function updateParticles(delta) {
   state.particles.forEach((particle) => {
-    particle.life -= delta;
+    particle.life = advanceTimedEffectLife(particle.life, delta);
     if (particle.type === "spark" || particle.type === "music") {
-      particle.x += particle.vx * delta;
-      particle.y += particle.vy * delta;
-      particle.vy += particle.type === "music" ? 0.00018 * delta : 0.0007 * delta;
+      const position = getParticlePositionAfterDelta(particle, particle, delta);
+      particle.x = position.x;
+      particle.y = position.y;
+      particle.vy = getParticleVelocityYAfterGravity(particle.vy, particle.type, delta);
     }
   });
-  state.particles = state.particles.filter((particle) => particle.life > 0);
-  state.decals = state.decals.filter((decal) => performance.now() - decal.time < 8500);
+  state.particles = state.particles.filter((particle) => shouldKeepTimedEffect(particle.life));
+  const now = performance.now();
+  state.decals = state.decals.filter((decal) => shouldKeepDecal(now, decal.time));
 }
 
 function updateAirborne(delta) {
-  if (performance.now() < state.spawnGraceUntil) {
+  const now = performance.now();
+  if (shouldSkipAirborneForSpawnGrace(now, state.spawnGraceUntil)) {
     return;
   }
-  const sinceFloor = performance.now() - state.lastFloorContact;
-  const torsoAboveFloor = state.torso && state.torso.position.y < FLOOR_Y - 85;
-  if (sinceFloor > 450 && torsoAboveFloor) {
-    state.airborneBank += delta / 1000;
-    if (state.airborneBank >= 1) {
-      const seconds = Math.floor(state.airborneBank);
-      state.airborneBank -= seconds;
-      addScore(7 * seconds, "airborne", ["juggle", "force"]);
+  const sinceFloor = now - state.lastFloorContact;
+  if (shouldAwardAirborne(sinceFloor, state.torso?.position.y, FLOOR_Y)) {
+    const airborne = advanceAirborneBank(state.airborneBank, delta);
+    state.airborneBank = airborne.bank;
+    if (airborne.seconds > 0) {
+      const seconds = airborne.seconds;
+      addScore(getAirborneScore(seconds), "airborne", ["juggle", "force"]);
       recordMission("airborneSecond", seconds);
     }
   }
@@ -2335,50 +2673,39 @@ function updateSelfRighting(delta) {
     return;
   }
   const tilt = Math.sin(state.torso.angle);
-  const nearFloor = state.torso.position.y > FLOOR_Y - 130;
-  if (Math.abs(tilt) > 0.4 && Math.abs(state.torso.angularVelocity) < 0.18) {
-    Body.setAngularVelocity(state.torso, state.torso.angularVelocity - tilt * 0.00062 * delta);
+  const nearFloor = isNearFloor(state.torso.position.y, FLOOR_Y);
+  if (shouldApplySelfRighting(tilt, state.torso.angularVelocity)) {
+    Body.setAngularVelocity(state.torso, getSelfRightingAngularVelocity(state.torso.angularVelocity, tilt, delta));
     if (nearFloor) {
-      Body.applyForce(state.torso, state.torso.position, { x: -tilt * 0.00001 * state.torso.mass, y: -0.000022 * state.torso.mass });
+      Body.applyForce(state.torso, state.torso.position, getSelfRightingForce(tilt, state.torso.mass));
     }
   }
 }
 
 function recoverBuddyFromWalls() {
-  if (!state.buddy || performance.now() < state.wallRecoveryCooldown) {
+  const now = performance.now();
+  if (!state.buddy || shouldSkipWallRecovery(now, state.wallRecoveryCooldown)) {
     return;
   }
   const bodies = Composite.allBodies(state.buddy);
   if (!bodies.length) {
     return;
   }
-  const minX = Math.min(...bodies.map((body) => body.bounds.min.x));
-  const maxX = Math.max(...bodies.map((body) => body.bounds.max.x));
-  const minY = Math.min(...bodies.map((body) => body.bounds.min.y));
-  const maxY = Math.max(...bodies.map((body) => body.bounds.max.y));
-  let dx = 0;
-  let dy = 0;
-  if (minX < 18) {
-    dx = 18 - minX;
-  } else if (maxX > STAGE_WIDTH - 18) {
-    dx = STAGE_WIDTH - 18 - maxX;
-  }
-  if (minY < -80) {
-    dy = -80 - minY;
-  } else if (maxY > STAGE_HEIGHT + 70) {
-    dy = STAGE_HEIGHT + 70 - maxY;
-  }
-  if (!dx && !dy) {
+  const offset = getWallRecoveryOffset(
+    getCombinedBounds(bodies),
+    { width: STAGE_WIDTH, height: STAGE_HEIGHT }
+  );
+  if (!offset.x && !offset.y) {
     return;
   }
-  Composite.translate(state.buddy, { x: dx, y: dy });
+  Composite.translate(state.buddy, offset);
   bodies.forEach((body) => {
     Body.setVelocity(body, {
-      x: Math.max(-8, Math.min(8, body.velocity.x * 0.45)),
-      y: Math.max(-8, Math.min(8, body.velocity.y * 0.45))
+      x: getRecoveredVelocityComponent(body.velocity.x),
+      y: getRecoveredVelocityComponent(body.velocity.y)
     });
   });
-  state.wallRecoveryCooldown = performance.now() + 420;
+  state.wallRecoveryCooldown = getNextWallRecoveryCooldown(now);
 }
 
 function tickleAt(position) {
@@ -2386,9 +2713,9 @@ function tickleAt(position) {
   if (!target) {
     return;
   }
-  const impulse = Vector.mult(Vector.normalise(Vector.sub(target.position, position)), 0.003 * target.mass);
+  const impulse = Vector.mult(Vector.normalise(Vector.sub(target.position, position)), getTickleImpulseMagnitude(target.mass));
   Body.applyForce(target, target.position, impulse);
-  addScore(6, "tickle", ["tickle", "happy"]);
+  addScore(getTickleScore(), "tickle", ["tickle", "happy"]);
   recordMission("happy", 1);
   setMood("Happy", 1800);
   spawnBurst(position, "#f1ff8b", 8);
@@ -2404,7 +2731,7 @@ function getBuddyAt(position) {
   let bestDistance = 36;
   buddyBodies.forEach((body) => {
     const distance = Vector.magnitude(Vector.sub(body.position, position));
-    if (distance < bestDistance) {
+    if (shouldReplaceNearest(distance, bestDistance)) {
       bestDistance = distance;
       best = body;
     }
@@ -2420,7 +2747,7 @@ function getNearestBuddyBody(position, maxDistance = 48) {
   let bestDistance = maxDistance;
   Composite.allBodies(state.buddy).forEach((body) => {
     const distance = Vector.magnitude(Vector.sub(body.position, position));
-    if (distance < bestDistance) {
+    if (shouldReplaceNearest(distance, bestDistance)) {
       bestDistance = distance;
       best = body;
     }
@@ -2441,11 +2768,11 @@ function addScore(baseValue, reason = "impact", tags = []) {
 
   const heatKey = `${state.tool}:${reason}`;
   const heat = state.toolHeat.get(heatKey) || 0;
-  const antiGrind = Math.max(0.35, 1 - heat * 0.17);
-  state.toolHeat.set(heatKey, Math.min(5, heat + 1));
-  const multiplier = getComboMultiplier();
-  const reward = Math.max(1, Math.round(baseValue * multiplier * antiGrind));
-  const xpGain = Math.max(1, Math.round(reward * 0.42));
+  const antiGrind = getScoreAntiGrind(heat);
+  state.toolHeat.set(heatKey, incrementToolHeat(heat));
+  const multiplier = getComboMultiplier(state.comboCount);
+  const reward = calculateReward(baseValue, multiplier, antiGrind);
+  const xpGain = calculateXpGain(reward);
 
   state.cash += reward;
   state.xp += xpGain;
@@ -2461,7 +2788,7 @@ function addScore(baseValue, reason = "impact", tags = []) {
   });
   recordMission(reason, 1);
   recordMission("cash", reward);
-  recordChallenge(reason, reason === "airborne" ? Math.max(1, Math.round(baseValue / 7)) : 1);
+  recordChallenge(reason, getChallengeRecordAmount(reason, baseValue));
 
   state.replayLog.push({ text: reason, value: reward, tags, time: Date.now() });
   if (state.replayLog.length > 18) {
@@ -2474,58 +2801,24 @@ function addScore(baseValue, reason = "impact", tags = []) {
   saveGame();
 }
 
-function getFiniteMass(body) {
-  if (!body || !Number.isFinite(body.mass) || body.mass <= 0) {
-    return 18;
-  }
-  return body.mass;
-}
-
 function playScoreFeedback(reason, reward, tags = []) {
-  const intensity = Math.min(1.8, Math.max(0.25, reward / 28));
-  if (reason === "impact" || reason === "throw" || reason === "bowling" || reason === "punch" || reason === "airborne" || reason === "float") {
-    feedback.play("impact", intensity);
-  } else if (reason === "explosion") {
-    feedback.play("explosion", intensity);
-  } else if (reason === "shock" || reason === "spark" || reason === "gravity") {
-    feedback.play("shock", intensity);
-  } else if (reason === "tickle" || reason === "gift" || reason === "confetti" || reason === "boombox") {
-    feedback.play(reason === "confetti" ? "gift" : reason, intensity);
-  } else if (reason === "paint" || reason === "paintball" || reason === "rubber" || reason === "cork" || reason === "corkHit" || reason === "plunger" || reason === "plungerHit" || reason === "star" || reason === "starHit" || reason === "heat" || reason === "frost" || reason === "goo" || reason === "pulse") {
-    feedback.play("paint", intensity);
-  } else if (reason === "armed" || reason === "build" || reason === "tether" || reason === "liquid") {
-    feedback.play("select", 0.5);
+  const intensity = getFeedbackIntensity(reward);
+  const playback = getFeedbackPlayback(reason);
+  if (playback) {
+    feedback.play(playback.sound, playback.useSelectIntensity ? 0.5 : intensity);
   }
 
-  if (tags.includes("explosive") || reason === "explosion") {
-    pulse([45, 35, 90]);
-  } else if (tags.includes("shock")) {
-    pulse([16, 24, 16]);
-  } else if (tags.includes("cold")) {
-    pulse([10, 18]);
-  } else if (tags.includes("slippery")) {
-    pulse([8, 12]);
-  } else if (tags.includes("heat")) {
-    pulse(14);
-  } else if (tags.includes("happy") || reason === "tickle") {
-    pulse(18);
-  } else if (reason === "impact" && reward > 4) {
-    pulse(Math.min(50, 8 + reward));
+  const pattern = getFeedbackPulsePattern(reason, reward, tags);
+  if (pattern) {
+    pulse(pattern);
   }
 }
 
 function pulse(pattern) {
-  if (!state.settings.haptics || !navigator.vibrate || !hasUserActivation()) {
+  if (!canUseHaptics(state.settings.haptics, Boolean(navigator.vibrate), navigator.userActivation)) {
     return;
   }
   navigator.vibrate(pattern);
-}
-
-function hasUserActivation() {
-  if (!navigator.userActivation) {
-    return true;
-  }
-  return navigator.userActivation.isActive || navigator.userActivation.hasBeenActive;
 }
 
 function recordMission(event, amount) {
@@ -2533,57 +2826,47 @@ function recordMission(event, amount) {
 }
 
 function updateHud() {
-  hud.cash.textContent = `$${Math.round(state.cash)}`;
-  hud.xp.textContent = String(Math.round(state.xp));
-  hud.combo.textContent = state.comboCount > 0 ? `x${getComboMultiplier().toFixed(2)}` : "x1.00";
-  hud.mood.textContent = state.mood;
+  const hudCore = getHudCorePresentation({
+    cash: state.cash,
+    xp: state.xp,
+    comboCount: state.comboCount,
+    comboTimer: state.comboTimer,
+    comboWindowMs: COMBO_WINDOW_MS,
+    power: state.power
+  });
+  const moodView = getMoodHudPresentation(state.mood);
+  hud.cash.textContent = hudCore.cash;
+  hud.xp.textContent = hudCore.xp;
+  hud.combo.textContent = hudCore.combo;
+  hud.mood.textContent = moodView.mood;
   hud.challenge.textContent = getChallengeLabel();
-  hud.face.textContent = moodFace(state.mood);
-  hud.powerReadout.textContent = String(state.power);
+  hud.face.textContent = moodView.face;
+  hud.powerReadout.textContent = hudCore.power;
   if (hud.toolMeta) {
     hud.toolMeta.textContent = getToolMetaLabel();
   }
-  const pct = state.comboTimer > 0 ? (state.comboTimer / COMBO_WINDOW_MS) * 100 : 0;
-  hud.comboFill.style.width = `${pct}%`;
+  hud.comboFill.style.width = `${hudCore.comboFillPercent}%`;
 }
 
 function getToolMetaLabel() {
-  if (state.tool === "rubber") {
-    const cooldown = Math.max(0, Math.ceil(state.rubberCooldown));
-    if (state.pointerDown) {
-      return cooldown > 0 ? `Burst ${state.rubberBurstShots} | ${cooldown}ms` : `Burst ${state.rubberBurstShots} | Ready`;
-    }
-    return state.rubberBurstShots > 0 ? `Burst ${state.rubberBurstShots}/6` : "Ready";
-  }
   const tool = getTool(state.tool);
-  return tool ? tool.category : "Ready";
+  return getRuntimeToolMetaLabel({
+    toolId: state.tool,
+    toolCategory: tool?.category,
+    pointerDown: state.pointerDown,
+    rubberCooldown: state.rubberCooldown,
+    rubberBurstShots: state.rubberBurstShots
+  });
 }
 
 function getChallengeLabel() {
   return challengeFlow.getChallengeLabel();
 }
 
-function getComboMultiplier() {
-  return 1 + Math.min(Math.max(state.comboCount - 1, 0), 7) * 0.22;
-}
-
 function setMood(nextMood, duration = 1500) {
   state.mood = nextMood;
   state.moodTimer = duration;
   updateHud();
-}
-
-function moodFace(mood) {
-  return {
-    Calm: ":)",
-    Curious: ":o",
-    Happy: ":D",
-    Afraid: ":/",
-    Excited: ":>",
-    Surprised: ":O",
-    Stunned: "x_x",
-    Angry: ">:("
-  }[mood] || ":)";
 }
 
 function showReplay() {
@@ -2626,11 +2909,14 @@ async function importSkinPackFile(event) {
   }
   try {
     const text = await file.text();
-    const parsed = JSON.parse(text);
-    const rawPack = parsed.pack || parsed;
-    const imported = assetPackFlow.importAssetPack(rawPack, rawPack);
+    const parsed = parseImportedAssetPackText(text);
+    if (parsed.status !== "ready") {
+      toast(getAssetPackImportToast("failed"));
+      return;
+    }
+    const imported = assetPackFlow.importAssetPack(parsed.pack, parsed.pack);
     if (!imported.registered) {
-      toast(`${imported.pack.name} is already loaded.`);
+      toast(getAssetPackImportToast("duplicate", imported.pack.name));
       return;
     }
     state.customAssetPacks.push(imported.pack);
@@ -2643,16 +2929,17 @@ async function importSkinPackFile(event) {
     applyRoomPack();
     applySkin();
     saveGame();
-    toast(`${imported.pack.name} skin pack imported.`);
+    toast(getAssetPackImportToast("imported", imported.pack.name));
   } catch {
-    toast("Skin pack import failed. Use a Buddy Lab asset-pack JSON.");
+    toast(getAssetPackImportToast("failed"));
   }
 }
 
 function toast(message) {
-  hud.toast.textContent = message;
-  hud.toast.classList.add("toast--visible");
-  state.toastTimer = 2600;
+  const toastView = getToastPresentation(message);
+  hud.toast.textContent = toastView.message;
+  hud.toast.classList.add(toastView.visibleClass);
+  state.toastTimer = toastView.timerMs;
 }
 
 function applySkin() {
@@ -2662,24 +2949,17 @@ function applySkin() {
   const skin = getSkin();
   const physics = getSkinPhysics(skin.id);
   Composite.allBodies(state.buddy).forEach((body) => {
-    body.render.fillStyle = skin.color;
-    body.render.strokeStyle = skin.accent;
-    body.render.lineWidth = body.label === "buddy_head" ? 2 : 1;
-    if (skin.texture) {
-      body.render.sprite = {
-        texture: skin.texture,
-        xScale: skin.textureScale || 0.72,
-        yScale: skin.textureScale || 0.72
-      };
-    } else {
-      body.render.sprite = {};
-    }
+    const render = getSkinBodyRender(skin, body.label);
+    body.render.fillStyle = render.fillStyle;
+    body.render.strokeStyle = render.strokeStyle;
+    body.render.lineWidth = render.lineWidth;
+    body.render.sprite = render.sprite;
     applySkinPhysics(body, physics);
   });
 }
 
 function getSkinPhysics(skinId) {
-  return SKIN_PHYSICS[skinId] || SKIN_PHYSICS.classic;
+  return getRuntimeSkinPhysics(skinId);
 }
 
 function applySkinPhysics(body, physics) {
@@ -2692,10 +2972,11 @@ function applySkinPhysics(body, physics) {
     };
   }
   const base = body.plugin.basePhysics;
-  Body.setDensity(body, base.density * physics.density);
-  body.frictionAir = base.frictionAir * physics.frictionAir;
-  body.restitution = base.restitution * physics.restitution;
-  body.plugin.physicsVariant = physics.label;
+  const applied = getAppliedSkinPhysics(base, physics);
+  Body.setDensity(body, applied.density);
+  body.frictionAir = applied.frictionAir;
+  body.restitution = applied.restitution;
+  body.plugin.physicsVariant = applied.label;
 }
 
 function clearBuddyHighlight() {
@@ -2704,28 +2985,29 @@ function clearBuddyHighlight() {
   }
   const skin = getSkin();
   Composite.allBodies(state.buddy).forEach((body) => {
+    const render = getSkinBodyRender(skin, body.label);
     if (!skin.texture) {
-      body.render.fillStyle = skin.color;
+      body.render.fillStyle = render.fillStyle;
     }
-    body.render.strokeStyle = skin.accent;
-    body.render.lineWidth = body.label === "buddy_head" ? 2 : 1;
+    body.render.strokeStyle = render.strokeStyle;
+    body.render.lineWidth = render.lineWidth;
   });
 }
 
 function getSkin() {
-  return SKIN_DEFS.find((skin) => skin.id === state.selectedSkin) || SKIN_DEFS[0];
+  return getRuntimeSkin(SKIN_DEFS, state.selectedSkin);
 }
 
 function getTool(toolId) {
-  return TOOL_DEFS.find((tool) => tool.id === toolId) || TOOL_DEFS[0];
+  return getRuntimeTool(TOOL_DEFS, toolId);
 }
 
 function getAssetPack(packId = state.settings.assetPack) {
-  return state.assetPacks.find((pack) => pack.id === packId) || state.assetPacks[0];
+  return resolveAssetPack(state.assetPacks, packId);
 }
 
 function applyRoomPack() {
-  const room = getAssetPack().room;
+  const room = getRoomApplyPresentation(getAssetPack().room);
   render.options.background = room.background;
   canvas.style.background = room.background;
   canvas.parentElement.style.background = room.background;
@@ -2738,22 +3020,22 @@ function applyRoomPack() {
 }
 
 function applyModeSettings() {
-  engine.timing.timeScale = state.settings.slowMo ? 0.55 : 1;
+  engine.timing.timeScale = getSlowMoTimeScale(state.settings.slowMo);
   engine.gravity.y = getGravityMode().value;
   if (state.ceilingBody) {
     Body.setPosition(state.ceilingBody, {
       x: STAGE_WIDTH / 2,
-      y: state.settings.ceilingOpen ? -120 : -18
+      y: getCeilingY(state.settings.ceilingOpen)
     });
   }
 }
 
 function getGravityMode() {
-  return GRAVITY_MODES[state.settings.gravityMode] || GRAVITY_MODES.normal;
+  return getGravityModeConfig(state.settings.gravityMode);
 }
 
 function getLiquidType() {
-  return LIQUID_TYPES[state.liquid.type] || LIQUID_TYPES.water;
+  return resolveLiquidType(LIQUID_TYPES, state.liquid.type);
 }
 
 function isBuddyBody(body) {
@@ -2780,6 +3062,11 @@ function removeProp(body) {
 }
 
 function resetScene() {
+  state.grenades.forEach((grenade) => {
+    if (grenade.tether) {
+      World.remove(engine.world, grenade.tether);
+    }
+  });
   state.props.forEach((body) => World.remove(engine.world, body));
   state.props = [];
   state.grenades = [];
@@ -2799,39 +3086,26 @@ function resetScene() {
   state.usedTags.clear();
   state.sessionCash = 0;
   spawnNewBuddy();
-  toast("Scene reset.");
+  toast(getHudActionToast("sceneReset"));
   updateHud();
 }
 
 function savePreset() {
-  const preset = {
-    liquid: { ...state.liquid },
-    props: state.props
-      .filter((body) => !body.label.startsWith("buddy"))
-      .slice(-35)
-      .map((body) => ({
-        label: body.label,
-        x: body.position.x,
-        y: body.position.y,
-        angle: body.angle
-      }))
-  };
+  const preset = createScenePreset(state.liquid, state.props);
   localStorage.setItem("buddyLab2026.scene", JSON.stringify(preset));
-  toast("Scene preset saved.");
+  toast(getScenePresetSaveToast());
 }
 
 function loadPreset() {
-  const raw = localStorage.getItem("buddyLab2026.scene");
-  if (!raw) {
-    toast("No saved preset found.");
+  const stored = parseStoredScenePreset(localStorage.getItem("buddyLab2026.scene"));
+  if (stored.status !== "ready") {
+    toast(getScenePresetLoadToast(stored.status));
     return;
   }
   resetScene();
-  const preset = JSON.parse(raw);
+  const preset = stored.preset;
   state.liquid = { ...state.liquid, ...(preset.liquid || {}) };
-  if (!LIQUID_TYPES[state.liquid.type]) {
-    state.liquid.type = state.settings.liquidType;
-  }
+  state.liquid.type = getSelectedLiquidTypeId(LIQUID_TYPES, state.liquid.type, state.settings.liquidType);
   controls.liquidType.value = state.liquid.type;
   preset.props.forEach((prop) => {
     if (prop.label === "trampoline") {
@@ -2848,33 +3122,33 @@ function loadPreset() {
       }));
     }
   });
-  toast("Scene preset loaded.");
+  toast(getScenePresetLoadToast(stored.status));
 }
 
 function toggleCeiling() {
   state.settings.ceilingOpen = !state.settings.ceilingOpen;
   Body.setPosition(state.ceilingBody, {
     x: STAGE_WIDTH / 2,
-    y: state.settings.ceilingOpen ? -120 : -18
+    y: getCeilingY(state.settings.ceilingOpen)
   });
-  toast(state.settings.ceilingOpen ? "Ceiling opened." : "Ceiling closed.");
+  toast(getCeilingToggleToast(state.settings.ceilingOpen));
   updateModeButtonStates();
   saveGame();
 }
 
 function toggleSlowMo() {
   state.settings.slowMo = !state.settings.slowMo;
-  engine.timing.timeScale = state.settings.slowMo ? 0.55 : 1;
-  toast(state.settings.slowMo ? "Slow motion enabled." : "Slow motion disabled.");
+  engine.timing.timeScale = getSlowMoTimeScale(state.settings.slowMo);
+  toast(getSlowMoToggleToast(state.settings.slowMo));
   updateModeButtonStates();
   saveGame();
 }
 
 function setGravityMode(modeId) {
-  state.settings.gravityMode = GRAVITY_MODES[modeId] ? modeId : "normal";
+  state.settings.gravityMode = normalizeGravityMode(modeId);
   engine.gravity.y = getGravityMode().value;
   updateModeButtonStates();
-  toast(`${getGravityMode().label} enabled.`);
+  toast(getGravityModeToast(state.settings.gravityMode));
   saveGame();
 }
 
@@ -2884,7 +3158,7 @@ function toggleFpsCounter() {
   state.fpsFrames = 0;
   state.fpsElapsed = 0;
   updateFpsCounterVisibility();
-  toast(state.settings.fpsCounter ? "FPS counter enabled." : "FPS counter disabled.");
+  toast(getFpsCounterToggleToast(state.settings.fpsCounter));
   saveGame();
 }
 
@@ -2892,13 +3166,12 @@ function updateFpsCounter(delta) {
   if (!state.settings.fpsCounter || !hud.fpsCounter) {
     return;
   }
-  state.fpsFrames += 1;
-  state.fpsElapsed += delta;
-  if (state.fpsElapsed >= 250) {
-    state.fpsValue = Math.max(1, Math.round((state.fpsFrames * 1000) / state.fpsElapsed));
-    state.fpsFrames = 0;
-    state.fpsElapsed = 0;
-    hud.fpsCounter.textContent = `FPS ${state.fpsValue}`;
+  const fpsSample = getFpsSamplePresentation(state.fpsFrames, state.fpsElapsed, delta);
+  state.fpsFrames = fpsSample.frames;
+  state.fpsElapsed = fpsSample.elapsed;
+  if (fpsSample.value !== undefined && fpsSample.label !== undefined) {
+    state.fpsValue = fpsSample.value;
+    hud.fpsCounter.textContent = fpsSample.label;
   }
 }
 
@@ -2906,55 +3179,32 @@ function updateFpsCounterVisibility() {
   if (!hud.fpsCounter) {
     return;
   }
-  hud.fpsCounter.classList.toggle("fps-counter--visible", state.settings.fpsCounter);
-  hud.fpsCounter.textContent = state.settings.fpsCounter ? `FPS ${state.fpsValue}` : "FPS 0";
+  const fpsCounter = getFpsCounterPresentation(state.settings.fpsCounter, state.fpsValue);
+  hud.fpsCounter.classList.toggle("fps-counter--visible", fpsCounter.visible);
+  hud.fpsCounter.textContent = fpsCounter.label;
 }
 
 function updateModeButtonStates() {
-  controls.ceiling?.setAttribute("aria-pressed", String(state.settings.ceilingOpen));
-  controls.slowMo?.setAttribute("aria-pressed", String(state.settings.slowMo));
+  const modeButtons = getBooleanModeButtonStates(state.settings);
+  controls.ceiling?.setAttribute("aria-pressed", modeButtons.ceiling.ariaPressed);
+  controls.slowMo?.setAttribute("aria-pressed", modeButtons.slowMo.ariaPressed);
   controls.gravityModes.forEach((button) => {
-    const isActive = button.dataset.gravityMode === state.settings.gravityMode;
-    button.setAttribute("aria-pressed", String(isActive));
-    button.classList.toggle("is-active", isActive);
+    const buttonState = getGravityModeButtonState(button.dataset.gravityMode, state.settings.gravityMode);
+    button.setAttribute("aria-pressed", buttonState.ariaPressed);
+    button.classList.toggle("is-active", buttonState.active);
   });
 }
 
 function spawnBurst(position, color, count) {
   for (let i = 0; i < count; i += 1) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = 0.035 + Math.random() * 0.09;
-    state.particles.push({
-      type: "spark",
-      x: position.x,
-      y: position.y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      radius: 2 + Math.random() * 3,
-      color,
-      life: 460 + Math.random() * 380,
-      maxLife: 840
-    });
+    state.particles.push(getBurstParticle(position, color, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 }
 
 function spawnConfettiBurst(position, count) {
   const colors = ["#ffd06a", "#55d9cf", "#e46e5f", "#98f17f", "#e7a8ff"];
   for (let i = 0; i < count; i += 1) {
-    const angle = -Math.PI * 0.9 + Math.random() * Math.PI * 0.8;
-    const speed = 0.055 + Math.random() * 0.1;
-    state.particles.push({
-      type: "spark",
-      kind: "confetti",
-      x: position.x,
-      y: position.y - 8,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 0.035,
-      radius: 1.8 + Math.random() * 2.4,
-      color: colors[i % colors.length],
-      life: 680 + Math.random() * 480,
-      maxLife: 1160
-    });
+    state.particles.push(getConfettiBurstParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random()));
   }
 }
 
@@ -2962,23 +3212,26 @@ function spawnMusicNotes(position, count) {
   const colors = ["#ffc857", "#55d9cf", "#f6f1d0"];
   for (let i = 0; i < count; i += 1) {
     const side = i % 2 === 0 ? -1 : 1;
-    state.particles.push({
-      type: "music",
-      kind: "music",
-      x: position.x + side * (12 + Math.random() * 18),
-      y: position.y - 16,
-      vx: side * (0.015 + Math.random() * 0.025),
-      vy: -0.05 - Math.random() * 0.06,
-      radius: 3 + Math.random() * 1.5,
-      color: colors[i % colors.length],
-      life: 820 + Math.random() * 420,
-      maxLife: 1240
-    });
+    state.particles.push(getMusicNoteParticle(position, colors[i % colors.length], side, Math.random(), Math.random(), Math.random(), Math.random(), Math.random()));
+  }
+}
+
+function spawnMoneySparkles(position, count) {
+  const colors = ["#98f17f", "#f1ff8b", "#d8ffd1"];
+  for (let i = 0; i < count; i += 1) {
+    state.particles.push(getMoneySparkleParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random(), Math.random()));
+  }
+}
+
+function spawnTreatCrumbs(position, count) {
+  const colors = ["#d89b5f", "#fff4d7", "#7a4a2e"];
+  for (let i = 0; i < count; i += 1) {
+    state.particles.push(getTreatCrumbParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random()));
   }
 }
 
 function addShake(amount) {
-  state.shake = Math.min(24, state.shake + amount);
+  state.shake = increaseShakeAmount(state.shake, amount);
 }
 
 function drawOverlayEffects() {
@@ -2986,9 +3239,8 @@ function drawOverlayEffects() {
   ctx.save();
 
   if (state.shake > 0 && !state.settings.reducedFlash) {
-    const offsetX = (Math.random() - 0.5) * state.shake;
-    const offsetY = (Math.random() - 0.5) * state.shake;
-    canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    const offset = getShakeOffset(Math.random(), Math.random(), state.shake);
+    canvas.style.transform = getShakeTransform(offset);
   } else {
     canvas.style.transform = "";
   }
@@ -3039,7 +3291,7 @@ function drawLiquid(ctx) {
   ctx.beginPath();
   ctx.moveTo(0, state.liquid.level);
   for (let x = 0; x <= STAGE_WIDTH; x += 32) {
-    const y = state.liquid.level + Math.sin(time + x * 0.025) * 5;
+    const y = getLiquidWaveY(state.liquid.level, time, x);
     ctx.lineTo(x, y);
   }
   ctx.lineTo(STAGE_WIDTH, STAGE_HEIGHT);
@@ -3051,7 +3303,7 @@ function drawLiquid(ctx) {
   ctx.lineWidth = 2;
   ctx.beginPath();
   for (let x = 0; x <= STAGE_WIDTH; x += 32) {
-    const y = state.liquid.level + Math.sin(time + x * 0.025) * 5;
+    const y = getLiquidWaveY(state.liquid.level, time, x);
     if (x === 0) {
       ctx.moveTo(x, y);
     } else {
@@ -3080,14 +3332,14 @@ function drawClassicBuddyPart(ctx, body) {
   ctx.rotate(body.angle);
   ctx.globalAlpha = 0.98;
 
-  const radius = part.radius || Math.min(part.width, part.height) / 2;
+  const geometry = getClassicPartRenderGeometry(part, isHead);
   const fill = ctx.createRadialGradient(
-    -part.width * 0.22,
-    -part.height * 0.28,
-    Math.max(1, radius * 0.08),
+    geometry.gradientFocusX,
+    geometry.gradientFocusY,
+    geometry.gradientInnerRadius,
     0,
     0,
-    Math.max(part.width, part.height) * 0.72
+    geometry.gradientOuterRadius
   );
   fill.addColorStop(0, "#f7fbf7");
   fill.addColorStop(0.38, "#d4ddd7");
@@ -3095,16 +3347,16 @@ function drawClassicBuddyPart(ctx, body) {
   fill.addColorStop(1, "#57635d");
   ctx.fillStyle = fill;
   ctx.strokeStyle = "#3d4842";
-  ctx.lineWidth = isHead ? 1.6 : 1.2;
+  ctx.lineWidth = geometry.lineWidth;
 
   if (part.shape === "circle") {
     ctx.beginPath();
-    ctx.arc(0, 0, radius, 0, Math.PI * 2);
+    ctx.arc(0, 0, geometry.radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
   } else {
     ctx.beginPath();
-    ctx.roundRect(-part.width / 2, -part.height / 2, part.width, part.height, radius);
+    ctx.roundRect(-part.width / 2, -part.height / 2, part.width, part.height, geometry.radius);
     ctx.fill();
     ctx.stroke();
   }
@@ -3112,40 +3364,35 @@ function drawClassicBuddyPart(ctx, body) {
   ctx.globalAlpha = 0.42;
   ctx.fillStyle = "#ffffff";
   ctx.beginPath();
-  ctx.ellipse(-part.width * 0.17, -part.height * 0.23, Math.max(2, radius * 0.28), Math.max(1.6, radius * 0.13), -0.55, 0, Math.PI * 2);
+  ctx.ellipse(geometry.highlightX, geometry.highlightY, geometry.highlightRadiusX, geometry.highlightRadiusY, -0.55, 0, Math.PI * 2);
   ctx.fill();
 
   if (isHead) {
-    drawClassicBuddyFace(ctx, radius);
+    drawClassicBuddyFace(ctx, geometry.radius);
   }
   ctx.restore();
 }
 
 function drawClassicBuddyFace(ctx, radius) {
-  const face = moodFace(state.mood);
+  const face = getMoodFace(state.mood);
+  const geometry = getClassicFaceRenderGeometry(radius, state.mood, face);
   ctx.globalAlpha = 0.9;
   ctx.strokeStyle = "#5e6962";
   ctx.fillStyle = "#5e6962";
   ctx.lineWidth = 1.7;
 
-  if (face === "x_x") {
-    drawXEye(ctx, -radius * 0.32, -radius * 0.1, radius * 0.1);
-    drawXEye(ctx, radius * 0.32, -radius * 0.1, radius * 0.1);
+  if (geometry.useXEyes) {
+    drawXEye(ctx, geometry.eyeLeftX, geometry.eyeY, geometry.xEyeSize);
+    drawXEye(ctx, geometry.eyeRightX, geometry.eyeY, geometry.xEyeSize);
   } else {
     ctx.beginPath();
-    ctx.arc(-radius * 0.32, -radius * 0.1, radius * 0.055, 0, Math.PI * 2);
-    ctx.arc(radius * 0.32, -radius * 0.1, radius * 0.055, 0, Math.PI * 2);
+    ctx.arc(geometry.eyeLeftX, geometry.eyeY, geometry.dotEyeRadius, 0, Math.PI * 2);
+    ctx.arc(geometry.eyeRightX, geometry.eyeY, geometry.dotEyeRadius, 0, Math.PI * 2);
     ctx.fill();
   }
 
   ctx.beginPath();
-  if (state.mood === "Afraid" || state.mood === "Surprised" || state.mood === "Curious") {
-    ctx.arc(0, radius * 0.28, radius * 0.13, 0, Math.PI * 2);
-  } else if (state.mood === "Stunned" || state.mood === "Sad") {
-    ctx.arc(0, radius * 0.36, radius * 0.28, Math.PI * 1.12, Math.PI * 1.88);
-  } else {
-    ctx.arc(0, radius * 0.1, radius * 0.34, 0.28, Math.PI - 0.28);
-  }
+  ctx.arc(geometry.mouthX, geometry.mouthY, geometry.mouthRadius, geometry.mouthStartAngle, geometry.mouthEndAngle);
   ctx.stroke();
 }
 
@@ -3163,7 +3410,7 @@ function drawAim(ctx) {
     return;
   }
   ctx.save();
-  ctx.strokeStyle = state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper" || state.tool === "plunger" || state.tool === "starshot" ? "#ffc857" : "#e8f7f4";
+  ctx.strokeStyle = state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper" || state.tool === "plunger" || state.tool === "starshot" || state.tool === "cannonball" ? "#ffc857" : "#e8f7f4";
   ctx.lineWidth = 3;
   ctx.setLineDash([8, 7]);
   ctx.beginPath();
@@ -3199,10 +3446,32 @@ function drawToolFields(ctx) {
     ctx.stroke();
     ctx.restore();
   }
+  if ((state.tool === "vacuum" || state.tool === "repulsor" || state.tool === "magnet") && state.pointerDown) {
+    const color = state.tool === "vacuum" ? "#55d9cf" : state.tool === "repulsor" ? "#f1ff8b" : "#e7a8ff";
+    const phase = performance.now() / 120;
+    ctx.save();
+    ctx.globalAlpha = 0.32;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = state.tool === "repulsor" ? 5 : 3;
+    for (let index = 0; index < 3; index += 1) {
+      const radius = 38 + index * 42 + Math.sin(phase + index) * 5;
+      ctx.beginPath();
+      ctx.arc(state.pointerCurrent.x, state.pointerCurrent.y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    if (state.tool === "vacuum") {
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(state.pointerCurrent.x, state.pointerCurrent.y, 165, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
   if (state.tool === "heatcone" && state.pointerDown) {
     const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
     const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
-    const angle = Math.atan2(aim.y, aim.x);
+    const angle = getVectorAngle(aim);
     ctx.save();
     ctx.globalAlpha = 0.24;
     ctx.fillStyle = "#ff8d66";
@@ -3232,7 +3501,7 @@ function drawToolFields(ctx) {
   if (state.tool === "frostpuff" && state.pointerDown) {
     const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
     const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
-    const angle = Math.atan2(aim.y, aim.x);
+    const angle = getVectorAngle(aim);
     ctx.save();
     ctx.globalAlpha = 0.22;
     ctx.fillStyle = "#baf7ff";
@@ -3252,7 +3521,7 @@ function drawToolFields(ctx) {
   if (state.tool === "goomist" && state.pointerDown) {
     const cursorVelocity = Vector.sub(state.pointerCurrent, state.pointerPrevious);
     const aim = Vector.magnitude(cursorVelocity) > 1.5 ? Vector.normalise(cursorVelocity) : { x: 1, y: 0 };
-    const angle = Math.atan2(aim.y, aim.x);
+    const angle = getVectorAngle(aim);
     ctx.save();
     ctx.globalAlpha = 0.24;
     ctx.fillStyle = "#98f17f";
@@ -3308,6 +3577,8 @@ function drawPropCosmetics(ctx) {
       drawRubberPelletCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "foam-brick-lined") {
       drawBrickCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "crate-cross") {
+      drawCrateCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "stage-weight-anvil") {
       drawAnvilCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "foam-dart") {
@@ -3318,12 +3589,24 @@ function drawPropCosmetics(ctx) {
       drawPlungerCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "star-shot") {
       drawStarCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "cannonball-iron") {
+      drawCannonballCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "ball-basic") {
       drawBallCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "trampoline-pad") {
       drawTrampolineCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "platform-plank") {
+      drawPlatformCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "bumper-ring") {
+      drawBumperCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "conveyor-belt") {
+      drawConveyorCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "gift-box") {
       drawGiftCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "money-drop") {
+      drawMoneyDropCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "treat-cookie") {
+      drawTreatCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "confetti-popper") {
       drawConfettiPopperCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "boombox") {
@@ -3332,6 +3615,14 @@ function drawPropCosmetics(ctx) {
       drawTeslaCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "grenade-shell") {
       drawGrenadeCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "firecracker-tube") {
+      drawFirecrackerCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "mine-button") {
+      drawMineCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "sticky-bomb") {
+      drawStickyBombCosmetic(ctx, body, cosmetic);
+    } else if (cosmetic.type === "large-cartoon-bomb") {
+      drawLargeBombCosmetic(ctx, body, cosmetic);
     }
   }
 }
@@ -3344,7 +3635,8 @@ function drawBallCosmetic(ctx, body, cosmetic) {
   ctx.fillStyle = cosmetic.shine;
   ctx.globalAlpha = 0.65;
   ctx.beginPath();
-  ctx.arc(-radius * 0.35, -radius * 0.42, radius * 0.18, 0, Math.PI * 2);
+  const shine = getCircularCosmeticArc(radius, -0.35, -0.42, 0.18);
+  ctx.arc(shine.x, shine.y, shine.radius, 0, Math.PI * 2);
   ctx.fill();
   ctx.globalAlpha = 1;
   ctx.strokeStyle = cosmetic.rim;
@@ -3376,6 +3668,77 @@ function drawTrampolineCosmetic(ctx, body, cosmetic) {
   ctx.restore();
 }
 
+function drawPlatformCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.stripe;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-76, -3);
+  ctx.lineTo(76, -3);
+  ctx.moveTo(-76, 4);
+  ctx.lineTo(76, 4);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.rivet;
+  for (let x = -68; x <= 68; x += 34) {
+    ctx.beginPath();
+    ctx.arc(x, 0, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawBumperCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.ring;
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.arc(0, 0, 22, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.core;
+  ctx.beginPath();
+  ctx.arc(0, 0, 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = cosmetic.bolt;
+  for (let i = 0; i < 4; i += 1) {
+    const bolt = getCosmeticPolarPoint((Math.PI / 2) * i + Math.PI / 4, 16);
+    ctx.beginPath();
+    ctx.arc(bolt.x, bolt.y, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawConveyorCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.fillStyle = cosmetic.belt;
+  ctx.fillRect(-84, -7, 168, 14);
+  ctx.strokeStyle = cosmetic.roller;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(-78, 0, 7, 0, Math.PI * 2);
+  ctx.arc(78, 0, 7, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.arrow;
+  const direction = body.plugin?.conveyorDirection || 1;
+  const phase = body.plugin?.conveyorPhase || 0;
+  for (let x = -54; x <= 54; x += 36) {
+    const shifted = ((x + phase + 90) % 180) - 90;
+    ctx.beginPath();
+    ctx.moveTo(shifted + 8 * direction, 0);
+    ctx.lineTo(shifted - 4 * direction, -5);
+    ctx.lineTo(shifted - 4 * direction, 5);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
 function drawGiftCosmetic(ctx, body, cosmetic) {
   ctx.save();
   ctx.translate(body.position.x, body.position.y);
@@ -3393,6 +3756,57 @@ function drawGiftCosmetic(ctx, body, cosmetic) {
   ctx.ellipse(-6, -20, 6, 4, -0.35, 0, Math.PI * 2);
   ctx.ellipse(6, -20, 6, 4, 0.35, 0, Math.PI * 2);
   ctx.fill();
+  ctx.restore();
+}
+
+function drawMoneyDropCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.fillStyle = cosmetic.bill;
+  ctx.globalAlpha = 0.92;
+  ctx.fillRect(-17, -9, 34, 18);
+  ctx.strokeStyle = cosmetic.ink;
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(-17, -9, 34, 18);
+  ctx.strokeStyle = cosmetic.band;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(0, -12);
+  ctx.lineTo(0, 12);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.ink;
+  ctx.font = "bold 12px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("$", 8, 0);
+  ctx.restore();
+}
+
+function drawTreatCosmetic(ctx, body, cosmetic) {
+  const radius = body.circleRadius || 17;
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.fillStyle = cosmetic.icing;
+  ctx.globalAlpha = 0.42;
+  ctx.beginPath();
+  const icing = getCircularCosmeticArc(radius, -0.2, -0.18, 0.45);
+  ctx.arc(icing.x, icing.y, icing.radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = cosmetic.chip;
+  for (let index = 0; index < 5; index += 1) {
+    const chip = getCosmeticPolarPoint(index * 1.7, radius * 0.45, radius * 0.42);
+    ctx.beginPath();
+    ctx.arc(chip.x, chip.y, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.strokeStyle = cosmetic.crumb;
+  ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 0.72, 0.2, Math.PI * 1.3);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -3481,6 +3895,96 @@ function drawGrenadeCosmetic(ctx, body, cosmetic) {
   ctx.restore();
 }
 
+function drawFirecrackerCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.stripe;
+  ctx.lineWidth = 2;
+  for (let y = -12; y <= 12; y += 12) {
+    ctx.beginPath();
+    ctx.moveTo(-8, y);
+    ctx.lineTo(8, y);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = cosmetic.fuse;
+  ctx.beginPath();
+  ctx.moveTo(0, -21);
+  ctx.quadraticCurveTo(7, -30, 14, -24);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.spark;
+  ctx.beginPath();
+  ctx.arc(16, -24, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawMineCosmetic(ctx, body, cosmetic) {
+  const radius = body.circleRadius || 21;
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.strokeStyle = cosmetic.tooth;
+  ctx.lineWidth = 2;
+  for (let index = 0; index < 8; index += 1) {
+    const tooth = getCosmeticPolarSegment(index * (Math.PI / 4), radius - 3, radius + 5);
+    ctx.beginPath();
+    ctx.moveTo(tooth.from.x, tooth.from.y);
+    ctx.lineTo(tooth.to.x, tooth.to.y);
+    ctx.stroke();
+  }
+  ctx.fillStyle = cosmetic.button;
+  ctx.beginPath();
+  ctx.arc(0, 0, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawStickyBombCosmetic(ctx, body, cosmetic) {
+  const radius = body.circleRadius || 16;
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.fillStyle = cosmetic.pad;
+  ctx.beginPath();
+  const pad = getCircularCosmeticArc(radius, 0, 0.35, 0.58);
+  ctx.arc(pad.x, pad.y, pad.radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = cosmetic.fuse;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-2, -radius);
+  ctx.quadraticCurveTo(8, -radius - 11, 15, -radius - 4);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawLargeBombCosmetic(ctx, body, cosmetic) {
+  const radius = body.circleRadius || 31;
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.fillStyle = cosmetic.shine;
+  ctx.globalAlpha = 0.58;
+  ctx.beginPath();
+  const shine = getCircularCosmeticArc(radius, -0.32, -0.38, 0.18);
+  ctx.arc(shine.x, shine.y, shine.radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = cosmetic.cap;
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.arc(0, -radius + 4, 8, Math.PI, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = cosmetic.fuse;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(4, -radius - 4);
+  ctx.quadraticCurveTo(16, -radius - 20, 27, -radius - 8);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawBeachBallCosmetic(ctx, body, cosmetic) {
   const radius = body.circleRadius || 30;
   const colors = cosmetic.colors || ["#f7fbff", "#ff7161", "#55d9cf", "#ffc857"];
@@ -3505,9 +4009,10 @@ function drawBeachBallCosmetic(ctx, body, cosmetic) {
   ctx.lineWidth = 2;
   for (let index = 0; index < colors.length; index += 1) {
     const angle = -Math.PI / 2 + index * (Math.PI * 2 / colors.length);
+    const seam = getCosmeticPolarPoint(angle, radius);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+    ctx.lineTo(seam.x, seam.y);
     ctx.stroke();
   }
   ctx.fillStyle = "#f7fbff";
@@ -3604,6 +4109,36 @@ function drawBrickCosmetic(ctx, body, cosmetic) {
   ctx.lineTo(17, -2);
   ctx.closePath();
   ctx.fill();
+  ctx.restore();
+}
+
+function drawCrateCosmetic(ctx, body, cosmetic) {
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.globalAlpha = 0.9;
+  ctx.strokeStyle = cosmetic.edge;
+  ctx.lineWidth = 5;
+  ctx.strokeRect(-22, -22, 44, 44);
+  ctx.strokeStyle = cosmetic.plank;
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(-20, -20);
+  ctx.lineTo(20, 20);
+  ctx.moveTo(20, -20);
+  ctx.lineTo(-20, 20);
+  ctx.stroke();
+  ctx.fillStyle = cosmetic.nail;
+  for (const point of [
+    [-16, -16],
+    [16, -16],
+    [-16, 16],
+    [16, 16]
+  ]) {
+    ctx.beginPath();
+    ctx.arc(point[0], point[1], 2.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.restore();
 }
 
@@ -3733,12 +4268,11 @@ function drawStarCosmetic(ctx, body, cosmetic) {
   for (let i = 0; i < 10; i += 1) {
     const radius = i % 2 === 0 ? 14 : 6;
     const angle = -Math.PI / 2 + i * (Math.PI / 5);
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
+    const point = getCosmeticPolarPoint(angle, radius);
     if (i === 0) {
-      ctx.moveTo(x, y);
+      ctx.moveTo(point.x, point.y);
     } else {
-      ctx.lineTo(x, y);
+      ctx.lineTo(point.x, point.y);
     }
   }
   ctx.closePath();
@@ -3757,16 +4291,37 @@ function drawStarCosmetic(ctx, body, cosmetic) {
   ctx.restore();
 }
 
+function drawCannonballCosmetic(ctx, body, cosmetic) {
+  const radius = body.circleRadius || 18;
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle);
+  ctx.fillStyle = cosmetic.shine;
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath();
+  const shine = getCircularCosmeticArc(radius, -0.3, -0.36, 0.2);
+  ctx.arc(shine.x, shine.y, shine.radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = cosmetic.scuff;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(2, 1, radius * 0.66, 0.15, Math.PI * 1.15);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawParticles(ctx) {
   for (const particle of state.particles) {
-    const alpha = Math.max(0, particle.life / particle.maxLife);
+    const alpha = getParticleAlpha(particle.life, particle.maxLife);
     ctx.globalAlpha = alpha;
     if (particle.type === "bolt") {
+      const midpoint = getBoltMidpoint(particle.a, particle.b, Math.random(), Math.random());
       ctx.strokeStyle = particle.color;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(particle.a.x, particle.a.y);
-      ctx.lineTo((particle.a.x + particle.b.x) / 2 + Math.random() * 18 - 9, (particle.a.y + particle.b.y) / 2 + Math.random() * 18 - 9);
+      ctx.lineTo(midpoint.x, midpoint.y);
       ctx.lineTo(particle.b.x, particle.b.y);
       ctx.stroke();
     } else if (particle.type === "music") {
@@ -3800,7 +4355,7 @@ Events.on(engine, "collisionStart", (event) => {
     }
     target.render.fillStyle = paint.plugin.color;
     state.decals.push({ bodyId: target.id, color: paint.plugin.color, time: performance.now() });
-    addScore(9, "paint", ["projectile", "paint"]);
+    addScore(getPaintballHitScore(), "paint", ["projectile", "paint"]);
     setMood("Surprised", 1200);
     spawnBurst(paint.position, paint.plugin.color, 8);
     removeProp(paint);
@@ -3816,14 +4371,14 @@ Events.on(engine, "collisionStart", (event) => {
     }
     cork.plugin.hit = true;
     const offset = Vector.sub(target.position, cork.position);
-    const direction = Vector.magnitude(offset) > 0.001 ? Vector.normalise(offset) : { x: 1, y: 0 };
-    const impulse = Vector.mult(direction, 0.0034 * target.mass);
+    const direction = getDirectionOrFallback(offset, { x: 1, y: 0 });
+    const impulse = Vector.mult(direction, getProjectileImpulseMagnitude(target.mass, 0.0034));
     Body.applyForce(target, target.position, impulse);
     if (state.torso && state.torso !== target) {
-      Body.applyForce(state.torso, state.torso.position, Vector.mult(direction, 0.0014 * state.torso.mass));
+      Body.applyForce(state.torso, state.torso.position, Vector.mult(direction, getProjectileImpulseMagnitude(state.torso.mass, 0.0014)));
     }
-    Body.setAngularVelocity(cork, cork.angularVelocity * 0.55);
-    addScore(7.5, "corkHit", ["projectile", "corkPopper", "blunt", "bounce"]);
+    Body.setAngularVelocity(cork, getDampedAngularVelocity(cork.angularVelocity, 0.55));
+    addScore(getCorkPopperHitScore(), "corkHit", ["projectile", "corkPopper", "blunt", "bounce"]);
     recordMission("corkPopper", 1);
     setMood("Surprised", 1100);
     spawnBurst(cork.position, "#c58a55", 6);
@@ -3840,16 +4395,16 @@ Events.on(engine, "collisionStart", (event) => {
     plunger.plugin.hit = true;
     plunger.plugin.suction = true;
     const offset = Vector.sub(plunger.position, target.position);
-    const direction = Vector.magnitude(offset) > 0.001 ? Vector.normalise(offset) : { x: -1, y: 0 };
+    const direction = getDirectionOrFallback(offset, { x: -1, y: 0 });
     target.plugin = {
       ...target.plugin,
-      suctionTime: 1650
+      suctionTime: getPlungerSuctionDuration()
     };
-    Body.applyForce(target, target.position, Vector.mult(direction, 0.0032 * target.mass));
-    Body.setVelocity(plunger, Vector.mult(target.velocity, 0.35));
+    Body.applyForce(target, target.position, Vector.mult(direction, getProjectileImpulseMagnitude(target.mass, 0.0032)));
+    Body.setVelocity(plunger, getScaledVelocity(target.velocity, 0.35));
     Body.setAngularVelocity(plunger, 0);
-    Body.setAngle(plunger, Math.atan2(direction.y, direction.x));
-    addScore(8.2, "plungerHit", ["projectile", "plungerShot", "suction", "blunt"]);
+    Body.setAngle(plunger, getVectorAngle(direction));
+    addScore(getPlungerShotHitScore(), "plungerHit", ["projectile", "plungerShot", "suction", "blunt"]);
     recordMission("plungerShot", 1);
     setMood("Surprised", 1300);
     spawnBurst(plunger.position, "#e46e5f", 7);
@@ -3874,16 +4429,16 @@ Events.on(engine, "collisionStart", (event) => {
     target.render.strokeStyle = "#ffd06a";
     target.render.lineWidth = 3;
     const offset = Vector.sub(target.position, star.position);
-    const direction = Vector.magnitude(offset) > 0.001 ? Vector.normalise(offset) : { x: 1, y: 0 };
-    const spinSign = direction.x >= 0 ? 1 : -1;
-    Body.applyForce(target, target.position, Vector.mult(direction, 0.0027 * target.mass));
+    const direction = getDirectionOrFallback(offset, { x: 1, y: 0 });
+    const spinSign = getHorizontalSpinSign(direction);
+    Body.applyForce(target, target.position, Vector.mult(direction, getProjectileImpulseMagnitude(target.mass, 0.0027)));
     if (state.torso && state.torso !== target) {
-      Body.applyForce(state.torso, state.torso.position, Vector.mult(direction, 0.0011 * state.torso.mass));
+      Body.applyForce(state.torso, state.torso.position, Vector.mult(direction, getProjectileImpulseMagnitude(state.torso.mass, 0.0011)));
     }
-    Body.setAngularVelocity(target, target.angularVelocity + spinSign * 0.16);
-    Body.setAngularVelocity(star, star.angularVelocity + spinSign * 0.42);
-    Body.setVelocity(star, Vector.mult(Vector.add(star.velocity, Vector.mult(direction, 2.4)), 0.48));
-    addScore(8.4, "starHit", ["projectile", "starShot", "spin", "blunt"]);
+    Body.setAngularVelocity(target, getSpinAngularVelocity(target.angularVelocity, spinSign, 0.16));
+    Body.setAngularVelocity(star, getSpinAngularVelocity(star.angularVelocity, spinSign, 0.42));
+    Body.setVelocity(star, getVelocityAfterDirectionalImpulse(star.velocity, direction, 2.4, 0.48));
+    addScore(getStarShotHitScore(), "starHit", ["projectile", "starShot", "spin", "blunt"]);
     recordMission("starShot", 1);
     setMood("Surprised", 1250);
     spawnBurst(star.position, "#ffd06a", 8);
@@ -3901,7 +4456,7 @@ Events.on(engine, "collisionStart", (event) => {
     Body.setVelocity(dart, { x: 0, y: 0 });
     Body.setAngularVelocity(dart, 0);
     Body.setStatic(dart, true);
-    addScore(8.5, "dartHit", ["projectile", "foamDart", "blunt"]);
+    addScore(getFoamDartHitScore(), "dartHit", ["projectile", "foamDart", "blunt"]);
     recordMission("foamDart", 1);
     setMood("Surprised", 1200);
     spawnBurst(dart.position, "#ffc857", 5);
@@ -3910,14 +4465,15 @@ Events.on(engine, "collisionStart", (event) => {
 
 function updateUnlockButtons() {
   document.querySelectorAll(".tool-button").forEach((button) => {
-    button.classList.toggle("tool-button--locked", !state.unlockedTools.has(button.dataset.tool));
+    const buttonState = getToolButtonState(button.dataset.tool, state.tool, state.unlockedTools.has(button.dataset.tool));
+    button.classList.toggle("tool-button--locked", buttonState.locked);
   });
   document.querySelectorAll(".radial-wheel__button").forEach((button) => {
     const unlocked = state.unlockedTools.has(button.dataset.tool);
-    button.classList.toggle("radial-wheel__button--locked", !unlocked);
-    button.classList.toggle("radial-wheel__button--active", button.dataset.tool === state.tool);
-    const tool = getTool(button.dataset.tool);
-    button.setAttribute("aria-label", unlocked ? tool.name : `${tool.name} locked, costs $${tool.cost}`);
+    const buttonState = getRadialToolButtonState(button.dataset.tool, state.tool, getTool(button.dataset.tool), unlocked);
+    button.classList.toggle("radial-wheel__button--locked", buttonState.locked);
+    button.classList.toggle("radial-wheel__button--active", buttonState.active);
+    button.setAttribute("aria-label", buttonState.ariaLabel);
   });
 }
 

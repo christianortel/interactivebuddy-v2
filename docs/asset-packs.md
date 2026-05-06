@@ -67,6 +67,35 @@ Required audio pack fields:
 
 Use browser oscillator waveform names for wave fields: `sine`, `square`, `sawtooth`, or `triangle`.
 
+Optional audio sample fields:
+
+- `samples`: object mapping feedback events to local file paths or embedded data URLs.
+- Supported high-value event keys include `impact`, `explosion`, `shock`, `tickle`, `gift`, `boombox`, `paint`, `unlock`, and `select`.
+- A sample value can be a string path/URL, or an object with `src`, optional `gain`, and optional `playbackRate`.
+
+Example:
+
+```json
+{
+  "audioPacks": {
+    "privateExact": {
+      "name": "Private Exact",
+      "master": 0.22,
+      "pitch": 1,
+      "toneWave": "triangle",
+      "impactWave": "triangle",
+      "zapWave": "square",
+      "noiseFilter": 1,
+      "decay": 1,
+      "samples": {
+        "impact": "audio/impact.wav",
+        "explosion": { "src": "data:audio/wav;base64,...", "gain": 0.85, "playbackRate": 1 }
+      }
+    }
+  }
+}
+```
+
 ## Template
 
 A validator-clean template is available at:
@@ -80,6 +109,13 @@ The template is not listed in the live manifest, so it will not appear in-game u
 ## Private Skin-Pack Import
 
 Use `File > Import Skin Pack` in-game for private or user-provided packs. Imported packs use the same `pack.json` shape as bundled packs, but they do not need to be added to `assets/packs/manifest.json`.
+
+For a persistent private fan-build folder, use `assets/private/manifest.json` instead. It is loaded automatically after the bundled manifest when present, and real private files are ignored by git. Start from:
+
+```text
+assets/private/manifest.example.json
+assets/private/pack.example.json
+```
 
 The importer also accepts a wrapper object with the pack under `pack`:
 
@@ -116,7 +152,10 @@ The importer also accepts a wrapper object with the pack under `pack`:
         "impactWave": "triangle",
         "zapWave": "square",
         "noiseFilter": 1,
-        "decay": 1
+        "decay": 1,
+        "samples": {
+          "impact": "data:audio/wav;base64,..."
+        }
       }
     }
   }

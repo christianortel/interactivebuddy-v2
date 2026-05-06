@@ -6,6 +6,8 @@ export class FeedbackEngine {
     this.context = null;
     this.master = null;
     this.wind = null;
+    this.sampleBuffers = new Map();
+    this.failedSamples = new Set();
   }
 
   settings() {
@@ -145,9 +147,77 @@ export class FeedbackEngine {
     }
   }
 
+  getSample(eventName) {
+    const pack = this.pack();
+    return pack.samples?.[eventName] || null;
+  }
+
+  loadSampleBuffer(src) {
+    if (!src) {
+      return Promise.resolve(null);
+    }
+    if (!this.sampleBuffers.has(src)) {
+      this.sampleBuffers.set(
+        src,
+        fetch(src)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Audio sample returned ${response.status}`);
+            }
+            return response.arrayBuffer();
+          })
+          .then((buffer) => this.context.decodeAudioData(buffer))
+          .catch(() => {
+            this.failedSamples.add(src);
+            return null;
+          })
+      );
+    }
+    return this.sampleBuffers.get(src);
+  }
+
+  playSample(eventName, intensity = 1) {
+    if (!this.settings().audio) {
+      return false;
+    }
+    const sample = this.getSample(eventName);
+    if (!sample) {
+      return false;
+    }
+    this.ensure();
+    if (!this.context || !this.master) {
+      return true;
+    }
+    const pack = this.pack();
+    this.master.gain.value = pack.master;
+    const src = typeof sample === "string" ? sample : sample.src;
+    if (this.failedSamples.has(src)) {
+      return false;
+    }
+    const sampleGain = typeof sample === "object" && Number.isFinite(sample.gain) ? sample.gain : 1;
+    const sampleRate = typeof sample === "object" && Number.isFinite(sample.playbackRate) ? sample.playbackRate : 1;
+    this.loadSampleBuffer(src).then((buffer) => {
+      if (!buffer || !this.context || !this.master || !this.settings().audio) {
+        return;
+      }
+      const source = this.context.createBufferSource();
+      const amp = this.context.createGain();
+      source.buffer = buffer;
+      source.playbackRate.value = Math.max(0.1, sampleRate * (pack.pitch || 1));
+      amp.gain.value = Math.max(0, sampleGain * Math.max(0.12, Math.min(1.8, intensity)));
+      source.connect(amp);
+      amp.connect(this.master);
+      source.start();
+    });
+    return true;
+  }
+
   play(eventName, intensity = 1) {
     const level = Math.max(0.12, Math.min(1.8, intensity));
     const pack = this.pack();
+    if (this.playSample(eventName, level)) {
+      return;
+    }
     if (eventName === "impact") {
       this.noise({ duration: 0.07 + level * 0.04, gain: 0.05 + level * 0.09, filter: 240 + level * 220 });
       this.tone({ frequency: 94 + level * 28, duration: 0.09, type: pack.impactWave, gain: 0.035 + level * 0.03, bend: 0.72 });

@@ -2,6 +2,32 @@ export function finiteOr(value, fallback) {
   return Number.isFinite(value) ? value : fallback;
 }
 
+export function sanitizeAudioSamples(samples) {
+  if (!samples || typeof samples !== "object") {
+    return {};
+  }
+  return Object.fromEntries(
+    Object.entries(samples)
+      .map(([eventName, sample]) => {
+        if (typeof sample === "string" && sample.trim()) {
+          return [eventName, { src: sample.trim() }];
+        }
+        if (!sample || typeof sample !== "object" || typeof sample.src !== "string" || !sample.src.trim()) {
+          return null;
+        }
+        return [
+          eventName,
+          {
+            src: sample.src.trim(),
+            gain: finiteOr(sample.gain, 1),
+            playbackRate: finiteOr(sample.playbackRate, 1)
+          }
+        ];
+      })
+      .filter(Boolean)
+  );
+}
+
 export function sanitizeAssetPack(pack, manifestEntry = {}) {
   const id = String(pack.id || manifestEntry.id || "").trim();
   const name = String(pack.name || manifestEntry.name || id).trim();
@@ -44,6 +70,7 @@ export function sanitizeAssetPack(pack, manifestEntry = {}) {
       zapWave: audio.zapWave || "square",
       noiseFilter: finiteOr(audio.noiseFilter, 1),
       decay: finiteOr(audio.decay, 1),
+      samples: sanitizeAudioSamples(audio.samples),
       assetPack: id
     };
   });
@@ -62,12 +89,24 @@ export function createAssetPackController({
   skinDefs,
   audioPacks,
   manifestUrl,
+  manifests,
   fetchRef = fetch,
   logger = console
 }) {
+  const manifestSources = manifests || [{ url: manifestUrl, optional: false }];
+
   async function loadAssetPacks() {
+    for (const manifest of manifestSources) {
+      await loadAssetPackManifest(manifest.url, Boolean(manifest.optional));
+    }
+  }
+
+  async function loadAssetPackManifest(url, optional = false) {
+    if (!url) {
+      return;
+    }
     try {
-      const manifestResponse = await fetchRef(manifestUrl, { cache: "no-store" });
+      const manifestResponse = await fetchRef(url, { cache: "no-store" });
       if (!manifestResponse.ok) {
         throw new Error(`Manifest returned ${manifestResponse.status}`);
       }
@@ -84,7 +123,9 @@ export function createAssetPackController({
       );
       loadedPacks.forEach(registerAssetPack);
     } catch (error) {
-      logger.warn("Asset packs unavailable; using built-in assets.", error);
+      if (!optional) {
+        logger.warn("Asset packs unavailable; using built-in assets.", error);
+      }
     }
   }
 

@@ -127,7 +127,8 @@ button {
 }
 
 .menu:hover .menu__panel,
-.menu:focus-within .menu__panel {
+.menu:focus-within .menu__panel,
+.menu.is-open > .menu__panel {
   display: grid;
 }
 

@@ -1,6 +1,19 @@
-export function formatProgress(value) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
-}
+import {
+  advanceChallengeProgress,
+  advanceMissionProgress,
+  chooseRuntimeMissions,
+  createChallengeResult,
+  createChallengeStartState,
+  decrementChallengeTime,
+  formatProgress,
+  getChallengeLabel as getChallengeLabelText,
+  getChallengeModeId,
+  getChallengeReward,
+  getMissionProgressPercent,
+  getMissionReward
+} from "../src/runtime/challengeState.ts";
+
+export { formatProgress };
 
 export function createChallengeController({
   state,
@@ -20,18 +33,9 @@ export function createChallengeController({
   dateNow = () => Date.now()
 }) {
   function chooseMissions() {
-    const coverageIds = ["rope2", "liquid2", "bowling2", "beach3", "punch2", "prop4", "bead6", "dart4", "cork4", "plunger4", "star4", "spark5", "frost5", "goo5", "pulse5", "confetti5", "boombox4", "wheel3", "export1"];
-    const coverageMission = missionPool.find((mission) => mission.id === coverageIds[state.missionCycle % coverageIds.length]);
-    state.missionCycle += 1;
-    const shuffled = missionPool
-      .filter((mission) => mission.id !== coverageMission.id)
-      .sort(() => random() - 0.5);
-    state.missions = [coverageMission, ...shuffled.slice(0, 2)].map((mission) => ({
-      ...mission,
-      progress: 0,
-      completed: false,
-      uniqueTags: new Set()
-    }));
+    const selected = chooseRuntimeMissions(missionPool, state.missionCycle, random);
+    state.missionCycle = selected.missionCycle;
+    state.missions = selected.missions;
     renderMissions();
     toast("Mission cards refreshed.");
   }
@@ -39,7 +43,7 @@ export function createChallengeController({
   function renderMissions() {
     missionList.innerHTML = "";
     state.missions.forEach((mission) => {
-      const pct = Math.min(100, (mission.progress / mission.target) * 100);
+      const pct = getMissionProgressPercent(mission.progress, mission.target);
       const element = documentRef.createElement("article");
       element.className = "mission";
       element.dataset.missionId = mission.id;
@@ -54,13 +58,9 @@ export function createChallengeController({
   }
 
   function startChallenge(modeId, announce = true) {
-    const mode = challengeModes[modeId] || challengeModes.free;
-    state.challenge.mode = modeId in challengeModes ? modeId : "free";
-    state.challenge.progress = 0;
-    state.challenge.timeLeft = mode.duration;
-    state.challenge.completed = false;
-    state.challenge.startedAt = now();
-    state.challenge.lastResult = null;
+    const next = createChallengeStartState(challengeModes, modeId, now());
+    const mode = challengeModes[next.mode] || challengeModes.free;
+    Object.assign(state.challenge, next);
     challengeSelect.value = state.challenge.mode;
     if (announce) {
       toast(state.challenge.mode === "free" ? "Free Play enabled." : `${mode.name} started.`);
@@ -74,7 +74,7 @@ export function createChallengeController({
     if (state.challenge.mode === "free" || state.challenge.completed || mode.duration <= 0) {
       return;
     }
-    state.challenge.timeLeft = Math.max(0, state.challenge.timeLeft - delta / 1000);
+    state.challenge.timeLeft = decrementChallengeTime(state.challenge.timeLeft, delta);
     if (state.challenge.timeLeft === 0) {
       state.challenge.completed = true;
       finishChallenge(false);
@@ -86,11 +86,12 @@ export function createChallengeController({
     if (state.challenge.mode === "free" || state.challenge.completed || mode.event !== event) {
       return;
     }
-    state.challenge.progress = Math.min(mode.target, state.challenge.progress + amount);
+    state.challenge.progress = advanceChallengeProgress(state.challenge.progress, amount, mode.target);
     if (state.challenge.progress >= mode.target) {
       state.challenge.completed = true;
-      state.cash += mode.reward;
-      state.xp += Math.round(mode.reward * 0.6);
+      const reward = getChallengeReward(mode.reward);
+      state.cash += reward.cash;
+      state.xp += reward.xp;
       finishChallenge(true);
       feedback.play("unlock", 1);
       pulse([35, 40, 55]);
@@ -100,23 +101,20 @@ export function createChallengeController({
 
   function finishChallenge(success) {
     const mode = getChallengeMode();
-    const elapsed = Math.max(0, (now() - state.challenge.startedAt) / 1000);
     const previousBest = state.challenge.bests[state.challenge.mode];
-    const isBest = success && (!previousBest || elapsed < previousBest.elapsed);
-    if (isBest) {
-      state.challenge.bests[state.challenge.mode] = {
-        elapsed,
-        completedAt: dateNow()
-      };
-    }
-    state.challenge.lastResult = {
-      mode: state.challenge.mode,
-      name: mode.name,
+    const finished = createChallengeResult({
+      modeId: state.challenge.mode,
+      mode,
       success,
-      elapsed,
-      reward: success ? mode.reward : 0,
-      isBest
-    };
+      startedAt: state.challenge.startedAt,
+      now: now(),
+      previousBest,
+      completedAt: dateNow()
+    });
+    if (finished.best) {
+      state.challenge.bests[state.challenge.mode] = finished.best;
+    }
+    state.challenge.lastResult = finished.result;
     showChallengeResult(state.challenge.lastResult);
     toast(success ? `${mode.name} complete. +$${mode.reward}` : `${mode.name} expired. Try again from Modes.`);
   }
@@ -132,20 +130,19 @@ export function createChallengeController({
   }
 
   function getChallengeMode() {
-    return challengeModes[state.challenge.mode] || challengeModes.free;
+    return challengeModes[getChallengeModeId(challengeModes, state.challenge.mode)] || challengeModes.free;
   }
 
   function getChallengeLabel() {
     const mode = getChallengeMode();
-    if (state.challenge.mode === "free") {
-      return "Free";
-    }
-    const progress = `${formatProgress(state.challenge.progress)}/${mode.target}`;
-    if (state.challenge.completed) {
-      const best = state.challenge.bests[state.challenge.mode];
-      return best ? `${mode.name} ${best.elapsed.toFixed(1)}s` : `${mode.name} done`;
-    }
-    return `${progress} ${Math.ceil(state.challenge.timeLeft)}s`;
+    return getChallengeLabelText({
+      modeId: state.challenge.mode,
+      mode,
+      progress: state.challenge.progress,
+      timeLeft: state.challenge.timeLeft,
+      completed: state.challenge.completed,
+      best: state.challenge.bests[state.challenge.mode]
+    });
   }
 
   function recordMission(event, amount) {
@@ -154,12 +151,13 @@ export function createChallengeController({
       if (mission.completed || mission.event !== event) {
         return;
       }
-      mission.progress = Math.min(mission.target, mission.progress + amount);
+      mission.progress = advanceMissionProgress(mission.progress, amount, mission.target);
       changed = true;
       if (mission.progress >= mission.target) {
         mission.completed = true;
-        state.cash += mission.reward;
-        state.xp += Math.round(mission.reward * 0.5);
+        const reward = getMissionReward(mission.reward);
+        state.cash += reward.cash;
+        state.xp += reward.xp;
         toast(`${mission.title} complete. +$${mission.reward}`);
         saveGame();
       }

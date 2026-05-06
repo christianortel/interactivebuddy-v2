@@ -1,0 +1,27 @@
+{
+  "name": "buddy-lab-clean-room",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build && vite preview --configLoader native --host 127.0.0.1 --port 5173",
+    "build": "tsc --noEmit && vite build --configLoader native",
+    "preview": "vite preview --configLoader native --host 127.0.0.1",
+    "test:unit": "node --experimental-strip-types tests/unit-modules.mjs",
+    "test:assets": "powershell -ExecutionPolicy Bypass -File ./tests/run-assets.ps1",
+    "test:runtime": "node --experimental-strip-types tests/runtime-helpers.mjs",
+    "test:static-smoke": "node tests/dist-static-smoke.mjs",
+    "browser:resolve-chromium": "node tests/resolve-playwright-chromium.mjs",
+    "browser:launch-cdp": "powershell -ExecutionPolicy Bypass -File ./tests/launch-cdp-browser.ps1",
+    "test:browser-smoke": "powershell -ExecutionPolicy Bypass -File ./tests/run-browser-smoke.ps1",
+    "test:browser-smoke:external": "powershell -ExecutionPolicy Bypass -File ./tests/run-browser-smoke-external.ps1",
+    "test:regression": "npm run build && powershell -ExecutionPolicy Bypass -File ./tests/run-regression.ps1",
+    "test:visual": "npm run build && powershell -ExecutionPolicy Bypass -File ./tests/run-regression.ps1 -Visual"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "playwright": "^1.59.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.7"
+  }
+}

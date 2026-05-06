@@ -1,4 +1,4 @@
-const INSTANT_PLACEMENT_TOOLS = new Set(["grenade", "trampoline", "gift", "confetti", "boombox", "tesla", "rope", "water"]);
+const INSTANT_PLACEMENT_TOOLS = new Set(["firecracker", "grenade", "mine", "stickybomb", "largebomb", "trampoline", "platform", "bumper", "conveyor", "gift", "moneydrop", "treat", "confetti", "boombox", "tesla", "rope", "water"]);
 const PAINT_COLORS = ["#ff7161", "#ffc857", "#98f17f", "#55d9cf", "#e7a8ff"];
 export const RUBBER_PELLET_VARIANTS = [
   { id: "charcoal-lime", fill: "#2f3a40", stroke: "#f1ff8b", stripe: "#f1ff8b", dot: "#111719" },
@@ -161,6 +161,23 @@ export function createStarBody(Bodies, position) {
   });
 }
 
+export function createCannonballBody(Bodies, position) {
+  return Bodies.circle(position.x, position.y, 18, {
+    restitution: 0.22,
+    friction: 0.52,
+    density: 0.0058,
+    label: "prop_cannonball",
+    plugin: {
+      cosmetic: {
+        type: "cannonball-iron",
+        shine: "#73838a",
+        scuff: "#171d20"
+      }
+    },
+    render: { fillStyle: "#2f383d", strokeStyle: "#c6d4d7", lineWidth: 2 }
+  });
+}
+
 export function createRubberPelletBody(Bodies, position, variantIndex = 0) {
   const variant = getRubberPelletVariant(variantIndex);
   return Bodies.circle(position.x, position.y, 6, {
@@ -216,6 +233,25 @@ export function createBrickBody(Bodies, position) {
   });
 }
 
+export function createCrateBody(Bodies, position) {
+  return Bodies.rectangle(position.x, position.y, 52, 52, {
+    chamfer: { radius: 4 },
+    restitution: 0.28,
+    friction: 0.78,
+    density: 0.0028,
+    label: "prop_crate",
+    plugin: {
+      cosmetic: {
+        type: "crate-cross",
+        plank: "#b87745",
+        edge: "#5b3824",
+        nail: "#f6d39b"
+      }
+    },
+    render: { fillStyle: "#9c6238", strokeStyle: "#5b3824", lineWidth: 3 }
+  });
+}
+
 export function createAnvilBody(Bodies, position) {
   return Bodies.rectangle(position.x, position.y, 74, 38, {
     restitution: 0.12,
@@ -251,6 +287,79 @@ export function createGrenadeBody(Bodies, position) {
   });
 }
 
+export function createFirecrackerBody(Bodies, position) {
+  return Bodies.rectangle(position.x, position.y, 18, 42, {
+    chamfer: { radius: 4 },
+    restitution: 0.38,
+    friction: 0.62,
+    density: 0.0012,
+    label: "prop_firecracker",
+    plugin: {
+      cosmetic: {
+        type: "firecracker-tube",
+        fuse: "#f1ff8b",
+        stripe: "#fff4d7",
+        spark: "#ffc857"
+      }
+    },
+    render: { fillStyle: "#d94e45", strokeStyle: "#64211f", lineWidth: 2 }
+  });
+}
+
+export function createMineBody(Bodies, position) {
+  return Bodies.circle(position.x, position.y, 21, {
+    restitution: 0.18,
+    friction: 0.86,
+    density: 0.0044,
+    label: "prop_mine",
+    plugin: {
+      cosmetic: {
+        type: "mine-button",
+        button: "#ff7161",
+        tooth: "#b9c5c4",
+        shell: "#202a2a"
+      }
+    },
+    render: { fillStyle: "#202a2a", strokeStyle: "#b9c5c4", lineWidth: 2 }
+  });
+}
+
+export function createStickyBombBody(Bodies, position) {
+  return Bodies.circle(position.x, position.y, 16, {
+    restitution: 0.1,
+    friction: 0.94,
+    density: 0.0028,
+    label: "prop_stickybomb",
+    plugin: {
+      cosmetic: {
+        type: "sticky-bomb",
+        pad: "#98f17f",
+        fuse: "#ffc857",
+        shell: "#293333"
+      }
+    },
+    render: { fillStyle: "#293333", strokeStyle: "#98f17f", lineWidth: 3 }
+  });
+}
+
+export function createLargeBombBody(Bodies, position) {
+  return Bodies.circle(position.x, position.y, 31, {
+    restitution: 0.2,
+    friction: 0.72,
+    density: 0.0068,
+    label: "prop_largebomb",
+    plugin: {
+      cosmetic: {
+        type: "large-cartoon-bomb",
+        fuse: "#f1ff8b",
+        cap: "#5b6a6b",
+        shine: "#73838a"
+      }
+    },
+    render: { fillStyle: "#1f2829", strokeStyle: "#c6d4d7", lineWidth: 3 }
+  });
+}
+
 export function createTrampolineBody(Bodies, position) {
   return Bodies.rectangle(position.x, position.y, 150, 16, {
     isStatic: true,
@@ -269,6 +378,60 @@ export function createTrampolineBody(Bodies, position) {
   });
 }
 
+export function createPlatformBody(Bodies, position) {
+  return Bodies.rectangle(position.x, position.y, 170, 18, {
+    isStatic: true,
+    restitution: 0.24,
+    friction: 0.82,
+    label: "platform",
+    plugin: {
+      cosmetic: {
+        type: "platform-plank",
+        stripe: "#f1ff8b",
+        rivet: "#25322f"
+      }
+    },
+    render: { fillStyle: "#60706a", strokeStyle: "#25322f", lineWidth: 2 }
+  });
+}
+
+export function createBumperBody(Bodies, position) {
+  return Bodies.circle(position.x, position.y, 28, {
+    isStatic: true,
+    restitution: 1.55,
+    friction: 0.05,
+    label: "bumper",
+    plugin: {
+      cosmetic: {
+        type: "bumper-ring",
+        ring: "#ff7161",
+        core: "#fff4b8",
+        bolt: "#31545a"
+      }
+    },
+    render: { fillStyle: "#fff4b8", strokeStyle: "#ff7161", lineWidth: 4 }
+  });
+}
+
+export function createConveyorBody(Bodies, position) {
+  return Bodies.rectangle(position.x, position.y, 180, 20, {
+    isStatic: true,
+    restitution: 0.18,
+    friction: 0.04,
+    label: "conveyor",
+    plugin: {
+      conveyorSpeed: 0.0028,
+      cosmetic: {
+        type: "conveyor-belt",
+        belt: "#263331",
+        arrow: "#55d9cf",
+        roller: "#f1ff8b"
+      }
+    },
+    render: { fillStyle: "#263331", strokeStyle: "#55d9cf", lineWidth: 2 }
+  });
+}
+
 export function createGiftBody(Bodies, position) {
   return Bodies.rectangle(position.x, position.y, 34, 34, {
     restitution: 0.36,
@@ -283,6 +446,43 @@ export function createGiftBody(Bodies, position) {
       }
     },
     render: { fillStyle: "#ffc857", strokeStyle: "#e46e5f", lineWidth: 3 }
+  });
+}
+
+export function createMoneyDropBody(Bodies, position) {
+  return Bodies.rectangle(position.x, position.y, 42, 28, {
+    chamfer: { radius: 8 },
+    restitution: 0.42,
+    friction: 0.42,
+    density: 0.001,
+    label: "prop_moneydrop",
+    plugin: {
+      cosmetic: {
+        type: "money-drop",
+        bill: "#98f17f",
+        band: "#f1ff8b",
+        ink: "#24452d"
+      }
+    },
+    render: { fillStyle: "#98f17f", strokeStyle: "#24452d", lineWidth: 2 }
+  });
+}
+
+export function createTreatBody(Bodies, position) {
+  return Bodies.circle(position.x, position.y, 17, {
+    restitution: 0.5,
+    friction: 0.38,
+    density: 0.0009,
+    label: "prop_treat",
+    plugin: {
+      cosmetic: {
+        type: "treat-cookie",
+        chip: "#5d3824",
+        icing: "#fff4d7",
+        crumb: "#c58a55"
+      }
+    },
+    render: { fillStyle: "#d89b5f", strokeStyle: "#7a4a2e", lineWidth: 2 }
   });
 }
 

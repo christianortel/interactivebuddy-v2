@@ -76,11 +76,17 @@ function Wait-ForServer {
 
 try {
   if (-not $NoServer) {
-    $arguments = @("-m", "http.server", "$Port", "--bind", $HostName)
+    $viteScript = Join-Path $root "node_modules/vite/bin/vite.js"
+    $arguments = @($viteScript, "preview", "--configLoader", "native", "--host", $HostName, "--port", "$Port")
+    $serverFile = $nodeExe
+    if (-not (Test-Path $viteScript)) {
+      $arguments = @("-m", "http.server", "$Port", "--bind", $HostName)
+      $serverFile = $pythonExe
+    }
     if ($IsWindows -or $env:OS -eq "Windows_NT") {
-      $serverProcess = Start-Process -FilePath $pythonExe -ArgumentList $arguments -WorkingDirectory $root -WindowStyle Hidden -PassThru
+      $serverProcess = Start-Process -FilePath $serverFile -ArgumentList $arguments -WorkingDirectory $root -WindowStyle Hidden -PassThru
     } else {
-      $serverProcess = Start-Process -FilePath $pythonExe -ArgumentList $arguments -WorkingDirectory $root -PassThru
+      $serverProcess = Start-Process -FilePath $serverFile -ArgumentList $arguments -WorkingDirectory $root -PassThru
     }
   }
 

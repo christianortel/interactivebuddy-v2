@@ -1,5 +1,112 @@
 # Buddy Lab 2026
 
+Private/offline TypeScript + Vite physics sandbox now being driven toward a high-fidelity Interactive Buddy fan-remake target. The game uses a boxed room, a Matter.js ragdoll buddy, mouse grabbing/throwing, tools, projectiles, explosions, progression, shop unlocks, skins, local saves, settings, asset packs, and audiovisual feedback.
+
+The current product tracker is `INTERACTIVE_BUDDY_PARITY.md`. Treat that file as the source of truth for 1:1 work: capture reference evidence first, then tune/implement against that evidence. Broad TypeScript migration should wait unless it directly improves parity, browser verification, or private asset/audio support.
+
+## Local Setup
+
+```powershell
+npm install
+npm run dev
+```
+
+Open the local Vite preview URL, usually `http://127.0.0.1:5173`. In this Windows sandbox, `npm run dev` builds TypeScript first and serves the offline static output, which avoids blocked on-demand transform processes.
+
+## Offline Build
+
+```powershell
+npm run build
+npm run preview
+```
+
+The built `dist/` folder is static and can be served locally without a backend. Runtime physics uses the vendored Matter.js file under `vendor/`; asset packs are local JSON/SVG files under `assets/packs/`.
+
+## Browser Verification
+
+The fastest non-browser checks are:
+
+```powershell
+npm run build
+npm run test:unit
+npm run test:runtime
+npm run test:assets
+npm run test:static-smoke
+```
+
+`test:static-smoke` is a renderer-free production check for restricted environments: it validates the built HTML, bundled TypeScript shell, runtime chunk, vendored Matter.js, copied asset-pack manifest, and local static serving path.
+
+The CDP browser smoke covers the built app, vendored Matter.js boot, and the newer tool batches:
+
+```powershell
+npm run build
+npm run test:browser-smoke
+```
+
+If a restricted shell cannot launch Chromium renderers, launch the browser from a normal PowerShell session and attach to it:
+
+```powershell
+npm run browser:launch-cdp
+npm run test:browser-smoke:external
+```
+
+The launcher prints the browser process id, profile path, debug port, and stop command. By default it uses port `9333`; pass `-DebugPort` to `tests/launch-cdp-browser.ps1` and `tests/run-browser-smoke-external.ps1` if that port is already in use.
+
+For CI or a normal shell with Playwright's browser install available:
+
+```powershell
+npx playwright install chromium
+$env:BUDDY_CHROME_PATH = node ./tests/resolve-playwright-chromium.mjs
+npm run test:browser-smoke
+```
+
+## Controls
+
+- `1`-`9`: select visible tools.
+- Hand: click/drag body parts to grab, drag, throw, poke, slap, and fling.
+- Mouse wheel/power slider: adjust tool power where supported.
+- Aim-and-release tools: drag from the stage and release to fire.
+- Hold tools: Fan, Gravity Well, Heat, Frost, Goo, Pulse, and Spark apply continuous effects.
+- Place tools: Rope, Water, Trampoline, Grenade, Tesla, Gift, Confetti, and Boombox place or trigger at the cursor.
+- `R`: reset the scene.
+
+## Feature List
+
+- Single-screen 2D boxed room with four collision boundaries.
+- Multi-part Matter.js ragdoll buddy with head, torso, pelvis, arms, legs, hands, and feet.
+- Spring-like mouse grabbing, throw velocity, quick poke/tickle behavior, and wall recovery.
+- Money, XP, combos, anti-farm scoring, floating feedback, and local persistence.
+- Shop progression with locked/unlocked tools and skins.
+- Original skin packs, texture-backed SVG skins, room themes, and private asset-pack import.
+- Optional ignored private asset lane at `assets/private/manifest.json`, with templates under `assets/private/`.
+- Broad tool categories: hand/basic, thrown props, projectiles, explosives, elemental effects, force tools, environment builders, and nice/funny items.
+- Mood/reaction states, face changes, particles, camera shake, synthesized audio feedback, mute/settings controls, and replay export.
+- LocalStorage save/load, save import/export, settings persistence, best challenge times, and lifetime earnings tracking.
+
+## How To Add Tools
+
+1. Add data in `src/data/tools.ts` for typed catalog visibility.
+2. Add live runtime data in `js/content.js`.
+3. Add a behavior factory or effect in `js/tool-behaviors.js` and `main.js`.
+4. Add scoring tags and audit metadata in `TOOL_EFFECT_AUDIT`.
+5. Add browser/unit coverage in `tests/`.
+6. Update `PROJECT_STATUS.md` and any relevant docs.
+
+## How To Add Skins
+
+1. Add typed catalog data in `src/data/skins.ts` if it is built-in.
+2. Add runtime skin data in `js/content.js`, a bundled pack under `assets/packs/`, or a private local import pack.
+3. For exact fan-build art, prefer private local imports or private non-manifest packs.
+4. Validate packs with `npm run test:assets`.
+5. Verify shop buy/equip behavior and texture application in browser tests.
+
+## Known Limitations
+
+- The current live runtime is the existing JavaScript game engine wrapped by a TypeScript/Vite entry point. Further migration is lower priority than fidelity work.
+- Audio supports synthesized feedback plus audio-pack `samples` overrides for local or embedded private sound files.
+- Some catalog entries in `src/data/tools.ts` are parity targets while the live runtime ships the current working tool set under `js/content.js`.
+- `INTERACTIVE_BUDDY_PARITY.md` currently marks many 1:1 rows as blocked until reference captures are available.
+
 A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: grab a soft ragdoll buddy, try tools, earn cash/XP from varied reactions, unlock more tools and skins, and keep experimenting.
 
 ## Current Playable Slice
@@ -8,6 +115,7 @@ A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: 
 - Classic top menu bar plus a modern HUD, mission panel, shop, and bottom tool rail.
 - Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Plunger Shot, Star Launcher, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Confetti Popper, Boombox, Tesla Coil, and Black Hole.
 - Local asset packs: JSON manifests can add skins, audio packs, and room palettes.
+- Private asset packs: `assets/private/manifest.json` is auto-loaded when present and ignored by git for local fan-build files.
 - Texture-backed pack skins: local SVG skin assets can be applied to the ragdoll bodies.
 - Economy: cash, XP, combo timer, anti-grind yield decay, unlockable tools, unlockable skins, and local persistence.
 - Reactions: mood state, face indicator, impact scoring, airborne scoring, shock/explosion/fan/paint/gift/tickle/water/rope tags, camera shake, replay strip, particle effects, Web Audio feedback with selectable packs, and supported-device haptics.
@@ -223,9 +331,11 @@ In progress:
 
 Next improvements:
 
-- After every shipped tool has direct behavior coverage, expand the original/classic-inspired content set with more legally distinct tools, skins, room packs, and effect variants.
-- Next queue item is `Nice Tool Later`: add a money-style nice tool only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
-- Parallel tracking item: keep exact old skins/assets private-import-only unless rights are documented, while expanding clean-room equivalents through asset packs and tool-specific effects.
+- Use `INTERACTIVE_BUDDY_PARITY.md` as the primary queue.
+- Gather reference evidence for menus, shop, tool roster/order, prices, buddy physics/reactions, default room, and sound timing.
+- Implement the first narrow fidelity batch: default room proportions/colors, buddy scale/physics tuning, and separately selectable Hand/Poke/Slap/Tickle behavior if the reference menu requires it.
+- Fill private audio-pack `samples` from reference sounds before claiming sound parity.
+- Copy `assets/private/manifest.example.json` and `assets/private/pack.example.json` when building the local private replacement pack.
 
 Process notes:
 
@@ -233,6 +343,7 @@ Process notes:
 - Verify with `node --check` plus browser regression after gameplay changes.
 - When verification exposes weak behavior, fix the behavior first and update this tracker after the fix passes.
 - Prefer small module extractions with dependency injection and direct regression coverage over broad rewrites.
+- Prefer fidelity batches over module extractions unless the extraction directly supports parity or verification.
 - After a queue group is cleared, start the next queue with testability gaps before adding new gameplay surface area.
 - Do not mark an extraction complete unless the full runner passes or the tracker explicitly records the verification blocker.
 - For UI preview work, cover default content, built-in pack switching, and private import behavior before marking the queue item done.

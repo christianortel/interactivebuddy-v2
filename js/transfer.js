@@ -1,3 +1,16 @@
+import {
+  createSaveSnapshot,
+  extractImportedSave,
+  getReplayBufferSeconds as getReplayBufferSecondsFromChunks,
+  getReplayDownloadName,
+  getReplayDownloadText,
+  getReplayReadyToast,
+  getReplayStripText,
+  getSaveDownloadName,
+  getSaveDownloadText,
+  trimReplayChunks
+} from "../src/runtime/transferState.ts";
+
 export function createTransferController({
   state,
   canvas,
@@ -25,10 +38,7 @@ export function createTransferController({
       return;
     }
     const seconds = getReplayBufferSeconds();
-    replayStrip.textContent = state.replayLog
-      .slice(-8)
-      .map((event) => `${event.text} +$${event.value}`)
-      .join("  |  ") + (seconds > 0 ? `  |  video buffer ${seconds.toFixed(0)}s` : "");
+    replayStrip.textContent = getReplayStripText(state.replayLog, seconds);
     replayStrip.classList.add("replay-strip--visible");
     windowRef.setTimeout(() => replayStrip.classList.remove("replay-strip--visible"), 5200);
   }
@@ -71,18 +81,12 @@ export function createTransferController({
   }
 
   function trimReplayBuffer() {
-    const cutoff = now() - replayBufferMs;
-    state.replayChunks = state.replayChunks.filter((chunk) => chunk.time >= cutoff);
+    state.replayChunks = trimReplayChunks(state.replayChunks, now(), replayBufferMs);
   }
 
   function getReplayBufferSeconds() {
     trimReplayBuffer();
-    if (!state.replayChunks.length) {
-      return 0;
-    }
-    const oldest = state.replayChunks[0].time;
-    const newest = state.replayChunks[state.replayChunks.length - 1].time;
-    return Math.max(0, (newest - oldest) / 1000);
+    return getReplayBufferSecondsFromChunks(state.replayChunks);
   }
 
   function exportReplayVideo() {
@@ -119,7 +123,7 @@ export function createTransferController({
       exportReplayButton.textContent = "Export";
       recordMission("replayExport", 1);
       recordChallenge("replayExport", 1);
-      toast(`Recent ${Math.max(1, Math.round(getReplayBufferSeconds()))}s replay ready.`);
+      toast(getReplayReadyToast(getReplayBufferSeconds()));
     }, 180);
   }
 
@@ -127,8 +131,8 @@ export function createTransferController({
     replayStrip.innerHTML = "";
     const link = documentRef.createElement("a");
     link.href = url;
-    link.download = `buddy-lab-replay-${dateNow()}.webm`;
-    link.textContent = `Recent replay ready (${Math.max(1, Math.round(size / 1024))} KB)`;
+    link.download = getReplayDownloadName(dateNow());
+    link.textContent = getReplayDownloadText(size);
     link.style.color = "#98f17f";
     link.style.fontWeight = "700";
     replayStrip.appendChild(link);
@@ -137,19 +141,14 @@ export function createTransferController({
 
   function exportSaveSnapshot() {
     saveGame();
-    const snapshot = {
-      app: "Buddy Lab 2026",
-      type: "progression-save",
-      exportedAt: new Date().toISOString(),
-      save: createSavePayload()
-    };
+    const snapshot = createSaveSnapshot(createSavePayload(), new Date().toISOString());
     const blob = new BlobCtor([JSON.stringify(snapshot, null, 2)], { type: "application/json" });
     const url = urlRef.createObjectURL(blob);
     replayStrip.innerHTML = "";
     const link = documentRef.createElement("a");
     link.href = url;
-    link.download = `buddy-lab-save-${dateNow()}.json`;
-    link.textContent = `Save snapshot ready (${Math.max(1, Math.round(blob.size / 1024))} KB)`;
+    link.download = getSaveDownloadName(dateNow());
+    link.textContent = getSaveDownloadText(blob.size);
     link.style.color = "#98f17f";
     link.style.fontWeight = "700";
     replayStrip.appendChild(link);
@@ -167,7 +166,7 @@ export function createTransferController({
     try {
       const text = await file.text();
       const parsed = JSON.parse(text);
-      const importedSave = parsed.save || parsed;
+      const importedSave = extractImportedSave(parsed);
       const migrated = migrateSave(importedSave);
       writeJson(storageKey, migrated);
       toast("Save imported. Reloading.");

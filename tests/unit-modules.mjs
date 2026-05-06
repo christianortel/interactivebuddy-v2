@@ -14,16 +14,27 @@ import {
   createBowlingBallBody,
   createBoxingGloveBody,
   createBrickBody,
+  createCannonballBody,
   createConfettiPopperBody,
   createCorkBody,
+  createCrateBody,
+  createFirecrackerBody,
   createFoamDartBody,
   createGiftBody,
   createGrenadeBody,
+  createLargeBombBody,
+  createMineBody,
+  createMoneyDropBody,
   createPaintballBody,
+  createBumperBody,
+  createConveyorBody,
   createPlungerBody,
+  createPlatformBody,
   createRubberPelletBody,
   createStarBody,
+  createStickyBombBody,
   createTeslaBody,
+  createTreatBody,
   createTrampolineBody,
   getRubberPelletVariant,
   isInstantPlacementTool,
@@ -94,8 +105,17 @@ const fakeBodies = {
 };
 
 assert.equal(isInstantPlacementTool("grenade"), true);
+assert.equal(isInstantPlacementTool("firecracker"), true);
+assert.equal(isInstantPlacementTool("mine"), true);
+assert.equal(isInstantPlacementTool("stickybomb"), true);
+assert.equal(isInstantPlacementTool("largebomb"), true);
 assert.equal(isInstantPlacementTool("confetti"), true);
 assert.equal(isInstantPlacementTool("boombox"), true);
+assert.equal(isInstantPlacementTool("moneydrop"), true);
+assert.equal(isInstantPlacementTool("treat"), true);
+assert.equal(isInstantPlacementTool("platform"), true);
+assert.equal(isInstantPlacementTool("bumper"), true);
+assert.equal(isInstantPlacementTool("conveyor"), true);
 assert.equal(isInstantPlacementTool("fan"), false);
 assert.equal(randomPaintColor(() => 0), "#ff7161");
 assert.equal(randomPaintColor(() => 0.999), "#e7a8ff");
@@ -118,6 +138,8 @@ assert.equal(createBoxingGloveBody(fakeBodies, { x: 10, y: 20 }).label, "prop_gl
 assert.equal(createBoxingGloveBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "glove-laced");
 assert.equal(createBrickBody(fakeBodies, { x: 10, y: 20 }).label, "prop_brick");
 assert.equal(createBrickBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "foam-brick-lined");
+assert.equal(createCrateBody(fakeBodies, { x: 10, y: 20 }).label, "prop_crate");
+assert.equal(createCrateBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "crate-cross");
 assert.equal(createAnvilBody(fakeBodies, { x: 10, y: 20 }).density, 0.009);
 assert.equal(createAnvilBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "stage-weight-anvil");
 assert.equal(createPaintballBody(fakeBodies, { x: 10, y: 20 }, "#fff").render.fillStyle, "#fff");
@@ -130,15 +152,36 @@ assert.equal(createPlungerBody(fakeBodies, { x: 10, y: 20 }).label, "prop_plunge
 assert.equal(createPlungerBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "plunger-shot");
 assert.equal(createStarBody(fakeBodies, { x: 10, y: 20 }).label, "prop_star");
 assert.equal(createStarBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "star-shot");
+assert.equal(createCannonballBody(fakeBodies, { x: 10, y: 20 }).label, "prop_cannonball");
+assert.equal(createCannonballBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "cannonball-iron");
 assert.equal(createRubberPelletBody(fakeBodies, { x: 10, y: 20 }).label, "prop_rubber");
 assert.equal(createRubberPelletBody(fakeBodies, { x: 10, y: 20 }, 1).plugin.cosmetic.variant, "safety-orange");
 assert.equal(getRubberPelletVariant(2).id, "mint-blue");
 assert.equal(createGrenadeBody(fakeBodies, { x: 10, y: 20 }).label, "prop_grenade");
 assert.equal(createGrenadeBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "grenade-shell");
+assert.equal(createFirecrackerBody(fakeBodies, { x: 10, y: 20 }).label, "prop_firecracker");
+assert.equal(createFirecrackerBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "firecracker-tube");
+assert.equal(createMineBody(fakeBodies, { x: 10, y: 20 }).label, "prop_mine");
+assert.equal(createMineBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "mine-button");
+assert.equal(createStickyBombBody(fakeBodies, { x: 10, y: 20 }).label, "prop_stickybomb");
+assert.equal(createStickyBombBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "sticky-bomb");
+assert.equal(createLargeBombBody(fakeBodies, { x: 10, y: 20 }).label, "prop_largebomb");
+assert.equal(createLargeBombBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "large-cartoon-bomb");
 assert.equal(createTrampolineBody(fakeBodies, { x: 10, y: 20 }).isStatic, true);
 assert.equal(createTrampolineBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "trampoline-pad");
+assert.equal(createPlatformBody(fakeBodies, { x: 10, y: 20 }).label, "platform");
+assert.equal(createPlatformBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "platform-plank");
+assert.equal(createBumperBody(fakeBodies, { x: 10, y: 20 }).label, "bumper");
+assert.equal(createBumperBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "bumper-ring");
+assert.equal(createConveyorBody(fakeBodies, { x: 10, y: 20 }).label, "conveyor");
+assert.equal(createConveyorBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "conveyor-belt");
+assert.equal(createConveyorBody(fakeBodies, { x: 10, y: 20 }).plugin.conveyorSpeed, 0.0028);
 assert.equal(createGiftBody(fakeBodies, { x: 10, y: 20 }).label, "prop_gift");
 assert.equal(createGiftBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "gift-box");
+assert.equal(createMoneyDropBody(fakeBodies, { x: 10, y: 20 }).label, "prop_moneydrop");
+assert.equal(createMoneyDropBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "money-drop");
+assert.equal(createTreatBody(fakeBodies, { x: 10, y: 20 }).label, "prop_treat");
+assert.equal(createTreatBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "treat-cookie");
 assert.equal(createConfettiPopperBody(fakeBodies, { x: 10, y: 20 }).label, "prop_confetti");
 assert.equal(createConfettiPopperBody(fakeBodies, { x: 10, y: 20 }).plugin.cosmetic.type, "confetti-popper");
 assert.equal(createBoomboxBody(fakeBodies, { x: 10, y: 20 }).label, "prop_boombox");
@@ -156,7 +199,17 @@ const sanitizedPack = sanitizeAssetPack(
     name: "Unit Pack",
     room: { accent: "#abcdef", motif: "office" },
     skins: [{ id: "unit:skin", name: "Unit Skin", cost: Number.NaN }],
-    audioPacks: { unitTone: { name: "Unit Tone", pitch: 1.25 } }
+    audioPacks: {
+      unitTone: {
+        name: "Unit Tone",
+        pitch: 1.25,
+        samples: {
+          impact: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+          explosion: { src: "audio/explosion.wav", gain: 0.7, playbackRate: 0.9 },
+          invalid: { gain: 2 }
+        }
+      }
+    }
   },
   {}
 );
@@ -165,6 +218,10 @@ assert.equal(sanitizedPack.room.motif, "office");
 assert.equal(sanitizedPack.skins[0].cost, 300);
 assert.equal(sanitizedPack.skins[0].accent, "#abcdef");
 assert.equal(sanitizedPack.audioPacks.unitTone.master, 0.18);
+assert.equal(sanitizedPack.audioPacks.unitTone.samples.impact.src.startsWith("data:audio/wav"), true);
+assert.equal(sanitizedPack.audioPacks.unitTone.samples.explosion.src, "audio/explosion.wav");
+assert.equal(sanitizedPack.audioPacks.unitTone.samples.explosion.gain, 0.7);
+assert.equal("invalid" in sanitizedPack.audioPacks.unitTone.samples, false);
 
 const assetPackState = { assetPacks: [{ id: "base" }] };
 const assetSkinDefs = [{ id: "classic" }];
@@ -190,6 +247,18 @@ assert.equal(assetPackState.assetPacks.length, 2);
 assert.equal(assetSkinDefs.some((skin) => skin.id === "unit:skin"), true);
 assert.equal(assetAudioPacks.unitTone.assetPack, "unit-pack");
 assert.equal(assetPackController.registerAssetPack(sanitizedPack), false);
+const optionalState = { assetPacks: [] };
+const optionalWarnings = [];
+const optionalController = createAssetPackController({
+  state: optionalState,
+  skinDefs: [],
+  audioPacks: {},
+  manifests: [{ url: "missing-private.json", optional: true }],
+  fetchRef: async () => ({ ok: false, status: 404 }),
+  logger: { warn: (message) => optionalWarnings.push(message) }
+});
+await optionalController.loadAssetPacks();
+assert.equal(optionalWarnings.length, 0);
 const embeddedTexturePack = assetPackController.importAssetPack({
   id: "embedded-pack",
   name: "Embedded Pack",

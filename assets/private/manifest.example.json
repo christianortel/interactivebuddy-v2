@@ -1,0 +1,9 @@
+{
+  "packs": [
+    {
+      "id": "interactive-buddy-private",
+      "name": "Interactive Buddy Private",
+      "path": "assets/private/interactive-buddy-private/pack.json"
+    }
+  ]
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Buddy Lab 2026</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="vendor/matter.min.js"></script>
   </head>
   <body>
     <main class="app-shell">
@@ -176,7 +177,32 @@
 
     <input id="saveImportInput" type="file" accept="application/json,.json" hidden />
     <input id="skinPackImportInput" type="file" accept="application/json,.json" hidden />
-    <script src="vendor/matter.min.js"></script>
-    <script src="main.js" type="module"></script>
+    <script>
+      window.__buddyLabBootFallbackTimer = window.setTimeout(async () => {
+        if (window.__buddyLabDebug) {
+          return;
+        }
+        const toast = document.getElementById("toast");
+        try {
+          const response = await fetch("./dist/index.html", { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error(`Built runtime unavailable: ${response.status}`);
+          }
+          const html = await response.text();
+          const match = html.match(/<script[^>]+type="module"[^>]+src="\.\/assets\/([^"]+\.js)"/);
+          if (!match) {
+            throw new Error("Built runtime entry not found.");
+          }
+          await import(`./dist/assets/${match[1]}`);
+        } catch (error) {
+          console.error("Buddy Lab runtime did not boot.", error);
+          if (toast) {
+            toast.textContent = "Runtime did not start. Run npm run build, then npm run dev or npm run preview.";
+            toast.classList.add("is-visible");
+          }
+        }
+      }, 1600);
+    </script>
+    <script src="/src/main.ts" type="module"></script>
   </body>
 </html>

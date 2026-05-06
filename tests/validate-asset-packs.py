@@ -5,6 +5,7 @@ from pathlib import Path
 
 REQUIRED_ROOM_KEYS = {"background", "grid", "floor", "accent"}
 REQUIRED_AUDIO_KEYS = {"name", "master", "pitch", "toneWave", "impactWave", "zapWave", "noiseFilter", "decay"}
+SUPPORTED_SAMPLE_EVENTS = {"impact", "explosion", "shock", "tickle", "gift", "boombox", "paint", "unlock", "select"}
 
 
 def assert_true(condition, message):
@@ -64,6 +65,24 @@ def validate_pack(root, entry):
         assert_true(not missing_audio, f"Audio pack {audio_id} missing {sorted(missing_audio)}")
         for key in ["master", "pitch", "noiseFilter", "decay"]:
             assert_true(isinstance(audio[key], (int, float)) and audio[key] > 0, f"Audio pack {audio_id} {key} must be positive")
+        samples = audio.get("samples", {})
+        assert_true(isinstance(samples, dict), f"Audio pack {audio_id} samples must be an object")
+        for sample_event, sample in samples.items():
+            assert_true(sample_event in SUPPORTED_SAMPLE_EVENTS, f"Audio pack {audio_id} unsupported sample event {sample_event}")
+            if isinstance(sample, str):
+                src = sample
+            else:
+                assert_true(isinstance(sample, dict), f"Audio sample {audio_id}.{sample_event} must be a string or object")
+                src = sample.get("src")
+                if "gain" in sample:
+                    assert_true(isinstance(sample["gain"], (int, float)) and sample["gain"] >= 0, f"Audio sample {audio_id}.{sample_event} gain must be non-negative")
+                if "playbackRate" in sample:
+                    assert_true(isinstance(sample["playbackRate"], (int, float)) and sample["playbackRate"] > 0, f"Audio sample {audio_id}.{sample_event} playbackRate must be positive")
+            assert_true(isinstance(src, str) and src, f"Audio sample {audio_id}.{sample_event} missing src")
+            if not src.startswith("data:audio/"):
+                sample_path = root / src
+                assert_true(sample_path.exists(), f"Audio sample not found for {audio_id}.{sample_event}: {sample_path}")
+                assert_true(sample_path.suffix.lower() in {".wav", ".mp3", ".ogg", ".m4a", ".aac", ".flac"}, f"Unsupported audio sample type for {audio_id}.{sample_event}")
 
     return {
         "id": pack["id"],

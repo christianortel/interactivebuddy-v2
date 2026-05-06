@@ -1,3 +1,5 @@
+import { getShopItemButtonState, resolveSkinPurchase, resolveToolPurchase } from "../src/runtime/progressionState.ts";
+
 export function createProgressionController({
   state,
   toolDefs,
@@ -34,8 +36,9 @@ export function createProgressionController({
       `;
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = active ? "Equipped" : owned ? (item.kind === "skin" ? "Equip" : "Owned") : "Buy";
-      button.disabled = active || (owned && item.kind === "tool");
+      const buttonState = getShopItemButtonState(item.kind, owned, active);
+      button.textContent = buttonState.text;
+      button.disabled = buttonState.disabled;
       button.addEventListener("click", () => {
         if (item.kind === "tool") {
           buyTool(item.id);
@@ -50,17 +53,18 @@ export function createProgressionController({
 
   function buyTool(toolId) {
     const tool = getTool(toolId);
-    if (state.unlockedTools.has(toolId)) {
+    const decision = resolveToolPurchase(tool, state.cash, state.unlockedTools.has(toolId));
+    if (decision.status === "owned") {
       selectTool(toolId);
       return;
     }
-    if (state.cash < tool.cost) {
-      toast(`Need $${tool.cost - state.cash} more for ${tool.name}.`);
+    if (decision.status === "insufficient") {
+      toast(decision.message);
       return;
     }
-    state.cash -= tool.cost;
+    state.cash = decision.cash;
     state.unlockedTools.add(toolId);
-    toast(`${tool.name} unlocked.`);
+    toast(decision.message);
     feedback.play("unlock", 1);
     pulse([35, 35, 45]);
     buildToolUi();
@@ -76,18 +80,19 @@ export function createProgressionController({
     if (!skin) {
       return;
     }
-    if (!state.unlockedSkins.has(skinId)) {
-      if (state.cash < skin.cost) {
-        toast(`Need $${skin.cost - state.cash} more for ${skin.name}.`);
-        return;
-      }
-      state.cash -= skin.cost;
+    const decision = resolveSkinPurchase(skin, state.cash, state.unlockedSkins.has(skinId));
+    if (decision.status === "insufficient") {
+      toast(decision.message);
+      return;
+    }
+    if (decision.status === "purchased") {
+      state.cash = decision.cash;
       state.unlockedSkins.add(skinId);
-      toast(`${skin.name} unlocked.`);
+      toast(decision.message);
       feedback.play("unlock", 1);
       pulse([35, 35, 45]);
     }
-    state.selectedSkin = skinId;
+    state.selectedSkin = decision.selectedSkin;
     applySkin();
     buildMenus();
     renderShop();
