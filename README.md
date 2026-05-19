@@ -150,7 +150,7 @@ Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run l
 - Modes > Gravity: switch between Normal, Low Gravity, and Heavy Gravity physics.
 - Modes > Debug > FPS Counter: show or hide the debug FPS overlay.
 - Export: saves the recent rolling WebM replay buffer from the canvas when supported.
-- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Suction Drill, Spin Drill, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, Groove Check, and Clip Export.
+- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Suction Drill, Spin Drill, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, Bonus Drop, Groove Check, and Clip Export.
 - Rubber Blaster shows a burst/cooldown readout and feeds the Bead Cannon challenge.
 - Settings > Asset pack shows a live room-palette preview and selectable room browser for loaded rooms.
 - `R`: reset scene.
@@ -278,6 +278,7 @@ Done:
 - Added and verified Room Preset Follow-up: Dojo Studio is a new original room pack with a dojo motif thumbnail, mat-floor palette, Practice Gi Buddy texture skin, Dojo Tap audio pack, manifest registration, room-browser selection coverage, and reload persistence coverage. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Nice Tool Follow-up: Boombox is a new cheerful timed tool with `boombox` speaker cosmetic metadata, custom overlay, music-note particles, rhythmic happy force pulses, `boombox`/`music`/`happy`/`nice` scoring tags, Groove Check mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Projectile Follow-up: Star Launcher is a new aim-and-release projectile with `star-shot` cosmetic metadata, custom spinning star overlay, launch and hit scoring, temporary Buddy spin status, twirl impulse physics, Spin Drill mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
+- Added Money Drop Bonus Drop coverage: Money Drop now has a `moneydrop4` mission card, a selectable Bonus Drop challenge mode, unit/runtime content assertions, and static smoke coverage that the built runtime exposes the mission, challenge, and cosmetic metadata. Direct browser behavior coverage remains pending until browser automation is available.
 
 Done assets:
 
