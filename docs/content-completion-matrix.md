@@ -51,7 +51,7 @@ Because the original Flash content list is fragmented online, every exact old it
 | Shock / electricity | Tesla Coil and Spark Wand handheld arcs | Shipped | Browser regression | Add additional chain variants only after stability review. |
 | Cold / frost / goo / light | Frost Puff reduced-flash mist with chilled body overlays, Goo Mist slippery coating with lowered friction, Pulse Beam narrow low-flash energy beam with lit-body status and steady push | Shipped | Browser regression | Audit all shipped weapon cosmetics/effects before adding more variants. |
 | Builders / environment | Trampoline, Rope, Water Fill, Platform, Bumper, and Conveyor Belt | Shipped / needs expanded browser coverage for the new builder batch | Browser regression for Trampoline/Rope/Water; unit metadata plus manual smoke pending for Platform/Bumper/Conveyor | Add prop spawners and richer room gadgets. |
-| Nice/good powers | Gift Box, Money Drop, Treat, Confetti Popper, and Boombox with Cheer Check and Groove Check mission/challenge hooks | Shipped / needs expanded browser coverage for Money Drop and Treat | Browser regression through direct Gift/Confetti/Boombox effects, Cheer Check completion, and Groove Check completion; unit metadata plus manual smoke pending for Money Drop/Treat | Add richer nice-item challenge hooks after browser automation is restored. |
+| Nice/good powers | Gift Box, Money Drop, Treat, Confetti Popper, and Boombox with Cheer Check, Bonus Drop, and Groove Check mission/challenge hooks | Shipped / needs expanded browser coverage for Money Drop and Treat | Browser regression covers direct Gift/Confetti/Boombox effects plus Cheer Check and Groove Check completion; static smoke and unit/runtime checks cover Money Drop's Bonus Drop content hook while browser automation is blocked | Add direct Money Drop and Treat browser behavior coverage after browser automation is restored. |
 | Alternate physics modes | Slow motion, ceiling toggle, Gravity submenu, liquid types, Robot heavy physics, Gelatin bouncy physics | Shipped | Browser regression for settings, gravity, skin physics, and liquids | Add more skin physics only after more skins justify it. |
 | Scripting engine / modding | JSON asset packs and private imports | Partial | Unit and browser regression | Add scriptable tool schema later. |
 | Weapon cosmetics/effects audit | Every shipped tool has `TOOL_EFFECT_AUDIT` metadata, visible effect identity, scoring tags, and direct regression coverage | Shipped | Unit checks, browser regression, and `docs/weapon-cosmetics-effects-audit.md` | Keep synchronized as new tools ship. |
@@ -104,7 +104,7 @@ Private import only:
 
 ## Next Content Batches
 
-1. `Nice Tool Later`: add a money-style nice tool only after projectile follow-up, and only with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
+1. `Treat Nice Coverage Later`: add direct browser behavior coverage for Treat after browser automation is restored, with mood, scoring, visible effects, shop/radial behavior, audit metadata, and regression coverage.
 2. `Room Preset Expansion Later`: add another room only after the next tool follow-ups, and only when it includes an original motif, pack metadata, preview thumbnails, selection/reload behavior, asset validation, and regression coverage.
 
 ## Audit Rules
