@@ -42,7 +42,7 @@ Status key:
 | Elastic Rope | Ceiling tether constraint line | `tether`, `builder`, `force` | Tool effects regression | Complete |
 | Water Fill | Liquid room fill with type-specific physics | `liquid`, `builder` | Liquid use and Liquid Control challenge | Complete |
 | Gift Box | `gift-box` ribbon/bow metadata and happy mood | `gift`, `happy` | Tool effects regression | Complete |
-| Money Drop | `money-drop` bill bundle metadata, coin particles, and happy/cash feedback | `moneydrop`, `cash`, `happy` | Unit metadata and manual smoke pending browser automation restore | Needs expansion |
+| Money Drop | `money-drop` bill bundle metadata, coin particles, and happy/cash feedback | `moneydrop`, `cash`, `happy`, `nice` | Unit/runtime coverage plus static smoke for Bonus Drop mission/challenge content; direct browser behavior still pending automation restore | Needs expansion |
 | Treat | `treat-cookie` snack metadata, crumb particles, and happy bump | `treat`, `happy`, `nice` | Unit metadata and manual smoke pending browser automation restore | Needs expansion |
 | Confetti Popper | `confetti-popper` popper metadata, colored particles, cheerful bump | `confetti`, `happy`, `nice` | Tool effects and Cheer Check challenge | Complete |
 | Boombox | `boombox` speaker metadata, music-note particles, rhythmic happy pulses | `boombox`, `music`, `happy`, `nice` | Tool effects and Groove Check challenge | Complete |
