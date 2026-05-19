@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { extname, join, relative, resolve } from "node:path";
 
-import { TOOL_DEFS } from "../js/content.js";
+import { CHALLENGE_MODES, MISSION_POOL, TOOL_DEFS, TOOL_EFFECT_AUDIT } from "../js/content.js";
 
 const root = resolve(".");
 const distRoot = join(root, "dist");
@@ -53,11 +53,24 @@ assert.match(shellSource, /__buddyLabProject/, "bundled shell should attach proj
 assert.match(shellSource, /cleanRoom:\s*!0/, "bundled shell should preserve clean-room metadata");
 assert.match(runtimeSource, /__buddyLabDebug/, "legacy runtime chunk should expose debug state for smoke and regression coverage");
 assert.match(runtimeSource, /toolEffectAudit/, "legacy runtime chunk should expose tool-effect audit metadata");
+assert.match(runtimeSource, /moneydrop4/, "runtime chunk should include Money Drop mission coverage");
+assert.match(runtimeSource, /Bonus Drop/, "runtime chunk should include Bonus Drop challenge text");
+assert.match(runtimeSource, /money-drop/, "runtime chunk should include Money Drop cosmetic metadata");
 assert.match(matterSource, /Matter/, "vendored Matter.js should be copied into dist");
 assert.ok(Array.isArray(manifest.packs) && manifest.packs.length > 0, "asset-pack manifest should be copied into dist");
 
 const missingTools = TOOL_DEFS.map((tool) => tool.id).filter((id) => !shellSource.includes(`id:"${id}"`) && !shellSource.includes(`id: "${id}"`));
 assert.deepEqual(missingTools, [], "typed shell catalog should include every live tool id");
+assert.ok(MISSION_POOL.some((mission) => mission.id === "moneydrop4" && mission.event === "moneydrop" && mission.target === 4), "Money Drop mission should be exposed in static content");
+assert.deepEqual(CHALLENGE_MODES.bonus, {
+  name: "Bonus Drop",
+  description: "Trigger 4 Money Drop bonuses before time runs out.",
+  event: "moneydrop",
+  target: 4,
+  duration: 35,
+  reward: 230
+}, "Bonus Drop challenge should be exposed in static content");
+assert.ok(TOOL_EFFECT_AUDIT.moneydrop.scoring.includes("nice"), "Money Drop audit should include the nice scoring tag");
 
 const server = createStaticServer(distRoot);
 await new Promise((resolveStart) => server.listen(port, "127.0.0.1", resolveStart));
