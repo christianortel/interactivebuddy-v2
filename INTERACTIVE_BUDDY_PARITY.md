@@ -74,7 +74,7 @@ Do not mark any row `Done` until it has reference evidence and a repeatable chec
 | Force/gravity | Fan, Black Hole, Vacuum, Repulsor, Magnet | Verify strength, cooldown, cursor behavior, and visual affordances | Partial |
 | Elemental/effects | Heat Cone, Frost Puff, Goo Mist, Pulse Beam, Spark Wand, Tesla Coil | Keep only if in reference or optional extras; tune if retained | Partial |
 | Environment/builders | Trampoline, Rope, Water/Liquid, Platform, Bumper, Conveyor | Verify which are actually in target reference version | Partial |
-| Nice/reward tools | Gift, Money Drop, Treat, Confetti, Boombox | Verify exact "nice" tools and cash/happy reaction behavior | Partial |
+| Nice/reward tools | Gift, Money Drop, Treat, Confetti, Boombox | Money Drop now has Bonus Drop mission/challenge coverage; still verify exact "nice" roster, prices, and cash/happy timing against reference | Partial |
 
 ## Asset And Sound Parity
 
