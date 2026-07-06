@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reference Harness — Interactive Buddy v1.02</title>
+    <style>
+      html, body { margin: 0; padding: 0; background: #222; }
+      #player { width: 550px; height: 400px; }
+      #player ruffle-player { width: 550px; height: 400px; display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="player"></div>
+    <script src="/node_modules/@ruffle-rs/ruffle/ruffle.js"></script>
+    <script>
+      window.RufflePlayer = window.RufflePlayer || {};
+      window.RufflePlayer.config = {
+        autoplay: "on",
+        unmuteOverlay: "hidden",
+        letterbox: "off",
+        scale: "exactFit",
+        contextMenu: "off",
+        splashScreen: false,
+        logLevel: "warn"
+      };
+      window.addEventListener("DOMContentLoaded", () => {
+        const ruffle = window.RufflePlayer.newest();
+        const player = ruffle.createPlayer();
+        player.style.width = "550px";
+        player.style.height = "400px";
+        document.getElementById("player").appendChild(player);
+        window.__harnessPlayer = player;
+        player.ruffle().load("/reference/private/interactive-buddy-v1.02.swf").then(() => {
+          window.__swfLoaded = true;
+        }).catch((error) => {
+          window.__swfLoadError = String(error);
+        });
+      });
+    </script>
+  </body>
+</html>

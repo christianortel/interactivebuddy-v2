@@ -32,12 +32,25 @@ Required top-level fields:
 - `skins`: at least one skin.
 - `audioPacks`: object of optional synthesized audio profiles.
 
+Optional top-level fields:
+
+- `toolTextures`: object that maps a spawned prop cosmetic id, such as `money-drop`, `gift-box`, `grenade-shell`, or `prop_moneydrop`, to a private local or embedded image override.
+- `uiTheme`: constrained CSS-variable theme overrides for the shell, HUD, and old-style menus.
+
 Required `room` fields:
 
 - `background`
 - `grid`
 - `floor`
 - `accent`
+
+Optional room texture fields:
+
+- `texture`: local path to `.svg`, `.png`, `.jpg`, `.jpeg`, or `.webp`.
+- `textureDataUrl`: embedded `data:image/...` texture for private local imports.
+- `textureFit`: `cover`, `contain`, or `auto`; defaults to `cover`.
+
+Room textures are applied as the canvas background behind the physics bodies. The room palette remains the fallback while the image loads or when no image is supplied.
 
 Required skin fields:
 
@@ -53,6 +66,24 @@ Optional skin texture fields:
 - `texture`: local path to `.svg`, `.png`, `.jpg`, `.jpeg`, or `.webp`.
 - `textureDataUrl`: embedded `data:image/...` texture for private local imports.
 - `textureScale`: positive number used by Matter.js sprite rendering.
+
+Optional tool texture fields:
+
+- `texture`: local path to `.svg`, `.png`, `.jpg`, `.jpeg`, or `.webp`.
+- `textureDataUrl`: embedded `data:image/...` texture for private local imports.
+- `scale`: positive multiplier applied to the spawned physics body's bounds.
+- `alpha`: 0-1 opacity.
+- `rotationOffset`: radians added to the physics body angle.
+- `width` / `height`: optional explicit drawn size in canvas pixels before `scale`.
+
+Tool texture keys should normally use the clean-room cosmetic ids documented in `docs/weapon-cosmetics-effects-audit.md`, for example `ball-basic`, `money-drop`, `sticky-bomb`, or `large-cartoon-bomb`. Body labels such as `prop_moneydrop` are also accepted. If a texture is missing or not loaded yet, the procedural clean-room drawing remains visible as a fallback.
+
+Optional UI theme fields:
+
+- `uiTheme.variables`: object mapping supported CSS variables to string values.
+- Supported variables include `--bg`, `--panel`, `--panel-text`, `--ink`, `--muted`, `--line`, `--accent`, `--accent-2`, `--warn`, `--danger`, `--menu-bg`, `--menu-border`, `--menu-panel-bg`, `--menu-panel-border`, `--menu-hover`, `--menu-hover-outline`, `--menu-active`, `--menu-active-edge`, and `--brand-bg`.
+
+The runtime ignores unsupported variables. This keeps private UI tuning local and reviewable while avoiding arbitrary bundled CSS injection.
 
 Required audio pack fields:
 
@@ -70,7 +101,8 @@ Use browser oscillator waveform names for wave fields: `sine`, `square`, `sawtoo
 Optional audio sample fields:
 
 - `samples`: object mapping feedback events to local file paths or embedded data URLs.
-- Supported high-value event keys include `impact`, `explosion`, `shock`, `tickle`, `gift`, `boombox`, `paint`, `unlock`, and `select`.
+- Supported high-value event keys include generic fallbacks such as `impact`, `explosion`, `shock`, `paint`, `unlock`, and `select`, plus exact score/tool events such as `poke`, `slap`, `moneydrop`, `treat`, `confetti`, `heat`, `frost`, `goo`, `pulse`, `firecracker`, `mine`, `stickybomb`, `largebomb`, `wind`, `vacuum`, `conveyor`, and `liquid`.
+- Exact event samples are tried first. If a pack omits one, the feedback engine falls back to the closest generic sample or synthesized placeholder sound.
 - A sample value can be a string path/URL, or an object with `src`, optional `gain`, and optional `playbackRate`.
 
 Example:
@@ -89,7 +121,10 @@ Example:
       "decay": 1,
       "samples": {
         "impact": "audio/impact.wav",
-        "explosion": { "src": "data:audio/wav;base64,...", "gain": 0.85, "playbackRate": 1 }
+        "explosion": { "src": "data:audio/wav;base64,...", "gain": 0.85, "playbackRate": 1 },
+        "frost": "audio/frost.wav",
+        "moneydrop": "audio/moneydrop.wav",
+        "conveyor": "audio/conveyor.wav"
       }
     }
   }
@@ -129,7 +164,9 @@ The importer also accepts a wrapper object with the pack under `pack`:
       "background": "#6f7f76",
       "grid": "#f0f7ef",
       "floor": "#506058",
-      "accent": "#ffd27a"
+      "accent": "#ffd27a",
+      "textureDataUrl": "data:image/svg+xml;base64,...",
+      "textureFit": "cover"
     },
     "skins": [
       {
@@ -143,6 +180,20 @@ The importer also accepts a wrapper object with the pack under `pack`:
         "description": "Private local skin."
       }
     ],
+    "toolTextures": {
+      "money-drop": {
+        "textureDataUrl": "data:image/svg+xml;base64,...",
+        "scale": 1,
+        "alpha": 1
+      }
+    },
+    "uiTheme": {
+      "variables": {
+        "--panel": "rgba(246, 248, 241, 0.94)",
+        "--accent": "#d8d2b8",
+        "--menu-bg": "linear-gradient(#f7f7ee, #d9d8cd)"
+      }
+    },
     "audioPacks": {
       "privateTone": {
         "name": "Private Tone",

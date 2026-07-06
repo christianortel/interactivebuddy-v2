@@ -1,0 +1,474 @@
+{
+  "$schema": "./evidence-index.schema.json",
+  "description": "One record per reference screenshot, clip, audio sample, or observation. Records with kind 'reference' are admissible for parity claims. Records with kind 'remake-current-state' document the remake only. Reference binaries and derived dumps live in gitignored lanes; this index carries only descriptions and checksums.",
+  "recordFields": {
+    "id": "Stable ID, e.g. EV-0001",
+    "kind": "reference | reference-derived | remake-current-state | missing-slot",
+    "sourcePath": "Repo-relative path or URL",
+    "targetVersion": "Locked version this evidences, or 'n/a'",
+    "capturedArea": "Screen/menu/tool/behavior covered",
+    "timestampRange": "For clips/audio, else null",
+    "factsSupported": ["List of measured facts this record supports"]
+  },
+  "records": [
+    {
+      "id": "EV-0001",
+      "kind": "reference",
+      "sourcePath": "reference/private/interactive-buddy-v1.02.swf (gitignored); origin https://archive.org/details/interactive_buddy_v_1_02_by_shock_value_d6ma8m",
+      "targetVersion": "v1.02",
+      "capturedArea": "Executable reference: entire game",
+      "timestampRange": null,
+      "md5": "baac2b44de9b49edd1167ada11526625",
+      "factsSupported": [
+        "Primary artifact for all measurements; MD5 matches archive.org metadata"
+      ]
+    },
+    {
+      "id": "EV-0002",
+      "kind": "reference",
+      "sourcePath": "reference/private/archive-cover.png (gitignored); origin archive.org item file 00_coverscreenshot.png",
+      "targetVersion": "v1.02",
+      "capturedArea": "Boot screen composition",
+      "timestampRange": null,
+      "factsSupported": [
+        "Top menu bar labels: File, Skins, Items, Modes, Settings, Help",
+        "Version label '1.02' top-right",
+        "Face icon button top-left under menu bar",
+        "Status line bottom-left: '$0.00 - Open Hand' (currency format $X.XX, current tool name appended)",
+        "Sphere-built gray Buddy stands right-of-center on floor with '...' speech bubble",
+        "Sage-gray room, lighter play area with darker surrounding frame"
+      ]
+    },
+    {
+      "id": "EV-0003",
+      "kind": "reference",
+      "sourcePath": "reference/private/archive-screenshot00.png (gitignored); origin archive.org item file screenshot_00.png",
+      "targetVersion": "v1.02",
+      "capturedArea": "Boot screen (duplicate angle of EV-0002)",
+      "timestampRange": null,
+      "factsSupported": ["Consistent with EV-0002"]
+    },
+    {
+      "id": "EV-0004",
+      "kind": "reference",
+      "sourcePath": "reference/private/archive-emulator.gif (gitignored); origin archive.org emulator screenshot GIF",
+      "targetVersion": "v1.02",
+      "capturedArea": "Animated boot capture",
+      "timestampRange": null,
+      "factsSupported": ["Pending frame-by-frame review"]
+    },
+    {
+      "id": "EV-0005",
+      "kind": "reference-derived",
+      "sourcePath": "reference/private/strings-raw.txt (gitignored), from EV-0001 via tests/extract-swf-strings.mjs",
+      "targetVersion": "v1.02",
+      "capturedArea": "All printable strings with byte offsets",
+      "timestampRange": null,
+      "factsSupported": [
+        "UI window state flags: itemStoreOpen, skinStoreOpen, modeStoreOpen, statsOpen, helpOpen, aboutOpen, updatesOpen, scriptOpen, physicsTweekOpen, customSkinOpen, clearWarningOpen, faceOpen, pause",
+        "Scripting console create() API object types: baseball, molotov, bowlball, bouncyball, grenade, fireball, mine, baby, orb, radio, vortex",
+        "Stats window tracks named stats (e.g. 'Bowling ball knockouts')",
+        "Per-skin speech-bubble line sets exist (prose remains in private lane)"
+      ]
+    },
+    {
+      "id": "EV-0006",
+      "kind": "reference-derived",
+      "sourcePath": "tests/parse-swf-header.mjs output over EV-0001",
+      "targetVersion": "v1.02",
+      "capturedArea": "SWF header",
+      "timestampRange": null,
+      "factsSupported": [
+        "Stage 550x400 px (11000x8000 twips)",
+        "Frame rate 40 fps",
+        "SWF version 8, uncompressed FWS, 42 root frames, 1553105 bytes"
+      ]
+    },
+    {
+      "id": "EV-0007",
+      "kind": "reference-derived",
+      "sourcePath": "reference/private/actions-decoded.txt (gitignored), defineItem table at offsets 0x14e1a5-0x14e730, from EV-0001 via tests/extract-swf-actions.mjs",
+      "targetVersion": "v1.02",
+      "capturedArea": "Complete item/skin/mode data table",
+      "timestampRange": null,
+      "factsSupported": [
+        "28 items in 7 categories with exact names, prices, startsOwned flags (see docs/CONTENT_INVENTORY.md)",
+        "11 skins with internal IDs and prices",
+        "10 modes with internal IDs and prices",
+        "Starting unlocks: Hand group, Grenades, Weak Gravity Vortex, Baseballs, skin Buddy, FPS Counter, Open Ceiling"
+      ]
+    },
+    {
+      "id": "EV-RMK-0001",
+      "kind": "remake-current-state",
+      "sourcePath": "docs/MEASUREMENT_LOG.md#remake-2026-07-03",
+      "targetVersion": "n/a",
+      "capturedArea": "Remake default boot, DOM-measured",
+      "timestampRange": null,
+      "factsSupported": [
+        "Remake canvas is 960x640 logical, CSS-scaled non-uniformly (711x458 observed)",
+        "Remake top menus are File/Skins/Items/Modes/Settings/Help (labels match reference EV-0002; contents unverified)",
+        "Remake HUD shows Cash/XP/Combo/Mood/Challenge plus power slider (diverges from reference status line)",
+        "Remake boots with $75 cash, 3 mission cards, 56 shop cards (diverges from reference)",
+        "Remake at git HEAD (a9d99da) fails to boot: ReferenceError hasUserActivation; fixed in working tree 2026-07-03"
+      ]
+    },
+    {
+      "id": "EV-0008",
+      "kind": "reference",
+      "sourcePath": "reference/screens/boot-t1s.png (gitignored), harness capture 2026-07-03 via tests/capture-reference.mjs (Ruffle 0.3.0, Chromium, 550x400)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Boot title card",
+      "timestampRange": "t=+1s after SWF load",
+      "factsSupported": [
+        "Title card text 'Interactive Buddy / By Shock Value / Version 1.02' overlays the live room and fades; no separate menu screen",
+        "Buddy already spawned at bottom-center during title card",
+        "Menu bar, face icon, status line, and version label already present at boot"
+      ]
+    },
+    {
+      "id": "EV-0009",
+      "kind": "reference",
+      "sourcePath": "reference/screens/boot-t3s.png, boot-t8s.png, idle-settled.png (gitignored), harness captures",
+      "targetVersion": "v1.02",
+      "capturedArea": "Settled idle state on a clean save",
+      "timestampRange": "t=+3s..+14s",
+      "factsSupported": [
+        "Clean-save boot money is $0.00 (fresh browser profile, no persisted state)",
+        "Default tool is Open Hand",
+        "Buddy idle at bottom-center (~x=275 in 550x400 stage) with '...' speech bubble",
+        "Speech bubble fades in/out over idle time (also EV-0013 screenshots 01-04)"
+      ]
+    },
+    {
+      "id": "EV-0010",
+      "kind": "reference",
+      "sourcePath": "reference/screens/menu-*.png, face-menu.png, diag-*.png, diag2-*.png (gitignored), harness captures",
+      "targetVersion": "v1.02",
+      "capturedArea": "Menu-bar interaction states",
+      "timestampRange": null,
+      "factsSupported": [
+        "Menu labels show a boxed highlight state on hover/press that latches while the menu is 'open'",
+        "OPEN ISSUE: menu panels never render under Ruffle 0.3.0 despite the latched open state — see GAP-15; menu content captures blocked pending diagnosis"
+      ]
+    },
+    {
+      "id": "EV-0013",
+      "kind": "reference",
+      "sourcePath": "reference/private/screenshot_01..04.png (gitignored), user-supplied local copy of the archive.org item (19 files, SWF MD5-identical to EV-0001)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Idle-state variants",
+      "timestampRange": null,
+      "factsSupported": [
+        "Speech-bubble fade cycle: absent, full, mid-fade states at idle",
+        "Idle pose consistent at bottom-center"
+      ]
+    },
+    {
+      "id": "EV-0014",
+      "kind": "reference-derived",
+      "sourcePath": "reference/private/initMenu-decoded.txt (gitignored), initMenu function at 0x151e93 (9152 bytes), from EV-0001 via tests/extract-swf-actions.mjs --range",
+      "targetVersion": "v1.02",
+      "capturedArea": "Menu system construction code",
+      "timestampRange": null,
+      "factsSupported": [
+        "UI built on Flash MX 2004 v2 components (mx.controls MenuBar/Menu, mx.containers.Window, mx.managers.PopUpManager)",
+        "11 window definitions with exact titles, contentPaths, and pixel sizes (M-REF-021)",
+        "Static menu entries per top-level menu (M-REF-022)",
+        "Menus are rebuilt dynamically (initMenu/clearMenu/removeMenuAt) as content is purchased"
+      ]
+    },
+    {
+      "id": "EV-0015",
+      "kind": "reference-derived",
+      "sourcePath": "reference/private/initSharedObject-decoded.txt (gitignored), initSharedObject at 0x144751 (2270 bytes)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Save system",
+      "timestampRange": null,
+      "factsSupported": [
+        "SharedObject.getLocal('daBud') is the save file",
+        "Save data keys: cash, item, skin, emotion, faceX, faceY, faceZ, faceR, faceText, blurLevel, aaQuality, gQuality, physicsQuality, soundOn, stats, modeContainer, numberOfObjects, activeScript, activeScriptName"
+      ]
+    },
+    {
+      "id": "EV-0016",
+      "kind": "reference-derived",
+      "sourcePath": "Decoded infopost function at 0x144724 (18 bytes)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Telemetry check",
+      "timestampRange": null,
+      "factsSupported": [
+        "infopost is a debug-only trace; the game makes no telemetry/network calls through it"
+      ]
+    },
+    {
+      "id": "EV-0017",
+      "kind": "reference-derived",
+      "sourcePath": "Pixel scans of reference/screens/menu-file.png via tests/measure-capture.mjs and tests/measure-capture2.mjs",
+      "targetVersion": "v1.02",
+      "capturedArea": "Stage colors, frame bevel, menu label extents, buddy rest box, face icon, status/version geometry",
+      "timestampRange": null,
+      "factsSupported": [
+        "M-REF-025 stage colors and frame geometry",
+        "M-REF-026 menu label x-extents",
+        "M-REF-027 buddy rest bounding box",
+        "M-REF-028 face icon box",
+        "M-REF-029 status/version geometry; version color #3c403c; hover fill #e6ffdb"
+      ]
+    },
+    {
+      "id": "EV-0018",
+      "kind": "reference-derived",
+      "sourcePath": "tests/parse-swf-shapes.mjs over EV-0001 (DefineShape bounds, DefineSprite placements, PlaceObject2 matrices/names, ExportAssets)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Exact buddy part geometry, spawn transforms, depths, UI element transforms, timeline structure",
+      "timestampRange": null,
+      "factsSupported": ["M-REF-030 buddy geometry", "M-REF-032 UI transforms", "303 sprites, 240 shapes, 335 exports"]
+    },
+    {
+      "id": "EV-0019",
+      "kind": "reference-derived",
+      "sourcePath": "Decoded physics functions (gitignored dumps: initPhysics-decoded.txt, doBodyPhysics-decoded.txt, integrator-decoded.txt, setBuddyXY-decoded.txt)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Physics constants and integrator structure",
+      "timestampRange": null,
+      "factsSupported": ["M-REF-031 physics constants", "Function inventory with sizes and offsets"]
+    },
+    {
+      "id": "EV-RMK-0002",
+      "kind": "remake-current-state",
+      "sourcePath": "tests/artifacts/parity/remake-shell.png + diff.png via tests/compare-shell.mjs",
+      "targetVersion": "n/a",
+      "capturedArea": "Parity slice-1 shell vs reference capture",
+      "timestampRange": null,
+      "factsSupported": [
+        "Parity shell boots headlessly from dist with zero page errors",
+        "Pixel diff vs menu-file.png: 7.27% (2026-07-03), residual = text antialiasing, buddy placeholder, face icon, reference File-highlight"
+      ]
+    },
+    {
+      "id": "EV-RMK-0003",
+      "kind": "remake-current-state",
+      "sourcePath": "tests/artifacts/parity/menu-items-open.png, item-store-open.png, item-store-scrolled.png (Playwright-driven runs, 2026-07-03)",
+      "targetVersion": "n/a",
+      "capturedArea": "Parity menu/window/store slice verification",
+      "timestampRange": null,
+      "factsSupported": [
+        "Items dropdown renders owned categories as submenus plus Buy New Items...",
+        "Item Store window (335x250, measured chrome) lists exact roster/prices; clean-save owned states correct (Grenades, Weak Gravity Vortex)",
+        "Wheel scrolling works; zero page errors across driven runs"
+      ]
+    },
+    {
+      "id": "EV-0020",
+      "kind": "reference-derived",
+      "sourcePath": "tests/extract-swf-sounds.mjs over EV-0001; assets/private/sounds/ + reference/private/sounds/ (both gitignored); playSound call-site grep of actions-decoded-v2.txt",
+      "targetVersion": "v1.02",
+      "capturedArea": "Complete sound inventory + event names/volumes",
+      "timestampRange": null,
+      "factsSupported": [
+        "87 sounds (78 MP3, 9 SWF-ADPCM decoded to WAV); 82 with original linkage names",
+        "playSound events: register@100, shotgunFire@80, pistolFire@80, machFire@80, explosion@75, beeper@75/100, shock@70, burnball@40",
+        "Voice sets: StrawberryClock (sc-*, 30 clips), Napoleon (nd-*/nap-dang, 17 clips); SFX punch1-4, static, radioMusic",
+        "Playback verified in built runtime 2026-07-03 (register/punch1/explosion/shotgunFire), zero errors"
+      ]
+    },
+    {
+      "id": "EV-0021",
+      "kind": "reference-derived",
+      "sourcePath": "Decoded purchase handler (0x1500f0+) and addCash function (0x14dc95, 859 B)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Purchase flow and payout core",
+      "timestampRange": null,
+      "factsSupported": [
+        "Store UI is a selection list (content.inStockList with selectedItem.id); purchase: cash -= price, item.have = true, compileItems(), saveItems(), menu rebuild flag, playSound('register', 100)",
+        "addCash: cash += Math.max(0, amount); stats.values.totalCash += Math.max(0, amount); dep counter decrements; moneySign particle spawned",
+        "addCash call sites: fixed awards 15/10/7/5/4/3/2/1 at offsets 158e4d/169035/158980/158422/16907d/1589d4/1690c5/16910d plus velocity-scaled Math.min formulas in doBodyPhysics/doObjectPhysics",
+        "Save containers confirmed: items, stats, modeContainer (initSharedObject)"
+      ]
+    },
+    {
+      "id": "EV-0022",
+      "kind": "reference-derived",
+      "sourcePath": "Decoded doBodyPhysics sections (grab/stretch at 0x169b88-0x169d0d, ignition payouts at 0x168fad-0x169130) and buddySay (0x15679e)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Grab/stretch mechanics, ignition payouts, speech system",
+      "timestampRange": null,
+      "factsSupported": [
+        "Limb stretch clamp: parts beyond 35 px from their rotated body anchor snap back to 34 px along the direction; exempt: rArm while grabbingMouse (buddy-grabs-cursor behavior)",
+        "Ignition events: body onFire -> spreads to head+legs, stopGrabbing(), addEmotion(-2), addCash(10); head: addEmotion(-2), addCash(4); each leg: addEmotion(-1), addCash(2)",
+        "addEmotion(delta) is the numeric mood core",
+        "buddySay(type, contents, time): 'sound' -> speak(contents, 100); 'script' -> executeScript; else bubble.newUseImage/newContents/textChanged/time (text or image bubbles)"
+      ]
+    },
+    {
+      "id": "EV-0023",
+      "kind": "reference-derived",
+      "sourcePath": "Decoded gun fire blocks (pistol 0x160722, shotgun 0x160da0, mach 0x161492), bullet constructor (0x15e05b), aim block (0x16046a), fist payout (0x16af7e); dump reference/private/doWeaponPhysics-decoded.txt",
+      "targetVersion": "v1.02",
+      "capturedArea": "Guns category mechanics",
+      "timestampRange": null,
+      "factsSupported": [
+        "bullet record {x,y,xv,yv,str,ricNum,type}; bullets spawn at cursor (_axmouse/_aymouse)",
+        "Pistol: edge-fire, speed 250, spread ±0.0125 rad, str 1.25, ric floor(random()*1.5), pistolFire@80, muzzle gotoAndPlay('fire'), shadow at +2/+2",
+        "Shotgun: edge-fire, 8 pellets, speed 125+random()*150, spread ±0.175 rad, str 0.65, ric floor(4*random()^4), shotgunFire@80",
+        "Machine Gun: fires while held, every 5 ticks (machReset=5), speed 250, machFire@80",
+        "Aim: atan2 from cursor toward buddy; Ctrl (key 17) locks aim to head; non-Ctrl branch pending decode",
+        "Fist punch payout: addCash(Math.min(0.5, punchDist*0.002)); unconscious hit sets modifier 'scared' for 300; gore via genGore per threshold"
+      ]
+    },
+    {
+      "id": "EV-0024",
+      "kind": "reference-derived",
+      "sourcePath": "Decoded explode() (0x155999, dump reference/private/explode-decoded.txt), addObjectBase grenade call (0x148088), object-hit payout (0x16687a), sayings table structure (0x14c8c2)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Explosion mechanics, object factory, anti-farm payout, reaction-line structure",
+      "timestampRange": null,
+      "factsSupported": [
+        "explode(p,x,y): shake += p*35; explosion@75 (makeExplosion); explodeTimer=4; 'explosion' reaction gated to 1500ms since last comment; mines chain via holdExplode within range",
+        "Buddy-part knockback: falloff r6 = d/p + 20/p - 20p; force = clamp(1e6/r6^2 - 1, 0, 150) radially outward",
+        "Grenade object: addObjectBase(false,false,0.2,0.65,0.35,'circle',x,y,xv,yv,'grenade') — bounce 0.2, friction 0.65",
+        "Object-hit payout gated by per-object hitTimer (anti-farm): addCash(max(3, force*0.02)) — interpretation of max-vs-floor to confirm at runtime",
+        "sayings[event].texts = per-skin reaction entries (text lines or image bubbles like questionMark); creative text stays in private lane"
+      ]
+    },
+    {
+      "id": "EV-0025",
+      "kind": "remake-current-state",
+      "sourcePath": "tests/artifacts/parity/molotov-fire.png, fire-burning.png, grenade-*.png (driven runs 2026-07-03)",
+      "targetVersion": "n/a",
+      "capturedArea": "Explosives + fire + earnings verification",
+      "timestampRange": null,
+      "factsSupported": [
+        "Molotov contact detonation ignites buddy; measured ignition payouts applied exactly (body $10, head $4, limbs $2) with popups; clean-save run earned $22.00 total",
+        "Grenade fuse-detonation knockback launches buddy cross-stage per exact force formula",
+        "Zero page errors across all driven explosive runs"
+      ]
+    },
+    {
+      "id": "EV-0026",
+      "kind": "reference-derived",
+      "sourcePath": "addObjectBase call table (0x147ef1-0x148106) and impact-payout block (0x166815-0x1668aa)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Object materials and universal impact payout",
+      "timestampRange": null,
+      "factsSupported": [
+        "Materials [bounce, friction, size]: baseball 0.2/0.8/0.3; bowlball 0.15/0.9/0.8; bouncyball 0.95/0.95/0.08; baby 0.1/0.2/0.5; fireball 0.9/0.9/0.1 (spawns burning); grenade 0.2/0.65/0.35; mine immovable 0/0/0.2; molotov 0.5/0.5/0.45",
+        "Impact payout: r7 = |relative velocity|; pays only when r7 > 25; amount = max(3, r7*0.02); gated by hitTimer and buddyHit flags; objects have mass used for rv torque",
+        "Buddy grabs held objects: grenade grab pays +$5 with say('grenade', 80); other grabs +$1; grabLocked state",
+        "Verified in runtime: 60 px/tick baseball impact paid exactly $3.00"
+      ]
+    },
+    {
+      "id": "EV-0027",
+      "kind": "reference-derived",
+      "sourcePath": "tests/extract-swf-sayings.mjs over the decoded dump; output assets/private/sayings.json + reference/private/sayings.json (both gitignored)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Complete reaction-event vocabulary and per-skin line tables",
+      "timestampRange": null,
+      "factsSupported": [
+        "10 reaction events: idle, thanks, help, explosion, scared, grenade, burn, zap, happy, sad (~12 per-skin entries each)",
+        "Creative text extracted only to the private lane; runtime loads it locally (src/parity/sayings.ts)"
+      ]
+    },
+    {
+      "id": "EV-0028",
+      "kind": "reference-derived",
+      "sourcePath": "setSkin decode (0x15160c), DefineSprite FrameLabel tables, tests/rasterize-swf-sprites.mjs output in assets/private/sprites/ (gitignored)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Skin system mechanics and original sprite art extraction",
+      "timestampRange": null,
+      "factsSupported": [
+        "setSkin(id): each part clip gets gotoAndStop(skinId) — skins are named frame labels inside the 6 part sprites",
+        "Complete label->frame tables extracted for all parts; hidden/cut skins present: insider, raspberry, wade, plus defaultng (Newgrounds default variant gated by newgroundsVersion flag)",
+        "Weapon clip 634 labels idle:1/fire:2 — one shared weapon look for all three guns with fire animation",
+        "Bubble clip 683 has 4 orientation labels: upLeft:1 upRight:10 downLeft:20 downRight:30",
+        "Sprite art rasterized from the user's artifact via generated mini-SWFs + Ruffle (black/white alpha derivation) into the private lane; runtime renders it via src/parity/sprites.ts with registration-point alignment"
+      ]
+    },
+    {
+      "id": "EV-0029",
+      "kind": "reference-derived",
+      "sourcePath": "Head sprite child placements, eye/mouth clip frame labels, face driver decode (0x170476-0x170532)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Face system",
+      "timestampRange": null,
+      "factsSupported": [
+        "Default-skin face = overlay clips on the head: eye clip 79 (open:1, closed:15) placed as righteye (-2.75,-3.2) and lefteye (4.2,-2.95); mouth clip 85 (normal:1, talking:8) at (0, 7.3); per-skin offset/scale variants exist",
+        "Exact blink rule: eyes closed when !awake or floor((time/2) % 80) == 0, else open",
+        "Camera shake decays *= 0.835 per tick (exact)",
+        "Arm 'shine' highlight counter-rotates to stay upright; body._rotation driven from bodyRot",
+        "Face sprites extracted to private lane and wired (blink + talking mouth verified in runtime)"
+      ]
+    },
+    {
+      "id": "EV-0030",
+      "kind": "reference-derived",
+      "sourcePath": "say() decode (0x14d9b0-0x14db58, dump reference/private/say-decoded.txt)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Reaction selection and voice routing",
+      "timestampRange": null,
+      "factsSupported": [
+        "say(event, time): gated on awake; notIdle(); lastComment=event; sayings[event].time=time; skin fallback defaultng->default; finds texts entry where entry[0]==skin; random line from entry[2]; buddySay(entry[1], line, time)",
+        "Entry flag entry[1] IS the buddySay type: false=text bubble, true/imageName=image bubble, 'sound'=voice line via speak(line,100) — voice skins' lines are sound clip names",
+        "Extracted sayings.json carries 88 text / 10 image / 20 sound entries (counts only; content in private lane)"
+      ]
+    },
+    {
+      "id": "EV-0031",
+      "kind": "reference-derived",
+      "sourcePath": "In-game scripting reference (water() signature), hose call sites (0x15f886 wide, 0x15fa63 narrow, 0x15fc40 fire), water() core dump reference/private/water-decoded.txt",
+      "targetVersion": "v1.02",
+      "capturedArea": "Water system and hose nozzles",
+      "timestampRange": null,
+      "factsSupported": [
+        "water(x, y, xv, yv, lifeSpanInFrames, strength, spread, size, disappearOnContact) — documented by the game's own scripting help",
+        "Wide Nozzle: speed 15, life 25, strength 0.005, spread 4, size 20, persistent, jitter 0.5",
+        "Narrow Nozzle: speed 30, life 20, strength 0.035, spread 0.3, size 20, disappearOnContact, jitter 0.075",
+        "Fire Hose: speed 60, life 20, strength 0.25, spread 0.3, size 35, disappearOnContact, jitter 0.04",
+        "Droplets: gravity integration, strength-scaled velocity transfer, extinguish on contact; zap visual uses attachMovie('zapGraphic') with random 360 rotation and alpha fade (0x1621da)",
+        "Verified in runtime: fully ablaze buddy doused 6->2 flames and pushed x 280->505 by Fire Hose stream"
+      ]
+    },
+    {
+      "id": "EV-0032",
+      "kind": "reference-derived",
+      "sourcePath": "createMissile decode (0x15b62c, dump reference/private/createMissile-decoded.txt) + caller (0x15b560) + Special-items block (0x15eeda)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Missiles and Special items",
+      "timestampRange": null,
+      "factsSupported": [
+        "Missile spawn EXACT: createMissile(25 + random()*500, -100, clickX, clickY) on click edge — from above the stage, homing to the click point; record: mass 1, friction 0.9, bounce 0.9, flammable false, real missile clip aimed by atan2(target-pos)",
+        "Magical Orb and Gravity Shifter share a held-item block that draws beam lines (lineStyle/lineTo); Gravity Shifter manipulates grav directly",
+        "Verified: missile detonation launched buddy (280,347)->(136,181); orb levitated buddy to cursor height; gravity shifter pinned buddy to far corner (489,83)"
+      ]
+    },
+    {
+      "id": "EV-MISS-0002",
+      "kind": "missing-slot",
+      "sourcePath": "reference/screens/ (to be captured via Ruffle harness)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Native-resolution screenshots: every menu open, every store page, every skin, dialogs, stats/help/about/updates windows",
+      "timestampRange": null,
+      "factsSupported": []
+    },
+    {
+      "id": "EV-MISS-0003",
+      "kind": "missing-slot",
+      "sourcePath": "reference/clips/ (to be captured via Ruffle harness)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Behavior clips: hand drag/throw, each item at low/mid/high power, reactions, purchase flow, resets, mode effects",
+      "timestampRange": null,
+      "factsSupported": []
+    },
+    {
+      "id": "EV-MISS-0004",
+      "kind": "missing-slot",
+      "sourcePath": "Audio event captures (extractable from EV-0001 sound tags and/or harness recording)",
+      "targetVersion": "v1.02",
+      "capturedArea": "Every sound event, timing, and mix",
+      "timestampRange": null,
+      "factsSupported": []
+    }
+  ]
+}

@@ -28,6 +28,80 @@ export function sanitizeAudioSamples(samples) {
   );
 }
 
+export function sanitizeToolTextures(toolTextures) {
+  if (!toolTextures || typeof toolTextures !== "object") {
+    return {};
+  }
+  return Object.fromEntries(
+    Object.entries(toolTextures)
+      .map(([key, texture]) => {
+        const id = String(key || "").trim();
+        if (!id || !texture || typeof texture !== "object") {
+          return null;
+        }
+        const src = typeof texture.texture === "string" && texture.texture.trim()
+          ? texture.texture.trim()
+          : typeof texture.textureDataUrl === "string" && texture.textureDataUrl.trim()
+            ? texture.textureDataUrl.trim()
+            : "";
+        if (!src) {
+          return null;
+        }
+        return [
+          id,
+          {
+            src,
+            scale: finiteOr(texture.scale, 1),
+            alpha: finiteOr(texture.alpha, 1),
+            rotationOffset: finiteOr(texture.rotationOffset, 0),
+            width: finiteOr(texture.width, 0),
+            height: finiteOr(texture.height, 0)
+          }
+        ];
+      })
+      .filter(Boolean)
+  );
+}
+
+const UI_THEME_VARIABLES = new Set([
+  "--bg",
+  "--room",
+  "--room-dark",
+  "--panel",
+  "--panel-text",
+  "--ink",
+  "--muted",
+  "--line",
+  "--accent",
+  "--accent-2",
+  "--warn",
+  "--danger",
+  "--menu-bg",
+  "--menu-border",
+  "--menu-panel-bg",
+  "--menu-panel-border",
+  "--menu-hover",
+  "--menu-hover-outline",
+  "--menu-active",
+  "--menu-active-edge",
+  "--brand-bg"
+]);
+
+export function sanitizeUiTheme(uiTheme) {
+  if (!uiTheme || typeof uiTheme !== "object") {
+    return { variables: {} };
+  }
+  const variables = {};
+  Object.entries(uiTheme.variables || {}).forEach(([key, value]) => {
+    const variableName = String(key || "").trim();
+    if (!UI_THEME_VARIABLES.has(variableName) || typeof value !== "string" || !value.trim()) {
+      return;
+    }
+    variables[variableName] = value.trim();
+  });
+  return { variables };
+}
+
 export function sanitizeAssetPack(pack, manifestEntry = {}) {
   const id = String(pack.id || manifestEntry.id || "").trim();
   const name = String(pack.name || manifestEntry.name || id).trim();
@@ -35,11 +109,14 @@ export function sanitizeAssetPack(pack, manifestEntry = {}) {
     throw new Error("Asset pack is missing id or name.");
   }
   const room = {
-    background: pack.room?.background || "#87968e",
-    grid: pack.room?.grid || "#e8f7f4",
-    floor: pack.room?.floor || "#64736b",
-    accent: pack.room?.accent || "#98f17f",
-    motif: pack.room?.motif || manifestEntry.room?.motif || "grid"
+    background: pack.room?.background || "#9aa59d",
+    grid: pack.room?.grid || "#a7b0a9",
+    floor: pack.room?.floor || "#5f6962",
+    accent: pack.room?.accent || "#d8d2b8",
+    motif: pack.room?.motif || manifestEntry.room?.motif || "grid",
+    texture: typeof pack.room?.texture === "string" ? pack.room.texture.trim() : "",
+    textureDataUrl: typeof pack.room?.textureDataUrl === "string" ? pack.room.textureDataUrl.trim() : "",
+    textureFit: pack.room?.textureFit || "cover"
   };
   const skins = Array.isArray(pack.skins)
     ? pack.skins
@@ -80,7 +157,9 @@ export function sanitizeAssetPack(pack, manifestEntry = {}) {
     description: pack.description || `${name} asset pack.`,
     room,
     skins,
-    audioPacks
+    audioPacks,
+    toolTextures: sanitizeToolTextures(pack.toolTextures),
+    uiTheme: sanitizeUiTheme(pack.uiTheme)
   };
 }
 

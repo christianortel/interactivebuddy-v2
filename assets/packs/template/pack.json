@@ -7,7 +7,9 @@
     "grid": "#c8d8d0",
     "floor": "#202a26",
     "accent": "#98f17f",
-    "motif": "grid"
+    "motif": "grid",
+    "texture": "assets/packs/template/skins/sample.svg",
+    "textureFit": "contain"
   },
   "skins": [
     {
@@ -21,6 +23,21 @@
       "description": "Example texture-backed skin. Replace this with your own art."
     }
   ],
+  "toolTextures": {
+    "gift-box": {
+      "texture": "assets/packs/template/skins/sample.svg",
+      "scale": 1,
+      "alpha": 0.95
+    }
+  },
+  "uiTheme": {
+    "variables": {
+      "--accent": "#98f17f",
+      "--accent-2": "#55d9cf",
+      "--menu-bg": "linear-gradient(#f7faf8, #d8dedb)",
+      "--menu-panel-bg": "#f5fff3"
+    }
+  },
   "audioPacks": {
     "templateTone": {
       "name": "Template Tone",

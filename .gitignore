@@ -37,3 +37,12 @@ assets/private/*
 !assets/private/README.md
 !assets/private/manifest.example.json
 !assets/private/pack.example.json
+
+# Reference private lane (never commit the original game file)
+reference/private/
+
+# Reference captures stay local (derived from the reference artifact)
+reference/screens/*
+!reference/screens/README.md
+reference/clips/*
+!reference/clips/README.md

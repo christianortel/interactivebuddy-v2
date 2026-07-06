@@ -4,6 +4,9 @@ export interface RuntimeSaveSettings {
   reducedFlash: boolean;
   slapstick: boolean;
   audio: boolean;
+  volume: number;
+  cameraShake: boolean;
+  particles: boolean;
   haptics: boolean;
   assetPack: string;
   audioPack: string;
@@ -12,6 +15,7 @@ export interface RuntimeSaveSettings {
   ceilingOpen: boolean;
   gravityMode: string;
   fpsCounter: boolean;
+  debugPhysics: boolean;
 }
 
 export interface RuntimeSaveData {
@@ -88,13 +92,16 @@ export function migrateRuntimeSave(save: RuntimeSaveSource | null | undefined, v
     version,
     cash: source.cash,
     xp: source.xp,
-    unlockedTools: toStringArray(source.unlockedTools, ["hand", "ball", "rope", "water"]),
+    unlockedTools: toStringArray(source.unlockedTools, ["hand", "poke", "slap", "tickle", "ball", "rope", "water"]),
     unlockedSkins: toStringArray(source.unlockedSkins, ["classic"]),
     selectedSkin: typeof source.selectedSkin === "string" ? source.selectedSkin : "classic",
     settings: {
       reducedFlash: Boolean(settings.reducedFlash),
       slapstick: settings.slapstick !== false,
       audio: settings.audio !== false,
+      volume: toUnitNumber(settings.volume, 1),
+      cameraShake: settings.cameraShake !== false,
+      particles: settings.particles !== false,
       haptics: settings.haptics !== false,
       assetPack: typeof settings.assetPack === "string" ? settings.assetPack : "base",
       audioPack: typeof settings.audioPack === "string" ? settings.audioPack : "classic",
@@ -102,7 +109,8 @@ export function migrateRuntimeSave(save: RuntimeSaveSource | null | undefined, v
       slowMo: Boolean(settings.slowMo),
       ceilingOpen: Boolean(settings.ceilingOpen),
       gravityMode: normalizeGravityMode(settings.gravityMode),
-      fpsCounter: Boolean(settings.fpsCounter)
+      fpsCounter: Boolean(settings.fpsCounter),
+      debugPhysics: Boolean(settings.debugPhysics)
     },
     customAssetPacks: Array.isArray(source.customAssetPacks) ? source.customAssetPacks : [],
     challengeMode: typeof source.challengeMode === "string" ? source.challengeMode : "free",
@@ -179,6 +187,10 @@ export function getScenePresetSaveToast(): string {
   return "Scene preset saved.";
 }
 
+export function getProgressResetToast(): string {
+  return "Progress reset.";
+}
+
 function toStringArray(value: unknown, fallback: string[]): string[] {
   if (!Array.isArray(value)) {
     return [...fallback];
@@ -204,4 +216,9 @@ function toScenePresetProp(value: unknown): ScenePresetProp | null {
 
 function toFiniteNumber(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function toUnitNumber(value: unknown, fallback: number): number {
+  const number = toFiniteNumber(value, fallback);
+  return Math.max(0, Math.min(1, number));
 }

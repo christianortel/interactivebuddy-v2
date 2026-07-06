@@ -62,6 +62,7 @@ export const coverageMissionIds = [
   "pulse5",
   "confetti5",
   "boombox4",
+  "moneydrop4",
   "wheel3",
   "export1"
 ];

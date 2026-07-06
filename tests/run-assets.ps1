@@ -28,3 +28,13 @@ $pythonExe = Resolve-Executable -Name "python" -Fallbacks @(
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
+
+& $pythonExe (Join-Path $root "tests/validate-asset-packs.py") --root $root --pack (Join-Path $root "assets/packs/template/pack.json")
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
+
+& $pythonExe (Join-Path $root "tests/validate-asset-packs.py") --root $root --pack (Join-Path $root "assets/private/pack.example.json")
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}

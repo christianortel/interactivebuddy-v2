@@ -6,6 +6,13 @@ export interface RuntimeToolMetaState {
   rubberBurstShots: number;
 }
 
+export interface CanvasCursorInput {
+  toolId: string;
+  pointerDown: boolean;
+  overBuddy: boolean;
+  draggingBuddy: boolean;
+}
+
 export function getRuntimeToolMetaLabel(state: RuntimeToolMetaState): string {
   if (state.toolId !== "rubber") {
     return state.toolCategory || "Ready";
@@ -95,6 +102,22 @@ export function getToolSelectionPanel(tool: RuntimeToolTitleItem): RuntimeToolSe
     name: tool.name,
     description: tool.description
   };
+}
+
+export function getCanvasCursorPresentation(input: CanvasCursorInput): string {
+  if (input.draggingBuddy) {
+    return "grabbing";
+  }
+  if (input.toolId === "hand" && input.overBuddy) {
+    return "grab";
+  }
+  if (["poke", "slap", "tickle"].includes(input.toolId) && input.overBuddy) {
+    return "crosshair";
+  }
+  if (input.pointerDown) {
+    return "crosshair";
+  }
+  return "default";
 }
 
 export function getToolRailButtonMarkup(tool: RuntimeToolRailItem): string {

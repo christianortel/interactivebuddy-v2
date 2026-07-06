@@ -1,9 +1,20 @@
-const impactReasons = new Set(["impact", "throw", "bowling", "punch", "crate", "cannonball", "airborne", "float"]);
-const shockReasons = new Set(["shock", "spark", "gravity", "vacuum", "repulsor", "magnet"]);
-const happyReasons = new Set(["tickle", "gift", "moneydrop", "treat", "confetti", "boombox"]);
-const paintReasons = new Set([
+const directFeedbackReasons = new Set([
+  "impact",
+  "throw",
+  "beachball",
+  "bowling",
+  "punch",
+  "crate",
+  "cannonball",
+  "airborne",
+  "float",
+  "tickle",
+  "poke",
+  "slap",
   "paint",
   "paintball",
+  "dart",
+  "dartHit",
   "rubber",
   "cork",
   "corkHit",
@@ -11,12 +22,26 @@ const paintReasons = new Set([
   "plungerHit",
   "star",
   "starHit",
+  "shock",
+  "spark",
   "heat",
   "frost",
   "goo",
-  "pulse"
+  "pulse",
+  "wind",
+  "gravity",
+  "vacuum",
+  "repulsor",
+  "magnet",
+  "gift",
+  "moneydrop",
+  "treat",
+  "confetti",
+  "boombox",
+  "explosion"
 ]);
-const selectReasons = new Set([
+
+const placementFeedbackReasons = new Set([
   "armed",
   "firecracker",
   "mine",
@@ -28,6 +53,13 @@ const selectReasons = new Set([
   "conveyor",
   "tether",
   "liquid"
+]);
+
+const pulseLikeReasons = new Set([
+  "heat",
+  "frost",
+  "goo",
+  "pulse"
 ]);
 
 export interface FeedbackPlayback {
@@ -51,23 +83,11 @@ export function canUseHaptics(hapticsEnabled: boolean, hasVibrate: boolean, user
 }
 
 export function getFeedbackPlayback(reason: string): FeedbackPlayback | null {
-  if (impactReasons.has(reason)) {
-    return { sound: "impact", useSelectIntensity: false };
+  if (directFeedbackReasons.has(reason)) {
+    return { sound: reason, useSelectIntensity: false };
   }
-  if (reason === "explosion") {
-    return { sound: "explosion", useSelectIntensity: false };
-  }
-  if (shockReasons.has(reason)) {
-    return { sound: "shock", useSelectIntensity: false };
-  }
-  if (happyReasons.has(reason)) {
-    return { sound: reason === "confetti" ? "gift" : reason, useSelectIntensity: false };
-  }
-  if (paintReasons.has(reason)) {
-    return { sound: "paint", useSelectIntensity: false };
-  }
-  if (selectReasons.has(reason)) {
-    return { sound: "select", useSelectIntensity: true };
+  if (placementFeedbackReasons.has(reason)) {
+    return { sound: reason, useSelectIntensity: true };
   }
   return null;
 }
@@ -85,7 +105,7 @@ export function getFeedbackPulsePattern(reason: string, reward: number, tags: st
   if (tags.includes("slippery")) {
     return [8, 12];
   }
-  if (tags.includes("heat")) {
+  if (tags.includes("heat") || pulseLikeReasons.has(reason)) {
     return 14;
   }
   if (tags.includes("happy") || reason === "tickle") {

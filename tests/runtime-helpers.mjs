@@ -10,17 +10,18 @@ import {
   getToolIdForNumberKey
 } from "../src/runtime/toolCatalog.ts";
 import { advanceConveyorPhase, getAnvilThrowScore, getBallThrowScore, getBeachBallThrowScore, getBlackHoleCooldown, getBlackHoleOrbitForceMagnitude, getBlackHolePullForceMagnitude, getBlackHoleRadius, getBlackHoleScore, getBoomboxAngularVelocity, getBoomboxBeatInterval, getBoomboxFalloff, getBoomboxInitialBeat, getBoomboxLife, getBoomboxNoteCount, getBoomboxPlacementScore, getBoomboxPulseForce, getBoomboxRange, getBoomboxScore, getBoomboxSide, getBowlingBallThrowScore, getBoxingGloveThrowScore, getBrickThrowScore, getBumperPlacementScore, getCannonballFireScore, getConeFalloff, getConfettiForceMagnitude, getConfettiLiftVector, getConfettiPopperRange, getConfettiScore, getConveyorCooldown, getConveyorDirection, getConveyorForce, getConveyorPlacementScore, getConveyorScore, getCorkPopperFireScore, getCorkPopperHitScore, getCrateThrowScore, getFanForceMagnitude, getFanRadius, getFanScore, getFanScoreCooldown, getFoamDartFireScore, getFoamDartHitScore, getFrostAngularVelocityScale, getFrostEffectDuration, getFrostPuffCooldown, getFrostPuffForce, getFrostPuffParticle, getFrostPuffRadius, getFrostPuffScore, getFrostVelocityScale, getGiftScore, getGooAngularVelocity, getGooEffectDuration, getGooFriction, getGooFrictionAir, getGooMistCooldown, getGooMistForce, getGooMistParticle, getGooMistRadius, getGooMistScore, getHandFlickScore, getHeatConeCooldown, getHeatConeForce, getHeatConeParticle, getHeatConeRadius, getHeatConeScore, getMagnetAngularVelocity, getMagnetCooldown, getMagnetForceMagnitude, getMagnetRadius, getMagnetRingEffect, getMagnetScore, getMoneyDropScore, getNudgeFalloff, getNudgeForce, getNudgeSide, getPaintballFireScore, getPaintballHitScore, getPlatformPlacementScore, getPlungerShotFireScore, getPlungerShotHitScore, getPlungerSuctionDuration, getPulseAngularVelocity, getPulseBeamCooldown, getPulseBeamFalloff, getPulseBeamForce, getPulseBeamParticle, getPulseBeamRadius, getPulseBeamScore, getPulseBeamSideDistance, getPulseEffectDuration, getRandomTossVelocity, getRepulsorAngularVelocity, getRepulsorCooldown, getRepulsorForceMagnitude, getRepulsorRadius, getRepulsorRingEffect, getRepulsorScore, getRopeAttachScore, getRubberCooldown, getRubberPelletSpeed, getRubberScore, getSparkWandAngularVelocity, getSparkWandCooldown, getSparkWandForceMagnitude, getSparkWandJitter, getSparkWandRange, getSparkWandScore, getStarShotFireScore, getStarShotHitScore, getTeslaForceMagnitude, getTeslaPlacementScore, getTeslaPulseInterval, getTeslaRange, getTeslaScore, getTeslaTargetLimit, getTickleImpulseMagnitude, getTickleScore, getTrampolinePlacementScore, getTreatScore, getVacuumCooldown, getVacuumForceMagnitude, getVacuumRadius, getVacuumRingEffect, getVacuumScore, incrementRubberBurstShots, isMagneticBodyLabel, shouldConveyorAffectBody, shouldSpawnSparkWandIdleBurst } from "../src/runtime/toolActionMath.ts";
+import { getPokeImpulseMagnitude, getPokeScore, getSlapImpulseMagnitude, getSlapScore } from "../src/runtime/toolActionMath.ts";
 import { getClampedOverlayPosition, getOverlayCssPosition, screenPointToWorld } from "../src/runtime/coordinates.ts";
 import { advanceTimedEffectLife, decayShakeAmount, getBoltMidpoint, getBurstParticle, getConfettiBurstParticle, getExplosionArmScore, getExplosionBaseForce, getExplosionBurstCount, getExplosionFalloff, getExplosionForceMagnitude, getExplosionRadius, getExplosionScore, getExplosionScoreBase, getExplosionTriggerTime, getImpactBurstCount, getMoneySparkleParticle, getMusicNoteParticle, getParticleAlpha, getParticleGravity, getParticlePositionAfterDelta, getParticleVelocityYAfterGravity, getShakeOffset, getShakeTransform, getTreatCrumbParticle, increaseShakeAmount, shouldKeepDecal, shouldKeepTimedEffect } from "../src/runtime/effectsMath.ts";
 import { getGiftCost } from "../src/runtime/economyMath.ts";
 import { canUseHaptics, getFeedbackPlayback, getFeedbackPulsePattern } from "../src/runtime/feedbackMapping.ts";
-import { calculateFps, formatComboLabel, formatFpsLabel, formatHudCash, formatHudXp, formatPowerLabel, getFpsCounterPresentation, getFpsSamplePresentation, getHudActionToast, getHudCorePresentation, getPowerControlPresentation, getToastHiddenPresentation, getToastPresentation } from "../src/runtime/hudPresentation.ts";
+import { calculateFps, formatComboLabel, formatFpsLabel, formatHudCash, formatHudXp, formatPowerLabel, getFpsCounterPresentation, getFpsSamplePresentation, getHudActionToast, getHudCorePresentation, getPowerControlPresentation, getPowerWheelPresentation, getToastHiddenPresentation, getToastPresentation } from "../src/runtime/hudPresentation.ts";
 import { getCanvasFitStyles } from "../src/runtime/layout.ts";
 import { getClampedLiquidLevel, getLiquidAngularDampingFactor, getLiquidBuoyancyForce, getLiquidDragForce, getLiquidDrainScore, getLiquidDrainToast, getLiquidFillScore, getLiquidFillToast, getLiquidFriction, getLiquidScore, getLiquidScoreCooldown, getLiquidSelectedToast, getLiquidSubmersion, getLiquidWaveY, getSelectedLiquidTypeId, resolveLiquidType, shouldDrainLiquid } from "../src/runtime/liquidMath.ts";
 import { getBooleanModeButtonState, getBooleanModeButtonStates, getCeilingToggleToast, getCeilingY, getFpsCounterToggleToast, getGravityModeButtonState, getGravityModeConfig, getGravityModeToast, getRopeAnchorX, getRopeAnchorY, getRopeLength, getRopeStiffness, getSlowMoTimeScale, getSlowMoToggleToast, gravityModes, normalizeGravityMode, shouldPruneRopes } from "../src/runtime/modeSettings.ts";
-import { getShopItemButtonState, resolveSkinPurchase, resolveToolPurchase } from "../src/runtime/progressionState.ts";
+import { getShopCategoryLabel, getShopCategoryOptions, getShopItemButtonState, getShopItemCategory, getShopItemPresentation, getSkinShopPreviewPresentation, shouldShowShopItem, resolveSkinPurchase, resolveToolPurchase } from "../src/runtime/progressionState.ts";
 import { clampImpactScore, clampVector, getClampedLaunchDistance, getCombinedBounds, getDampedAngularVelocity, getDirectionOrFallback, getDistanceWithMinimum, getEquivalentMass, getFiniteMass, getFrameScale, getGrabCorrectionMagnitude, getGrabFrictionAir, getHandDragElapsed, getHandDragFlickScale, getHandFlickAngularVelocity, getHorizontalSpinSign, getImpactScore, getLaunchSpeed, getNextWallRecoveryCooldown, getPoweredRadius, getProjectileImpulseMagnitude, getRecoveredVelocityComponent, getScaledVelocity, getSelfRightingAngularVelocity, getSelfRightingForce, getSignedAngularVelocity, getSpinAngularVelocity, getThrowScale, getVectorAngle, getVelocityAfterDirectionalImpulse, getWallRecoveryOffset, isNearFloor, scaleStaticImpactScore, shouldApplySelfRighting, shouldReplaceNearest, shouldSkipWallRecovery, shouldUseLaunchDirection, shouldUseStepFlick } from "../src/runtime/physicsMath.ts";
-import { getRoomApplyPresentation, getRoomBrowserButtonPresentation, getRoomBrowserButtonState, getRoomMotif, getRoomPreviewShellPresentation, getRoomPreviewSummary, getRoomSwatchPresentation, getRoomSwatches, getRoomThumbnailAriaLabel, getRoomThumbnailPresentation, getRoomThumbnailStyles } from "../src/runtime/roomPresentation.ts";
+import { getRoomApplyPresentation, getRoomBackgroundCss, getRoomBackgroundSize, getRoomBrowserButtonPresentation, getRoomBrowserButtonState, getRoomMotif, getRoomPreviewShellPresentation, getRoomPreviewSummary, getRoomSwatchPresentation, getRoomSwatches, getRoomTextureSource, getRoomThumbnailAriaLabel, getRoomThumbnailPresentation, getRoomThumbnailStyles } from "../src/runtime/roomPresentation.ts";
 import {
   advanceAirborneBank,
   calculateReward,
@@ -36,10 +37,10 @@ import {
   shouldAwardAirborne,
   shouldSkipAirborneForSpawnGrace
 } from "../src/runtime/scoringMath.ts";
-import { createRuntimeSavePayload, createScenePreset, getScenePresetLoadToast, getScenePresetSaveToast, migrateRuntimeSave, parseStoredScenePreset } from "../src/runtime/saveState.ts";
+import { createRuntimeSavePayload, createScenePreset, getProgressResetToast, getScenePresetLoadToast, getScenePresetSaveToast, migrateRuntimeSave, parseStoredScenePreset } from "../src/runtime/saveState.ts";
 import { getAppliedSkinPhysics, getClassicFaceRenderGeometry, getClassicPartRenderGeometry, getRuntimeSkin, getRuntimeSkinPhysics, getSkinBodyRender, getSkinSpriteRender } from "../src/runtime/skinRuntime.ts";
-import { getMoodFace, getMoodHudPresentation } from "../src/runtime/moodPresentation.ts";
-import { getCircularCosmeticArc, getCosmeticPolarPoint, getCosmeticPolarSegment, getExplosiveArmedToast, getLockedToolToast, getMenuCategoryPresentation, getMouseConstraintConfig, getRadialToolAriaLabel, getRadialToolButtonPlacement, getRadialToolButtonPresentation, getRadialToolButtonState, getRadialToolButtonTitle, getRadialWheelCenterLabel, getRadialWheelVisibilityPresentation, getRuntimeToolMetaLabel, getShopMenuButtonPresentation, getShopMenuItemLabel, getToolButtonState, getToolRailButtonMarkup, getToolRailButtonPresentation, getToolRailButtonTitle, getToolSelectionPanel, getToolUseToast } from "../src/runtime/toolPresentation.ts";
+import { getMoodBubbleText, getMoodFace, getMoodHudPresentation, getReactionBubblePresentation } from "../src/runtime/moodPresentation.ts";
+import { getCanvasCursorPresentation, getCircularCosmeticArc, getCosmeticPolarPoint, getCosmeticPolarSegment, getExplosiveArmedToast, getLockedToolToast, getMenuCategoryPresentation, getMouseConstraintConfig, getRadialToolAriaLabel, getRadialToolButtonPlacement, getRadialToolButtonPresentation, getRadialToolButtonState, getRadialToolButtonTitle, getRadialWheelCenterLabel, getRadialWheelVisibilityPresentation, getRuntimeToolMetaLabel, getShopMenuButtonPresentation, getShopMenuItemLabel, getToolButtonState, getToolRailButtonMarkup, getToolRailButtonPresentation, getToolRailButtonTitle, getToolSelectionPanel, getToolUseToast } from "../src/runtime/toolPresentation.ts";
 import { decrementTimer, extendTimer, isTimerExpired } from "../src/runtime/timerMath.ts";
 import {
   createSaveSnapshot,
@@ -75,12 +76,12 @@ inputManager.recordPointer({ x: 12, y: 6, time: 1120 });
 assert.deepEqual(inputManager.velocity(), { x: 100, y: 50 });
 
 const runtimeAssetPacks = [
-  { id: "base", name: "Base Lab" },
+  { id: "base", name: "Classic Plain" },
   { id: "retro", name: "Retro Office" }
 ];
 assert.deepEqual(resolveAssetPack(runtimeAssetPacks, "retro"), { id: "retro", name: "Retro Office" });
-assert.deepEqual(resolveAssetPack(runtimeAssetPacks, "missing"), { id: "base", name: "Base Lab" });
-assert.deepEqual(resolveAssetPack(runtimeAssetPacks, undefined), { id: "base", name: "Base Lab" });
+assert.deepEqual(resolveAssetPack(runtimeAssetPacks, "missing"), { id: "base", name: "Classic Plain" });
+assert.deepEqual(resolveAssetPack(runtimeAssetPacks, undefined), { id: "base", name: "Classic Plain" });
 assert.throws(() => resolveAssetPack([], "missing"), /Runtime asset pack list is empty/);
 assert.equal(getSelectedAssetPackId(runtimeAssetPacks, "retro"), "retro");
 assert.equal(getSelectedAssetPackId(runtimeAssetPacks, "missing"), "base");
@@ -163,6 +164,14 @@ assert.ok(Math.abs(getTickleImpulseMagnitude(10) - 0.03) < 0.0000000001);
 assert.ok(Math.abs(getTickleImpulseMagnitude(10, 0.01) - 0.1) < 0.0000000001);
 assert.equal(getTickleScore(), 6);
 assert.equal(getTickleScore(8), 8);
+assert.ok(Math.abs(getPokeImpulseMagnitude(10) - 0.042) < 0.0000000001);
+assert.ok(Math.abs(getPokeImpulseMagnitude(10, 0.01) - 0.1) < 0.0000000001);
+assert.equal(getPokeScore(), 4.5);
+assert.equal(getPokeScore(9), 9);
+assert.ok(Math.abs(getSlapImpulseMagnitude(10) - 0.072) < 0.0000000001);
+assert.ok(Math.abs(getSlapImpulseMagnitude(10, 0.01) - 0.1) < 0.0000000001);
+assert.equal(getSlapScore(), 7.4);
+assert.equal(getSlapScore(12), 12);
 assert.equal(getTrampolinePlacementScore(), 3);
 assert.equal(getTrampolinePlacementScore(6), 6);
 assert.equal(getPlatformPlacementScore(), 3.2);
@@ -485,13 +494,20 @@ assert.equal(isTimerExpired(1), false);
 assert.equal(isTimerExpired(0), true);
 assert.equal(isTimerExpired(-1), true);
 assert.deepEqual(getFeedbackPlayback("impact"), { sound: "impact", useSelectIntensity: false });
-assert.deepEqual(getFeedbackPlayback("crate"), { sound: "impact", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("crate"), { sound: "crate", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("poke"), { sound: "poke", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("slap"), { sound: "slap", useSelectIntensity: false });
 assert.deepEqual(getFeedbackPlayback("explosion"), { sound: "explosion", useSelectIntensity: false });
-assert.deepEqual(getFeedbackPlayback("vacuum"), { sound: "shock", useSelectIntensity: false });
-assert.deepEqual(getFeedbackPlayback("confetti"), { sound: "gift", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("vacuum"), { sound: "vacuum", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("frost"), { sound: "frost", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("goo"), { sound: "goo", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("pulse"), { sound: "pulse", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("confetti"), { sound: "confetti", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("moneydrop"), { sound: "moneydrop", useSelectIntensity: false });
 assert.deepEqual(getFeedbackPlayback("treat"), { sound: "treat", useSelectIntensity: false });
-assert.deepEqual(getFeedbackPlayback("plungerHit"), { sound: "paint", useSelectIntensity: false });
-assert.deepEqual(getFeedbackPlayback("conveyor"), { sound: "select", useSelectIntensity: true });
+assert.deepEqual(getFeedbackPlayback("plungerHit"), { sound: "plungerHit", useSelectIntensity: false });
+assert.deepEqual(getFeedbackPlayback("firecracker"), { sound: "firecracker", useSelectIntensity: true });
+assert.deepEqual(getFeedbackPlayback("conveyor"), { sound: "conveyor", useSelectIntensity: true });
 assert.equal(getFeedbackPlayback("unknown"), null);
 assert.deepEqual(getFeedbackPulsePattern("armed", 2, ["explosive"]), [45, 35, 90]);
 assert.deepEqual(getFeedbackPulsePattern("spark", 2, ["shock"]), [16, 24, 16]);
@@ -958,6 +974,10 @@ assert.equal(formatPowerLabel(60.4), "60");
 assert.equal(formatPowerLabel(60.5), "61");
 assert.deepEqual(getPowerControlPresentation("60.5"), { power: 60.5, label: "61" });
 assert.deepEqual(getPowerControlPresentation(24.4), { power: 24.4, label: "24" });
+assert.deepEqual(getPowerWheelPresentation(55, -100, 10, 100, 5), { power: 60, label: "60" });
+assert.deepEqual(getPowerWheelPresentation(55, 100, 10, 100, 5), { power: 50, label: "50" });
+assert.deepEqual(getPowerWheelPresentation(100, -100, 10, 100, 5), { power: 100, label: "100" });
+assert.deepEqual(getPowerWheelPresentation(10, 100, 10, 100, 5), { power: 10, label: "10" });
 assert.equal(formatComboLabel(0), "x1.00");
 assert.equal(formatComboLabel(1), "x1.00");
 assert.equal(formatComboLabel(2), "x1.22");
@@ -990,6 +1010,8 @@ assert.deepEqual(getToastPresentation("Saved."), { message: "Saved.", visibleCla
 assert.deepEqual(getToastPresentation("Saved.", 1200), { message: "Saved.", visibleClass: "toast--visible", timerMs: 1200 });
 assert.deepEqual(getToastHiddenPresentation(), { visibleClass: "toast--visible" });
 assert.equal(getHudActionToast("newBuddy"), "New buddy spawned.");
+assert.equal(getHudActionToast("buddyReset"), "Buddy reset.");
+assert.equal(getHudActionToast("objectsCleared"), "Objects cleared.");
 assert.equal(getHudActionToast("sceneReset"), "Scene reset.");
 assert.equal(getHudActionToast("missing"), "Ready.");
 assert.equal(getRoomMotif({ id: "Retro Office", room: { motif: "Desk + Grid!" } }), "desk---grid-");
@@ -1011,8 +1033,20 @@ assert.deepEqual(getRoomPreviewShellPresentation({}), {
   swatchesClassName: "room-preview__swatches",
   browserClassName: "room-browser"
 });
-assert.deepEqual(getRoomApplyPresentation({ background: "#111", floor: "#333" }), { background: "#111", floor: "#333" });
-assert.deepEqual(getRoomApplyPresentation({}), { background: "#87968e", floor: "#64736b" });
+assert.equal(getRoomTextureSource({ texture: "assets/private/room.png" }), "assets/private/room.png");
+assert.equal(getRoomTextureSource({ textureDataUrl: "data:image/png;base64,abc" }), "data:image/png;base64,abc");
+assert.equal(getRoomBackgroundCss({ background: "#111", texture: "assets/private/room.png" }), 'url("assets/private/room.png") #111');
+assert.equal(getRoomBackgroundCss({ background: "#111", textureDataUrl: "data:image/svg+xml,%3Csvg%20id%3D%22x%22/%3E" }), 'url("data:image/svg+xml,%3Csvg%20id%3D%22x%22/%3E") #111');
+assert.equal(getRoomBackgroundCss({ background: "#111" }), "#111");
+assert.equal(getRoomBackgroundSize({ textureFit: "contain" }), "contain");
+assert.equal(getRoomBackgroundSize({ textureFit: "stretch" }), "cover");
+assert.deepEqual(getRoomApplyPresentation({ background: "#111", floor: "#333" }), { background: "#111", backgroundSize: "cover", floor: "#333" });
+assert.deepEqual(getRoomApplyPresentation({ background: "#111", floor: "#333", texture: "assets/private/room.png", textureFit: "contain" }), {
+  background: 'url("assets/private/room.png") #111',
+  backgroundSize: "contain",
+  floor: "#333"
+});
+assert.deepEqual(getRoomApplyPresentation({}), { background: "#9aa59d", backgroundSize: "cover", floor: "#5f6962" });
 assert.deepEqual(getRoomSwatches({ background: "#111", grid: "#222", floor: "#333", accent: "#444" }), [
   { label: "Background", color: "#111", title: "Background: #111" },
   { label: "Grid", color: "#222", title: "Grid: #222" },
@@ -1020,10 +1054,10 @@ assert.deepEqual(getRoomSwatches({ background: "#111", grid: "#222", floor: "#33
   { label: "Accent", color: "#444", title: "Accent: #444" }
 ]);
 assert.deepEqual(getRoomSwatches({}), [
-  { label: "Background", color: "#87968e", title: "Background: #87968e" },
-  { label: "Grid", color: "#87968e", title: "Grid: #87968e" },
-  { label: "Floor", color: "#87968e", title: "Floor: #87968e" },
-  { label: "Accent", color: "#87968e", title: "Accent: #87968e" }
+  { label: "Background", color: "#9aa59d", title: "Background: #9aa59d" },
+  { label: "Grid", color: "#9aa59d", title: "Grid: #9aa59d" },
+  { label: "Floor", color: "#9aa59d", title: "Floor: #9aa59d" },
+  { label: "Accent", color: "#9aa59d", title: "Accent: #9aa59d" }
 ]);
 assert.deepEqual(getRoomSwatchPresentation({ color: "#111", title: "Background: #111" }), {
   className: "room-preview__swatch",
@@ -1038,10 +1072,10 @@ assert.deepEqual(getRoomThumbnailStyles({ background: "#111", grid: "#222", floo
   "--room-accent": "#444"
 });
 assert.deepEqual(getRoomThumbnailStyles({}), {
-  "--room-bg": "#87968e",
-  "--room-grid": "#e8f7f4",
-  "--room-floor": "#64736b",
-  "--room-accent": "#98f17f"
+  "--room-bg": "#9aa59d",
+  "--room-grid": "#a7b0a9",
+  "--room-floor": "#5f6962",
+  "--room-accent": "#d8d2b8"
 });
 assert.equal(getRoomThumbnailAriaLabel({ name: "Retro Office" }), "Retro Office room thumbnail");
 assert.equal(getRoomThumbnailAriaLabel({}), "Room room thumbnail");
@@ -1145,8 +1179,58 @@ assert.equal(getMoodFace("Surprised"), ":O");
 assert.equal(getMoodFace("Stunned"), "x_x");
 assert.equal(getMoodFace("Angry"), ">:(");
 assert.equal(getMoodFace("Unknown"), ":)");
+assert.equal(getMoodBubbleText("Happy"), "ha!");
+assert.equal(getMoodBubbleText("Afraid"), "!");
+assert.equal(getMoodBubbleText("Stunned"), "x_x");
+assert.equal(getMoodBubbleText("Calm"), "");
+assert.equal(getMoodBubbleText("Happy", " custom bubble text "), "custom bubbl");
 assert.deepEqual(getMoodHudPresentation("Happy"), { mood: "Happy", face: ":D" });
 assert.deepEqual(getMoodHudPresentation("Unknown"), { mood: "Unknown", face: ":)" });
+assert.deepEqual(getReactionBubblePresentation({
+  mood: "Happy",
+  timerMs: 800,
+  anchorX: 100,
+  anchorY: 120,
+  stageWidth: 960,
+  stageHeight: 640
+}), {
+  visible: true,
+  text: "ha!",
+  x: 77,
+  y: 62,
+  width: 46,
+  height: 25,
+  pointerX: 23,
+  alpha: 1,
+  radius: 7
+});
+assert.deepEqual(getReactionBubblePresentation({
+  mood: "Happy",
+  timerMs: 210,
+  anchorX: 6,
+  anchorY: 40,
+  stageWidth: 160,
+  stageHeight: 120,
+  text: "wow!"
+}), {
+  visible: true,
+  text: "wow!",
+  x: 10,
+  y: 10,
+  width: 54,
+  height: 25,
+  pointerX: 9,
+  alpha: 0.5,
+  radius: 7
+});
+assert.equal(getReactionBubblePresentation({
+  mood: "Calm",
+  timerMs: 800,
+  anchorX: 100,
+  anchorY: 120,
+  stageWidth: 960,
+  stageHeight: 640
+}).visible, false);
 
 assert.equal(getRuntimeToolMetaLabel({ toolId: "ball", toolCategory: "Props", pointerDown: false, rubberCooldown: 0, rubberBurstShots: 0 }), "Props");
 assert.equal(getRuntimeToolMetaLabel({ toolId: "ball", pointerDown: false, rubberCooldown: 0, rubberBurstShots: 0 }), "Ready");
@@ -1160,6 +1244,11 @@ const fullRubberTool = { id: "rubber", icon: "R", name: "Rubber Blaster", catego
 assert.equal(getLockedToolToast(rubberTool), "Rubber Blaster is locked. Buy it for $180.");
 assert.equal(getToolRailButtonTitle({ name: "Rubber Blaster", description: "Shoots soft beads." }, 2), "3. Shoots soft beads.");
 assert.equal(getRadialToolButtonTitle({ name: "Rubber Blaster", description: "Shoots soft beads." }), "Rubber Blaster: Shoots soft beads.");
+assert.equal(getCanvasCursorPresentation({ toolId: "hand", pointerDown: false, overBuddy: true, draggingBuddy: false }), "grab");
+assert.equal(getCanvasCursorPresentation({ toolId: "hand", pointerDown: true, overBuddy: true, draggingBuddy: true }), "grabbing");
+assert.equal(getCanvasCursorPresentation({ toolId: "poke", pointerDown: false, overBuddy: true, draggingBuddy: false }), "crosshair");
+assert.equal(getCanvasCursorPresentation({ toolId: "ball", pointerDown: true, overBuddy: false, draggingBuddy: false }), "crosshair");
+assert.equal(getCanvasCursorPresentation({ toolId: "ball", pointerDown: false, overBuddy: false, draggingBuddy: false }), "default");
 assert.deepEqual(getRadialToolButtonPlacement(0, 4, 100), {
   angle: -Math.PI / 2,
   transform: "translate(6.123233995736766e-15px, -100px)"
@@ -1286,6 +1375,9 @@ const migratedSave = migrateRuntimeSave({
     reducedFlash: 1,
     slapstick: false,
     audio: false,
+    volume: 0.4,
+    cameraShake: false,
+    particles: false,
     haptics: false,
     assetPack: "retro-office",
     audioPack: "soft",
@@ -1293,7 +1385,8 @@ const migratedSave = migrateRuntimeSave({
     slowMo: true,
     ceilingOpen: true,
     gravityMode: "low",
-    fpsCounter: true
+    fpsCounter: true,
+    debugPhysics: true
   },
   customAssetPacks: [{ id: "private-pack" }],
   challengeMode: "juggle",
@@ -1310,6 +1403,9 @@ assert.deepEqual(migratedSave.settings, {
   reducedFlash: true,
   slapstick: false,
   audio: false,
+  volume: 0.4,
+  cameraShake: false,
+  particles: false,
   haptics: false,
   assetPack: "retro-office",
   audioPack: "soft",
@@ -1317,7 +1413,8 @@ assert.deepEqual(migratedSave.settings, {
   slowMo: true,
   ceilingOpen: true,
   gravityMode: "low",
-  fpsCounter: true
+  fpsCounter: true,
+  debugPhysics: true
 });
 assert.deepEqual(migratedSave.customAssetPacks, [{ id: "private-pack" }]);
 assert.equal(migratedSave.challengeMode, "juggle");
@@ -1326,13 +1423,17 @@ assert.equal(migratedSave.tool, "fan");
 
 const fallbackSave = migrateRuntimeSave({ settings: { gravityMode: "space" }, customAssetPacks: "bad", challengeBests: [] }, 3);
 assert.equal(fallbackSave.version, 3);
-assert.deepEqual(fallbackSave.unlockedTools, ["hand", "ball", "rope", "water"]);
+assert.deepEqual(fallbackSave.unlockedTools, ["hand", "poke", "slap", "tickle", "ball", "rope", "water"]);
 assert.deepEqual(fallbackSave.unlockedSkins, ["classic"]);
 assert.equal(fallbackSave.selectedSkin, "classic");
 assert.equal(fallbackSave.settings.gravityMode, "normal");
 assert.equal(fallbackSave.settings.assetPack, "base");
 assert.equal(fallbackSave.settings.audioPack, "classic");
 assert.equal(fallbackSave.settings.liquidType, "water");
+assert.equal(fallbackSave.settings.volume, 1);
+assert.equal(fallbackSave.settings.cameraShake, true);
+assert.equal(fallbackSave.settings.particles, true);
+assert.equal(fallbackSave.settings.debugPhysics, false);
 assert.deepEqual(fallbackSave.customAssetPacks, []);
 assert.deepEqual(fallbackSave.challengeBests, {});
 assert.equal(fallbackSave.challengeMode, "free");
@@ -1390,6 +1491,7 @@ assert.equal(getScenePresetSaveToast(), "Scene preset saved.");
 assert.equal(getScenePresetLoadToast("missing"), "No saved preset found.");
 assert.equal(getScenePresetLoadToast("invalid"), "Scene preset could not be loaded.");
 assert.equal(getScenePresetLoadToast("ready"), "Scene preset loaded.");
+assert.equal(getProgressResetToast(), "Progress reset.");
 
 const runtimeSkins = [
   { id: "classic", color: "#d6ded9", accent: "#f5faf7" },
@@ -1535,6 +1637,59 @@ assert.deepEqual(getShopItemButtonState("tool", false, false), { text: "Buy", di
 assert.deepEqual(getShopItemButtonState("tool", true, false), { text: "Owned", disabled: true });
 assert.deepEqual(getShopItemButtonState("skin", true, false), { text: "Equip", disabled: false });
 assert.deepEqual(getShopItemButtonState("skin", true, true), { text: "Equipped", disabled: true });
+assert.deepEqual(getShopItemPresentation({ shopCategory: "skins" }, true, true), {
+  className: "shop-item shop-item--owned shop-item--active",
+  category: "skins",
+  owned: "true",
+  active: "true",
+  ariaCurrent: "true"
+});
+assert.deepEqual(getShopItemPresentation({ shopCategory: "force" }, true, false), {
+  className: "shop-item shop-item--owned",
+  category: "force",
+  owned: "true",
+  active: "false",
+  ariaCurrent: ""
+});
+assert.equal(getShopItemCategory({ kind: "tool", category: "Projectiles" }), "projectiles");
+assert.equal(getShopItemCategory({ kind: "tool", category: "Nice Items!" }), "nice-items");
+assert.equal(getShopItemCategory({ kind: "skin", category: "Ignored" }), "skins");
+assert.equal(getShopCategoryLabel("projectiles"), "Projectiles");
+assert.equal(getShopCategoryLabel("nice-items"), "Nice Items");
+const shopItems = [
+  { id: "fan", name: "Fan", cost: 120, kind: "tool", shopCategory: "force" },
+  { id: "paintball", name: "Paintball", cost: 260, kind: "tool", shopCategory: "projectiles" },
+  { id: "neon", name: "Neon", cost: 50, kind: "skin", shopCategory: "skins" }
+];
+assert.deepEqual(getShopCategoryOptions(shopItems, "projectiles"), [
+  { id: "all", label: "All", active: false, count: 3 },
+  { id: "force", label: "Force", active: false, count: 1 },
+  { id: "projectiles", label: "Projectiles", active: true, count: 1 },
+  { id: "skins", label: "Skins", active: false, count: 1 }
+]);
+assert.equal(getShopCategoryOptions(shopItems, "missing")[0].active, true);
+assert.equal(shouldShowShopItem(shopItems[1], "all"), true);
+assert.equal(shouldShowShopItem(shopItems[1], "projectiles"), true);
+assert.equal(shouldShowShopItem(shopItems[1], "force"), false);
+assert.deepEqual(getSkinShopPreviewPresentation({
+  kind: "skin",
+  name: "Neon",
+  color: "#99f17f",
+  accent: "#55d9cf",
+  texture: "skins/neon.svg"
+}), {
+  visible: true,
+  className: "shop-skin-preview",
+  swatchClassName: "shop-skin-preview__swatch shop-skin-preview__swatch--textured",
+  headClassName: "shop-skin-preview__head",
+  bodyClassName: "shop-skin-preview__body",
+  faceClassName: "shop-skin-preview__face",
+  ariaLabel: "Neon preview",
+  color: "#99f17f",
+  accent: "#55d9cf",
+  texture: "skins/neon.svg"
+});
+assert.equal(getSkinShopPreviewPresentation({ kind: "tool", name: "Fan" }).visible, false);
 
 const challengeModes = {
   free: { name: "Free", event: "", target: 0, duration: 0, reward: 0 },

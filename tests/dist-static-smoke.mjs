@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { extname, join, relative, resolve } from "node:path";
 
-import { TOOL_DEFS } from "../js/content.js";
+import { CHALLENGE_MODES, MISSION_POOL, TOOL_DEFS, TOOL_EFFECT_AUDIT } from "../js/content.js";
 
 const root = resolve(".");
 const distRoot = join(root, "dist");
@@ -15,12 +15,21 @@ const requiredDomIds = [
   "shopGrid",
   "skinMenu",
   "itemMenu",
+  "resetBuddyButton",
+  "clearObjectsButton",
+  "clearObjectsFooterButton",
   "assetPack",
   "audioPack",
+  "audioVolume",
+  "audioVolumeValue",
+  "cameraShakeToggle",
+  "particlesToggle",
+  "debugPhysicsButton",
   "toast",
   "radialWheel",
   "saveImportInput",
-  "skinPackImportInput"
+  "skinPackImportInput",
+  "resetProgressButton"
 ];
 
 if (!existsSync(join(distRoot, "index.html"))) {
@@ -46,6 +55,7 @@ const cssHref = extractRequiredAttribute(html, /<link[^>]+href="([^"]+index-[^"]
 const shellSource = await readText(moduleSrc);
 const runtimeChunk = extractRequiredAttribute(shellSource, /import\("\.\/(main-[^"]+\.js)"\)/);
 const runtimeSource = await readText(`assets/${runtimeChunk}`);
+const cssSource = await readText(cssHref);
 const matterSource = await readText("vendor/matter.min.js");
 const manifest = JSON.parse(await readText("assets/packs/manifest.json"));
 
@@ -53,11 +63,55 @@ assert.match(shellSource, /__buddyLabProject/, "bundled shell should attach proj
 assert.match(shellSource, /cleanRoom:\s*!0/, "bundled shell should preserve clean-room metadata");
 assert.match(runtimeSource, /__buddyLabDebug/, "legacy runtime chunk should expose debug state for smoke and regression coverage");
 assert.match(runtimeSource, /toolEffectAudit/, "legacy runtime chunk should expose tool-effect audit metadata");
+assert.match(runtimeSource, /moneydrop4/, "runtime chunk should include Money Drop mission coverage");
+assert.match(runtimeSource, /Bonus Drop/, "runtime chunk should include Bonus Drop challenge text");
+assert.match(runtimeSource, /money-drop/, "runtime chunk should include Money Drop cosmetic metadata");
+assert.match(runtimeSource, /poke/, "runtime chunk should include Poke basic tool behavior");
+assert.match(runtimeSource, /slap/, "runtime chunk should include Slap basic tool behavior");
+assert.match(runtimeSource, /tickle/, "runtime chunk should include Tickle basic tool behavior");
+assert.match(runtimeSource, /Classic Plain/, "runtime chunk should include the plain default room name");
+assert.match(runtimeSource, /9aa59d/, "runtime chunk should include the plain gray default room palette");
+assert.match(runtimeSource, /toolTextures/, "runtime chunk should include private tool texture support");
+assert.match(runtimeSource, /textureFit/, "runtime chunk should include private room texture support");
+assert.match(runtimeSource, /uiTheme/, "runtime chunk should include private UI theme support");
+assert.match(runtimeSource, /moneydrop/, "runtime chunk should include exact-event audio feedback support");
+assert.match(runtimeSource, /firecracker/, "runtime chunk should include exact explosive sample event support");
+assert.match(runtimeSource, /moodBubble/, "runtime chunk should include on-canvas buddy reaction bubbles");
+assert.match(runtimeSource, /Progress reset/, "runtime chunk should include settings reset-progress feedback");
+assert.match(runtimeSource, /volume/, "runtime chunk should include persisted audio volume setting");
+assert.match(runtimeSource, /cameraShake/, "runtime chunk should include persisted camera shake setting");
+assert.match(runtimeSource, /particles/, "runtime chunk should include persisted particles setting");
+assert.match(runtimeSource, /debugPhysics/, "runtime chunk should include persisted physics debug setting");
+assert.match(runtimeSource, /Physics debug on/, "runtime chunk should include physics debug toggle feedback");
+assert.match(runtimeSource, /deltaY/, "runtime chunk should include mouse-wheel power adjustment");
+assert.match(runtimeSource, /grabbing/, "runtime chunk should include Buddy hover/grab cursor affordance");
+assert.match(runtimeSource, /Objects cleared/, "runtime chunk should include clear objects feedback");
+assert.match(runtimeSource, /Buddy reset/, "runtime chunk should include reset buddy feedback");
+assert.match(runtimeSource, /shopCategory/, "runtime chunk should include shop category filtering support");
+assert.match(cssSource, /shop-tabs/, "production CSS should include shop category tab styling");
+assert.match(cssSource, /shop-skin-preview/, "production CSS should include shop skin preview styling");
+assert.match(cssSource, /shop-item--active/, "production CSS should include equipped shop card styling");
 assert.match(matterSource, /Matter/, "vendored Matter.js should be copied into dist");
 assert.ok(Array.isArray(manifest.packs) && manifest.packs.length > 0, "asset-pack manifest should be copied into dist");
 
 const missingTools = TOOL_DEFS.map((tool) => tool.id).filter((id) => !shellSource.includes(`id:"${id}"`) && !shellSource.includes(`id: "${id}"`));
 assert.deepEqual(missingTools, [], "typed shell catalog should include every live tool id");
+assert.ok(MISSION_POOL.some((mission) => mission.id === "moneydrop4" && mission.event === "moneydrop" && mission.target === 4), "Money Drop mission should be exposed in static content");
+assert.deepEqual(CHALLENGE_MODES.bonus, {
+  name: "Bonus Drop",
+  description: "Trigger 4 Money Drop bonuses before time runs out.",
+  event: "moneydrop",
+  target: 4,
+  duration: 35,
+  reward: 230
+}, "Bonus Drop challenge should be exposed in static content");
+assert.ok(TOOL_EFFECT_AUDIT.moneydrop.scoring.includes("nice"), "Money Drop audit should include the nice scoring tag");
+for (const toolId of ["poke", "slap", "tickle"]) {
+  const tool = TOOL_DEFS.find((candidate) => candidate.id === toolId);
+  assert.ok(tool, `${toolId} should be present in live tool definitions`);
+  assert.equal(tool.cost, 0, `${toolId} should be a free basic tool`);
+  assert.ok(TOOL_EFFECT_AUDIT[toolId].scoring.includes("basic"), `${toolId} audit should include the basic scoring tag`);
+}
 
 const server = createStaticServer(distRoot);
 await new Promise((resolveStart) => server.listen(port, "127.0.0.1", resolveStart));

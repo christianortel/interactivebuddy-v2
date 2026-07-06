@@ -1,17 +1,19 @@
 {
-  "id": "interactive-buddy-private",
-  "name": "Interactive Buddy Private",
+  "id": "private-reference-pack",
+  "name": "Private Reference Pack",
   "description": "Local private replacement pack for the offline fan build.",
   "room": {
-    "background": "#87968e",
-    "grid": "#e8f7f4",
-    "floor": "#64736b",
-    "accent": "#98f17f",
-    "motif": "desktop"
+    "background": "#9aa59d",
+    "grid": "#a7b0a9",
+    "floor": "#5f6962",
+    "accent": "#d8d2b8",
+    "motif": "desktop",
+    "textureDataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNjQwIj48cmVjdCB3aWR0aD0iOTYwIiBoZWlnaHQ9IjY0MCIgZmlsbD0iIzlhYTU5ZCIvPjxwYXRoIGQ9Ik0wIDYxOGg5NjAiIHN0cm9rZT0iIzVmNjk2MiIgc3Ryb2tlLXdpZHRoPSI0NCIvPjxwYXRoIGQ9Ik0wIDAgOTYwIDAgOTYwIDY0MCAwIDY0MFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzcxN2I3NCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PC9zdmc+",
+    "textureFit": "cover"
   },
   "skins": [
     {
-      "id": "interactive-buddy-private:default",
+      "id": "private-reference-pack:default",
       "name": "Private Default",
       "cost": 0,
       "color": "#d6ded9",
@@ -21,9 +23,30 @@
       "description": "Private default buddy texture."
     }
   ],
+  "toolTextures": {
+    "money-drop": {
+      "textureDataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSIzMiI+PHJlY3QgeD0iNiIgeT0iOCIgd2lkdGg9IjUyIiBoZWlnaHQ9IjE2IiByeD0iMyIgZmlsbD0iI2I5ZjdjZCIgc3Ryb2tlPSIjMjQ1MzNhIiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMzIgNiB2MjBNMTYgMTZoMzIiIHN0cm9rZT0iIzI0NTMzYSIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+",
+      "scale": 1,
+      "alpha": 1
+    }
+  },
+  "uiTheme": {
+    "variables": {
+      "--bg": "#202522",
+      "--panel": "rgba(246, 248, 241, 0.94)",
+      "--panel-text": "#151a15",
+      "--accent": "#d8d2b8",
+      "--accent-2": "#9aa59d",
+      "--menu-bg": "linear-gradient(#f7f7ee, #d9d8cd)",
+      "--menu-panel-bg": "#fbfbf2",
+      "--menu-panel-border": "#76796f",
+      "--menu-hover": "#ecebdc",
+      "--brand-bg": "linear-gradient(90deg, #f7f7ee, #e0dfd3)"
+    }
+  },
   "audioPacks": {
-    "interactiveBuddyPrivate": {
-      "name": "Interactive Buddy Private",
+    "privateReference": {
+      "name": "Private Reference",
       "master": 0.22,
       "pitch": 1,
       "toneWave": "triangle",
@@ -36,9 +59,26 @@
         "explosion": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
         "shock": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
         "tickle": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "poke": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "slap": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
         "gift": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "moneydrop": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "treat": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "confetti": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
         "boombox": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
         "paint": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "heat": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "frost": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "goo": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "pulse": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "firecracker": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "mine": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "stickybomb": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "largebomb": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "wind": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "vacuum": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "conveyor": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        "liquid": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
         "unlock": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
         "select": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
       }

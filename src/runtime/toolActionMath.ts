@@ -49,6 +49,22 @@ export function getTickleScore(score = 6): number {
   return score;
 }
 
+export function getPokeImpulseMagnitude(mass: number, coefficient = 0.0042): number {
+  return coefficient * mass;
+}
+
+export function getPokeScore(score = 4.5): number {
+  return score;
+}
+
+export function getSlapImpulseMagnitude(mass: number, coefficient = 0.0072): number {
+  return coefficient * mass;
+}
+
+export function getSlapScore(score = 7.4): number {
+  return score;
+}
+
 export function getTrampolinePlacementScore(score = 3): number {
   return score;
 }

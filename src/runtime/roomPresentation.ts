@@ -4,6 +4,9 @@ export interface RuntimeRoomTheme {
   floor?: string;
   accent?: string;
   motif?: string;
+  texture?: string;
+  textureDataUrl?: string;
+  textureFit?: string;
 }
 
 export interface RuntimeAssetPack {
@@ -35,10 +38,26 @@ export function getRoomPreviewShellPresentation(pack: RuntimeAssetPack): {
   };
 }
 
-export function getRoomApplyPresentation(room: RuntimeRoomTheme = {}): { background: string; floor: string } {
+export function getRoomTextureSource(room: RuntimeRoomTheme = {}): string {
+  return room.texture || room.textureDataUrl || "";
+}
+
+export function getRoomBackgroundCss(room: RuntimeRoomTheme = {}): string {
+  const background = room.background || "#9aa59d";
+  const texture = getRoomTextureSource(room);
+  return texture ? `url("${escapeCssUrl(texture)}") ${background}` : background;
+}
+
+export function getRoomBackgroundSize(room: RuntimeRoomTheme = {}): string {
+  const fit = room.textureFit || "cover";
+  return ["cover", "contain", "auto"].includes(fit) ? fit : "cover";
+}
+
+export function getRoomApplyPresentation(room: RuntimeRoomTheme = {}): { background: string; backgroundSize: string; floor: string } {
   return {
-    background: room.background || "#87968e",
-    floor: room.floor || "#64736b"
+    background: getRoomBackgroundCss(room),
+    backgroundSize: getRoomBackgroundSize(room),
+    floor: room.floor || "#5f6962"
   };
 }
 
@@ -73,10 +92,10 @@ export function getRoomSwatchPresentation(swatch: { color: string; title: string
 
 export function getRoomThumbnailStyles(room: RuntimeRoomTheme = {}): Record<string, string> {
   return {
-    "--room-bg": room.background || "#87968e",
-    "--room-grid": room.grid || "#e8f7f4",
-    "--room-floor": room.floor || "#64736b",
-    "--room-accent": room.accent || "#98f17f"
+    "--room-bg": room.background || "#9aa59d",
+    "--room-grid": room.grid || "#a7b0a9",
+    "--room-floor": room.floor || "#5f6962",
+    "--room-accent": room.accent || "#d8d2b8"
   };
 }
 
@@ -127,10 +146,14 @@ export function getRoomBrowserButtonPresentation(roomPack: RuntimeAssetPack, sel
 }
 
 function getRoomSwatch(label: string, color: string | undefined): { label: string; color: string; title: string } {
-  const resolvedColor = color || "#87968e";
+  const resolvedColor = color || "#9aa59d";
   return {
     label,
     color: resolvedColor,
     title: `${label}: ${resolvedColor}`
   };
+}
+
+function escapeCssUrl(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }

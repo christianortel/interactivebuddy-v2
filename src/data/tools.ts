@@ -2,6 +2,9 @@ import type { ToolDefinition } from "../tools/Tool";
 
 export const toolDefinitions: ToolDefinition[] = [
   { id: "hand", name: "Open Hand", category: "basic", icon: "H", price: 0, hasPower: true, description: "Grab, drag, flick, throw, and quick-tap to tickle." },
+  { id: "poke", name: "Poke", category: "basic", icon: ".", price: 0, hasPower: true, description: "Click Buddy for a small sharp nudge and startled reaction." },
+  { id: "slap", name: "Slap", category: "basic", icon: "/", price: 0, hasPower: true, description: "Drag across Buddy for a broader shove with slapstick spin." },
+  { id: "tickle", name: "Tickle", category: "basic", icon: "~", price: 0, hasPower: true, description: "Click Buddy for a happy tickle burst without grabbing." },
   { id: "ball", name: "Ball", category: "thrown", icon: "O", price: 0, hasPower: true, description: "Drag to aim and release a springy projectile." },
   { id: "beachball", name: "Beach Ball", category: "thrown", icon: "o", price: 280, hasPower: true, description: "A big light prop with floaty bounce and soft impacts." },
   { id: "bowling", name: "Bowling Ball", category: "thrown", icon: "8", price: 340, hasPower: true, description: "A heavy rolling ball with satisfying blunt impacts." },

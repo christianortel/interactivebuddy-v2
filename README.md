@@ -63,25 +63,34 @@ npm run test:browser-smoke
 ## Controls
 
 - `1`-`9`: select visible tools.
-- Hand: click/drag body parts to grab, drag, throw, poke, slap, and fling.
+- Hand: click/drag body parts to grab, drag, throw, and fling; quick tap still tickles.
+- Poke / Slap / Tickle: selectable basic tools for focused nudge, drag-shove, and happy tickle reactions.
 - Mouse wheel/power slider: adjust tool power where supported.
 - Aim-and-release tools: drag from the stage and release to fire.
 - Hold tools: Fan, Gravity Well, Heat, Frost, Goo, Pulse, and Spark apply continuous effects.
 - Place tools: Rope, Water, Trampoline, Grenade, Tesla, Gift, Confetti, and Boombox place or trigger at the cursor.
-- `R`: reset the scene.
+- `R`: reset the room.
+- File > Reset Buddy respawns only the ragdoll.
+- File/Footer > Clear Objects removes spawned props, ropes, explosives, and effect clutter while keeping the buddy.
+- File/Footer > Reset Room clears objects, liquid, combo state, and respawns the buddy.
 
 ## Feature List
 
 - Single-screen 2D boxed room with four collision boundaries.
 - Multi-part Matter.js ragdoll buddy with head, torso, pelvis, arms, legs, hands, and feet.
-- Spring-like mouse grabbing, throw velocity, quick poke/tickle behavior, and wall recovery.
+- Spring-like mouse grabbing, throw velocity, selectable Poke/Slap/Tickle reactions, and wall recovery.
+- Separate Reset Buddy, Clear Objects, and Reset Room controls for sandbox recovery.
 - Money, XP, combos, anti-farm scoring, floating feedback, and local persistence.
-- Shop progression with locked/unlocked tools and skins.
+- Shop progression with category tabs, locked/unlocked tools, owned/equipped card states, and buy/equip skin cards with color/texture previews.
 - Original skin packs, texture-backed SVG skins, room themes, and private asset-pack import.
 - Optional ignored private asset lane at `assets/private/manifest.json`, with templates under `assets/private/`.
+- Private room/background texture support through room-level `texture` or `textureDataUrl`.
+- Private asset-pack `toolTextures` overrides for local/user-owned spawned prop and tool art.
+- Private asset-pack `uiTheme.variables` overrides for local menu/HUD skin tuning.
+- Private asset-pack audio `samples` can now target exact feedback events such as Poke, Slap, Money Drop, elemental tools, explosives, and environment placements before falling back to generic synthesized sounds.
 - Broad tool categories: hand/basic, thrown props, projectiles, explosives, elemental effects, force tools, environment builders, and nice/funny items.
-- Mood/reaction states, face changes, particles, camera shake, synthesized audio feedback, mute/settings controls, and replay export.
-- LocalStorage save/load, save import/export, settings persistence, best challenge times, and lifetime earnings tracking.
+- Mood/reaction states, face changes, small on-canvas reaction bubbles, particle effects, camera shake, synthesized audio feedback, mute/settings controls, persisted volume/shake/particle/debug toggles, reset-progress confirmation, and replay export.
+- LocalStorage save/load, save import/export, settings persistence, saved scene presets, best challenge times, and lifetime earnings tracking.
 
 ## How To Add Tools
 
@@ -97,13 +106,14 @@ npm run test:browser-smoke
 1. Add typed catalog data in `src/data/skins.ts` if it is built-in.
 2. Add runtime skin data in `js/content.js`, a bundled pack under `assets/packs/`, or a private local import pack.
 3. For exact fan-build art, prefer private local imports or private non-manifest packs.
-4. Validate packs with `npm run test:assets`.
-5. Verify shop buy/equip behavior and texture application in browser tests.
+4. Add spawned prop/tool art under pack-level `toolTextures` when a private image should replace a procedural tool cosmetic.
+5. Validate packs with `npm run test:assets`.
+6. Verify shop buy/equip behavior and texture application in browser tests.
 
 ## Known Limitations
 
 - The current live runtime is the existing JavaScript game engine wrapped by a TypeScript/Vite entry point. Further migration is lower priority than fidelity work.
-- Audio supports synthesized feedback plus audio-pack `samples` overrides for local or embedded private sound files.
+- Audio supports synthesized feedback plus exact-event audio-pack `samples` overrides for local or embedded private sound files.
 - Some catalog entries in `src/data/tools.ts` are parity targets while the live runtime ships the current working tool set under `js/content.js`.
 - `INTERACTIVE_BUDDY_PARITY.md` currently marks many 1:1 rows as blocked until reference captures are available.
 
@@ -113,13 +123,13 @@ A browser-based physics sandbox inspired by the old 2000s desktop toy-box loop: 
 
 - Matter.js ragdoll buddy built from rigid bodies and spring constraints.
 - Classic top menu bar plus a modern HUD, mission panel, shop, and bottom tool rail.
-- Tools: Open Hand, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Plunger Shot, Star Launcher, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Confetti Popper, Boombox, Tesla Coil, and Black Hole.
+- Tools: Open Hand, Poke, Slap, Tickle, Ball, Bowling Ball, Beach Ball, Foam Brick, Boxing Glove, Fan, Paintball, Foam Dart, Cork Popper, Plunger Shot, Star Launcher, Rubber Blaster, Heat Cone, Spark Wand, Frost Puff, Goo Mist, Pulse Beam, Grenade, Trampoline, Stage Weight, Elastic Rope, Water Fill, Gift Box, Money Drop, Treat, Confetti Popper, Boombox, Tesla Coil, and Black Hole.
 - Local asset packs: JSON manifests can add skins, audio packs, and room palettes.
 - Private asset packs: `assets/private/manifest.json` is auto-loaded when present and ignored by git for local fan-build files.
 - Texture-backed pack skins: local SVG skin assets can be applied to the ragdoll bodies.
 - Economy: cash, XP, combo timer, anti-grind yield decay, unlockable tools, unlockable skins, and local persistence.
 - Reactions: mood state, face indicator, impact scoring, airborne scoring, shock/explosion/fan/paint/gift/tickle/water/rope tags, camera shake, replay strip, particle effects, Web Audio feedback with selectable packs, and supported-device haptics.
-- Quality toggles: reduced flash, slapstick mode, audio, haptics, slow motion, ceiling toggle, reset, save/load scene preset.
+- Quality toggles: reduced flash, slapstick mode, audio, volume, camera shake, particles, haptics, slow motion, ceiling toggle, physics debug, reset buddy, clear objects, reset room, reset progress, save/load scene preset.
 
 ## Running Locally
 
@@ -137,7 +147,8 @@ Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run l
 
 - `1`-`9`: select tools.
 - Left drag with Hand: grab and fling.
-- Quick tap with Hand: tickle.
+- Quick tap with Hand: tickle fallback.
+- Poke / Slap / Tickle: select from the basic tools for direct nudge, shove, and happy reaction behavior.
 - Ball/Paintball: drag to aim, release to fire.
 - Fan/Black Hole: hold on the stage.
 - Paintball/Foam Dart/Cork Popper/Plunger Shot/Star Launcher: drag to aim and release.
@@ -149,8 +160,9 @@ Matter.js is vendored in `vendor/matter.min.js`, so the playable slice can run l
 - Boombox: click to place a speaker that emits music notes, happy pulses, and gentle motion.
 - Modes > Gravity: switch between Normal, Low Gravity, and Heavy Gravity physics.
 - Modes > Debug > FPS Counter: show or hide the debug FPS overlay.
+- Modes > Debug > Physics Debug: show or hide body outlines, centers, and constraint lines.
 - Export: saves the recent rolling WebM replay buffer from the canvas when supported.
-- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Suction Drill, Spin Drill, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, Groove Check, and Clip Export.
+- Modes > Challenge: Free Play, Juggle Lab, Tether Tricks, Liquid Control, Prop Tricks, Bead Cannon, Suction Drill, Spin Drill, Spark Drill, Frost Test, Slip Test, Pulse Check, Cheer Check, Bonus Drop, Groove Check, and Clip Export.
 - Rubber Blaster shows a burst/cooldown readout and feeds the Bead Cannon challenge.
 - Settings > Asset pack shows a live room-palette preview and selectable room browser for loaded rooms.
 - `R`: reset scene.
@@ -254,7 +266,7 @@ Done:
 - Added and verified Projectile Variants challenge/UI hooks: Rubber Blaster now emits a shared `beadCannon` event, displays a stable burst/cooldown HUD pill, has a Bead Cannon mission card, and completes the new Bead Cannon challenge from real rapid-fire pellet use. Browser regression covers the HUD status, event tag, mission coverage, challenge completion, saved best time, pellet count, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Elemental Variants: Spark Wand is a handheld shock tool distinct from Tesla Coil, emits cursor-to-buddy bolt arcs, applies small stun impulses, records `sparkWand`/elemental events, feeds the Spark Drill mission and challenge, saves best challenge time, and is covered by browser regression for particles, mood, movement, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Mode Parity: Modes now has an old-style nested Debug submenu with an FPS Counter toggle, the FPS overlay updates from the simulation loop, the setting migrates off for legacy saves, persists to localStorage, restores after reload, and saved slow-motion/ceiling mode state is applied during boot. Browser regression covers submenu structure, toggle feedback, live FPS text, persistence, reload restoration, and migration default. Full `tests/run-regression.ps1 -Visual` passes.
-- Added and verified Room Preview: Settings > Asset pack now renders a live four-swatch room-palette preview for the selected pack, updates when built-in packs change, updates when private packs are imported, and exposes preview metadata for regression. Browser regression covers Base Lab, Classic Desktop, Neon Lab, and imported Private Pack preview state. Full `tests/run-regression.ps1 -Visual` passes.
+- Added and verified Room Preview: Settings > Asset pack now renders a live four-swatch room-palette preview for the selected pack, updates when built-in packs change, updates when private packs are imported, and exposes preview metadata for regression. Browser regression covers the default room, Classic Desktop, Neon Lab, and imported Private Pack preview state. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Prop Cosmetics: Bowling Ball now carries a `bowling-classic` cosmetic skin with rendered lane-ball highlight and finger-hole details, while Boxing Glove carries a `glove-laced` cosmetic skin with rendered cuff and lace details. Unit checks cover cosmetic metadata from the body factories, browser regression verifies real spawned props carry the expected cosmetic IDs, and the full visual runner passes.
 - Added and verified Projectile Polish: Rubber Blaster pellets now cycle three visible variants (`charcoal-lime`, `safety-orange`, and `mint-blue`) with per-variant colors plus stripe/dot overlays. Unit checks cover the variant factory, browser regression verifies real Rubber Blaster and Bead Cannon runs spawn multiple/all variants, and the full visual runner passes.
 - Added and verified Elemental Polish: Frost Puff is a reduced-flash held cold tool with frost cone visuals, temporary chilled body overlays, velocity damping, `cold`/`frostPuff` scoring tags, the Frost Test mission and challenge, saved best challenge time, and browser regression for particles, frosted bodies, mood, scoring, mission coverage, and finite rewards. Full `tests/run-regression.ps1 -Visual` passes.
@@ -278,6 +290,10 @@ Done:
 - Added and verified Room Preset Follow-up: Dojo Studio is a new original room pack with a dojo motif thumbnail, mat-floor palette, Practice Gi Buddy texture skin, Dojo Tap audio pack, manifest registration, room-browser selection coverage, and reload persistence coverage. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Nice Tool Follow-up: Boombox is a new cheerful timed tool with `boombox` speaker cosmetic metadata, custom overlay, music-note particles, rhythmic happy force pulses, `boombox`/`music`/`happy`/`nice` scoring tags, Groove Check mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
 - Added and verified Projectile Follow-up: Star Launcher is a new aim-and-release projectile with `star-shot` cosmetic metadata, custom spinning star overlay, launch and hit scoring, temporary Buddy spin status, twirl impulse physics, Spin Drill mission/challenge coverage, saved best challenge time, and direct browser regression. Full `tests/run-regression.ps1 -Visual` passes.
+- Added Money Drop Bonus Drop coverage: Money Drop now has a `moneydrop4` mission card, a selectable Bonus Drop challenge mode, unit/runtime content assertions, and static smoke coverage that the built runtime exposes the mission, challenge, and cosmetic metadata. Direct browser behavior coverage remains pending until browser automation is available.
+- Added and verified shop skin-card polish: skin cards show color/texture previews and all shop cards expose owned/equipped state through visible styling, `data-owned`, `data-active`, and `aria-current` for repeatable coverage.
+- Added and verified mouse-wheel power control: scrolling over the play canvas steps the same power value used by the HUD slider and clamps to the slider range.
+- Added and verified canvas cursor affordances: Hand shows grab/grabbing over Buddy, basic contact tools show a crosshair over Buddy, and drag/aim operations keep a crosshair.
 
 Done assets:
 
@@ -334,7 +350,7 @@ Next improvements:
 - Use `INTERACTIVE_BUDDY_PARITY.md` as the primary queue.
 - Gather reference evidence for menus, shop, tool roster/order, prices, buddy physics/reactions, default room, and sound timing.
 - Implement the first narrow fidelity batch: default room proportions/colors, buddy scale/physics tuning, and separately selectable Hand/Poke/Slap/Tickle behavior if the reference menu requires it.
-- Fill private audio-pack `samples` from reference sounds before claiming sound parity.
+- Fill private audio-pack `samples` from reference sounds with exact event keys before claiming sound parity.
 - Copy `assets/private/manifest.example.json` and `assets/private/pack.example.json` when building the local private replacement pack.
 
 Process notes:

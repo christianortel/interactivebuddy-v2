@@ -17,7 +17,15 @@ export default defineConfig({
   },
   build: {
     target: "es2022",
-    assetsInlineLimit: 0
+    assetsInlineLimit: 0,
+    rollupOptions: {
+      input: {
+        // Parity build only. The legacy Buddy Lab app (legacy.html) is kept in
+        // the tree as behavior reference during the rewrite but is no longer
+        // built or shipped (GAP-02 disposition).
+        main: resolve(process.cwd(), "index.html")
+      }
+    }
   }
 });
 

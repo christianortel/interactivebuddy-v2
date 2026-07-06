@@ -19,11 +19,11 @@ import { getClampedOverlayPosition, getOverlayCssPosition, screenPointToWorld } 
 import { advanceTimedEffectLife, decayShakeAmount, getBoltMidpoint, getBurstParticle, getConfettiBurstParticle, getExplosionArmScore, getExplosionBaseForce, getExplosionBurstCount, getExplosionFalloff, getExplosionForceMagnitude, getExplosionRadius, getExplosionScore, getExplosionScoreBase, getExplosionTriggerTime, getImpactBurstCount, getMoneySparkleParticle, getMusicNoteParticle, getParticleAlpha, getParticlePositionAfterDelta, getParticleVelocityYAfterGravity, getShakeOffset, getShakeTransform, getTreatCrumbParticle, increaseShakeAmount, shouldKeepDecal, shouldKeepTimedEffect } from "./src/runtime/effectsMath.ts";
 import { getGiftCost } from "./src/runtime/economyMath.ts";
 import { canUseHaptics, getFeedbackPlayback, getFeedbackPulsePattern } from "./src/runtime/feedbackMapping.ts";
-import { getFpsCounterPresentation, getFpsSamplePresentation, getHudActionToast, getHudCorePresentation, getPowerControlPresentation, getToastHiddenPresentation, getToastPresentation } from "./src/runtime/hudPresentation.ts";
+import { getFpsCounterPresentation, getFpsSamplePresentation, getHudActionToast, getHudCorePresentation, getPowerControlPresentation, getPowerWheelPresentation, getToastHiddenPresentation, getToastPresentation } from "./src/runtime/hudPresentation.ts";
 import { getCanvasFitStyles } from "./src/runtime/layout.ts";
 import { getClampedLiquidLevel, getLiquidAngularDampingFactor, getLiquidBuoyancyForce, getLiquidDragForce, getLiquidDrainScore, getLiquidDrainToast, getLiquidFillScore, getLiquidFillToast, getLiquidFriction, getLiquidScore, getLiquidScoreCooldown, getLiquidSelectedToast, getLiquidSubmersion, getLiquidWaveY, getSelectedLiquidTypeId, resolveLiquidType, shouldDrainLiquid } from "./src/runtime/liquidMath.ts";
 import { getBooleanModeButtonStates, getCeilingToggleToast, getCeilingY, getFpsCounterToggleToast, getGravityModeButtonState, getGravityModeConfig, getGravityModeToast, getRopeAnchorX, getRopeAnchorY, getRopeLength, getRopeStiffness, getSlowMoTimeScale, getSlowMoToggleToast, normalizeGravityMode, shouldPruneRopes } from "./src/runtime/modeSettings.ts";
-import { getMoodHudPresentation } from "./src/runtime/moodPresentation.ts";
+import { getMoodBubbleText, getMoodHudPresentation, getReactionBubblePresentation } from "./src/runtime/moodPresentation.ts";
 import { clampImpactScore, clampVector, getClampedLaunchDistance, getCombinedBounds, getDampedAngularVelocity, getDirectionOrFallback, getDistanceWithMinimum, getEquivalentMass, getFiniteMass, getFrameScale, getGrabCorrectionMagnitude, getGrabFrictionAir, getHandDragElapsed, getHandDragFlickScale, getHandFlickAngularVelocity, getHorizontalSpinSign, getImpactScore, getLaunchSpeed, getNextWallRecoveryCooldown, getPoweredRadius, getProjectileImpulseMagnitude, getRecoveredVelocityComponent, getScaledVelocity, getSelfRightingAngularVelocity, getSelfRightingForce, getSignedAngularVelocity, getSpinAngularVelocity, getThrowScale, getVectorAngle, getVelocityAfterDirectionalImpulse, getWallRecoveryOffset, isNearFloor, scaleStaticImpactScore, shouldApplySelfRighting, shouldReplaceNearest, shouldSkipWallRecovery, shouldUseLaunchDirection, shouldUseStepFlick } from "./src/runtime/physicsMath.ts";
 import {
   advanceAirborneBank,
@@ -40,7 +40,7 @@ import {
   shouldSkipAirborneForSpawnGrace
 } from "./src/runtime/scoringMath.ts";
 import { getRoomApplyPresentation, getRoomBrowserButtonPresentation, getRoomPreviewShellPresentation, getRoomSwatchPresentation, getRoomSwatches, getRoomThumbnailPresentation } from "./src/runtime/roomPresentation.ts";
-import { createRuntimeSavePayload, createScenePreset, getScenePresetLoadToast, getScenePresetSaveToast, migrateRuntimeSave, parseStoredScenePreset } from "./src/runtime/saveState.ts";
+import { createRuntimeSavePayload, createScenePreset, getProgressResetToast, getScenePresetLoadToast, getScenePresetSaveToast, migrateRuntimeSave, parseStoredScenePreset } from "./src/runtime/saveState.ts";
 import { getAppliedSkinPhysics, getClassicFaceRenderGeometry, getClassicPartRenderGeometry, getRuntimeSkin, getRuntimeSkinPhysics, getSkinBodyRender } from "./src/runtime/skinRuntime.ts";
 import {
   getRuntimeTool,
@@ -48,8 +48,8 @@ import {
   getRuntimeToolsByCategory,
   getToolIdForNumberKey
 } from "./src/runtime/toolCatalog.ts";
-import { advanceConveyorPhase, getAnvilThrowScore, getBallThrowScore, getBeachBallThrowScore, getBlackHoleCooldown, getBlackHoleOrbitForceMagnitude, getBlackHolePullForceMagnitude, getBlackHoleRadius, getBlackHoleScore, getBoomboxAngularVelocity, getBoomboxBeatInterval, getBoomboxFalloff, getBoomboxInitialBeat, getBoomboxLife, getBoomboxNoteCount, getBoomboxPlacementScore, getBoomboxPulseForce, getBoomboxRange, getBoomboxScore, getBoomboxSide, getBowlingBallThrowScore, getBoxingGloveThrowScore, getBrickThrowScore, getBumperPlacementScore, getCannonballFireScore, getConeFalloff, getConfettiForceMagnitude, getConfettiLiftVector, getConfettiPopperRange, getConfettiScore, getConveyorCooldown, getConveyorDirection, getConveyorForce, getConveyorPlacementScore, getConveyorScore, getCorkPopperFireScore, getCorkPopperHitScore, getCrateThrowScore, getFanForceMagnitude, getFanRadius, getFanScore, getFanScoreCooldown, getFoamDartFireScore, getFoamDartHitScore, getFrostAngularVelocityScale, getFrostEffectDuration, getFrostPuffCooldown, getFrostPuffForce, getFrostPuffParticle, getFrostPuffRadius, getFrostPuffScore, getFrostVelocityScale, getGiftScore, getGooAngularVelocity, getGooEffectDuration, getGooFriction, getGooFrictionAir, getGooMistCooldown, getGooMistForce, getGooMistParticle, getGooMistRadius, getGooMistScore, getHandFlickScore, getHeatConeCooldown, getHeatConeForce, getHeatConeParticle, getHeatConeRadius, getHeatConeScore, getMagnetAngularVelocity, getMagnetCooldown, getMagnetForceMagnitude, getMagnetRadius, getMagnetRingEffect, getMagnetScore, getMoneyDropScore, getNudgeFalloff, getNudgeForce, getNudgeSide, getPaintballFireScore, getPaintballHitScore, getPlatformPlacementScore, getPlungerShotFireScore, getPlungerShotHitScore, getPlungerSuctionDuration, getPulseAngularVelocity, getPulseBeamCooldown, getPulseBeamFalloff, getPulseBeamForce, getPulseBeamParticle, getPulseBeamRadius, getPulseBeamScore, getPulseBeamSideDistance, getPulseEffectDuration, getRandomTossVelocity, getRepulsorAngularVelocity, getRepulsorCooldown, getRepulsorForceMagnitude, getRepulsorRadius, getRepulsorRingEffect, getRepulsorScore, getRopeAttachScore, getRubberCooldown, getRubberPelletSpeed, getRubberScore, getSparkWandAngularVelocity, getSparkWandCooldown, getSparkWandForceMagnitude, getSparkWandJitter, getSparkWandRange, getSparkWandScore, getStarShotFireScore, getStarShotHitScore, getTeslaForceMagnitude, getTeslaPlacementScore, getTeslaPulseInterval, getTeslaRange, getTeslaScore, getTeslaTargetLimit, getTickleImpulseMagnitude, getTickleScore, getTrampolinePlacementScore, getTreatScore, getVacuumCooldown, getVacuumForceMagnitude, getVacuumRadius, getVacuumRingEffect, getVacuumScore, incrementRubberBurstShots, isMagneticBodyLabel, shouldConveyorAffectBody, shouldSpawnSparkWandIdleBurst } from "./src/runtime/toolActionMath.ts";
-import { getCircularCosmeticArc, getCosmeticPolarPoint, getCosmeticPolarSegment, getExplosiveArmedToast, getLockedToolToast, getMenuCategoryPresentation, getMouseConstraintConfig, getRadialToolButtonPresentation, getRadialToolButtonState, getRadialWheelCenterLabel, getRadialWheelVisibilityPresentation, getRuntimeToolMetaLabel, getShopMenuButtonPresentation, getToolButtonState, getToolRailButtonPresentation, getToolSelectionPanel, getToolUseToast } from "./src/runtime/toolPresentation.ts";
+import { advanceConveyorPhase, getAnvilThrowScore, getBallThrowScore, getBeachBallThrowScore, getBlackHoleCooldown, getBlackHoleOrbitForceMagnitude, getBlackHolePullForceMagnitude, getBlackHoleRadius, getBlackHoleScore, getBoomboxAngularVelocity, getBoomboxBeatInterval, getBoomboxFalloff, getBoomboxInitialBeat, getBoomboxLife, getBoomboxNoteCount, getBoomboxPlacementScore, getBoomboxPulseForce, getBoomboxRange, getBoomboxScore, getBoomboxSide, getBowlingBallThrowScore, getBoxingGloveThrowScore, getBrickThrowScore, getBumperPlacementScore, getCannonballFireScore, getConeFalloff, getConfettiForceMagnitude, getConfettiLiftVector, getConfettiPopperRange, getConfettiScore, getConveyorCooldown, getConveyorDirection, getConveyorForce, getConveyorPlacementScore, getConveyorScore, getCorkPopperFireScore, getCorkPopperHitScore, getCrateThrowScore, getFanForceMagnitude, getFanRadius, getFanScore, getFanScoreCooldown, getFoamDartFireScore, getFoamDartHitScore, getFrostAngularVelocityScale, getFrostEffectDuration, getFrostPuffCooldown, getFrostPuffForce, getFrostPuffParticle, getFrostPuffRadius, getFrostPuffScore, getFrostVelocityScale, getGiftScore, getGooAngularVelocity, getGooEffectDuration, getGooFriction, getGooFrictionAir, getGooMistCooldown, getGooMistForce, getGooMistParticle, getGooMistRadius, getGooMistScore, getHandFlickScore, getHeatConeCooldown, getHeatConeForce, getHeatConeParticle, getHeatConeRadius, getHeatConeScore, getMagnetAngularVelocity, getMagnetCooldown, getMagnetForceMagnitude, getMagnetRadius, getMagnetRingEffect, getMagnetScore, getMoneyDropScore, getNudgeFalloff, getNudgeForce, getNudgeSide, getPaintballFireScore, getPaintballHitScore, getPlatformPlacementScore, getPlungerShotFireScore, getPlungerShotHitScore, getPlungerSuctionDuration, getPokeImpulseMagnitude, getPokeScore, getPulseAngularVelocity, getPulseBeamCooldown, getPulseBeamFalloff, getPulseBeamForce, getPulseBeamParticle, getPulseBeamRadius, getPulseBeamScore, getPulseBeamSideDistance, getPulseEffectDuration, getRandomTossVelocity, getRepulsorAngularVelocity, getRepulsorCooldown, getRepulsorForceMagnitude, getRepulsorRadius, getRepulsorRingEffect, getRepulsorScore, getRopeAttachScore, getRubberCooldown, getRubberPelletSpeed, getRubberScore, getSlapImpulseMagnitude, getSlapScore, getSparkWandAngularVelocity, getSparkWandCooldown, getSparkWandForceMagnitude, getSparkWandJitter, getSparkWandRange, getSparkWandScore, getStarShotFireScore, getStarShotHitScore, getTeslaForceMagnitude, getTeslaPlacementScore, getTeslaPulseInterval, getTeslaRange, getTeslaScore, getTeslaTargetLimit, getTickleImpulseMagnitude, getTickleScore, getTrampolinePlacementScore, getTreatScore, getVacuumCooldown, getVacuumForceMagnitude, getVacuumRadius, getVacuumRingEffect, getVacuumScore, incrementRubberBurstShots, isMagneticBodyLabel, shouldConveyorAffectBody, shouldSpawnSparkWandIdleBurst } from "./src/runtime/toolActionMath.ts";
+import { getCanvasCursorPresentation, getCircularCosmeticArc, getCosmeticPolarPoint, getCosmeticPolarSegment, getExplosiveArmedToast, getLockedToolToast, getMenuCategoryPresentation, getMouseConstraintConfig, getRadialToolButtonPresentation, getRadialToolButtonState, getRadialWheelCenterLabel, getRadialWheelVisibilityPresentation, getRuntimeToolMetaLabel, getShopMenuButtonPresentation, getToolButtonState, getToolRailButtonPresentation, getToolSelectionPanel, getToolUseToast } from "./src/runtime/toolPresentation.ts";
 import { decrementTimer, extendTimer, isTimerExpired } from "./src/runtime/timerMath.ts";
 import {
   createAnvilBody,
@@ -111,6 +111,29 @@ const ASSET_PACK_MANIFEST_URL = "assets/packs/manifest.json";
 const PRIVATE_ASSET_PACK_MANIFEST_URL = "assets/private/manifest.json";
 const SAVE_VERSION = 2;
 const STORAGE_KEY = "buddyLab2026.save.v1";
+const SCENE_PRESET_KEY = "buddyLab2026.scene";
+const DEFAULT_CASH = 75;
+const DEFAULT_TOOL = "hand";
+const DEFAULT_SKIN = "classic";
+const DEFAULT_UNLOCKED_TOOLS = ["hand", "poke", "slap", "tickle", "ball", "rope", "water"];
+const DEFAULT_UNLOCKED_SKINS = ["classic"];
+const DEFAULT_SETTINGS = {
+  reducedFlash: false,
+  slapstick: true,
+  audio: true,
+  volume: 1,
+  cameraShake: true,
+  particles: true,
+  haptics: true,
+  assetPack: "base",
+  audioPack: "classic",
+  liquidType: "water",
+  slowMo: false,
+  ceilingOpen: false,
+  gravityMode: "normal",
+  fpsCounter: false,
+  debugPhysics: false
+};
 const CLASSIC_BUDDY_SCALE = 0.78;
 const CLASSIC_BUDDY_SPAWN = {
   x: 96,
@@ -149,7 +172,7 @@ const render = Render.create({
   options: {
     width: STAGE_WIDTH,
     height: STAGE_HEIGHT,
-    background: "#87968e",
+    background: "#9aa59d",
     pixelRatio: window.devicePixelRatio || 1,
     wireframes: false
   }
@@ -165,8 +188,14 @@ const controls = getControlBindings();
 const feedback = new FeedbackEngine({
   getSettings: () => state.settings,
   getPack: () => resolveAudioPack(AUDIO_PACKS, state.settings.audioPack),
-  hasUserActivation
+  hasUserActivation: () =>
+    Boolean(navigator.userActivation ? navigator.userActivation.hasBeenActive : userActivationFallback)
 });
+
+let userActivationFallback = false;
+window.addEventListener("pointerdown", () => {
+  userActivationFallback = true;
+}, { once: true });
 
 const state = {
   buddy: null,
@@ -197,30 +226,31 @@ const state = {
   assetPacks: [
     {
       id: "base",
-      name: "Base Lab",
-      description: "Built-in prototype assets.",
+      name: "Classic Plain",
+      description: "Built-in plain gray boxed room for classic sandbox sessions.",
       room: {
-        background: "#87968e",
-        grid: "#e8f7f4",
-        floor: "#64736b",
-        accent: "#98f17f",
-        motif: "lab"
+        background: "#9aa59d",
+        grid: "#a7b0a9",
+        floor: "#5f6962",
+        accent: "#d8d2b8",
+        motif: "plain"
       }
     }
   ],
   customAssetPacks: [],
-  cash: 75,
+  cash: DEFAULT_CASH,
   xp: 0,
   sessionCash: 0,
   comboCount: 0,
   comboTimer: 0,
   mood: "Calm",
   moodTimer: 0,
+  moodBubble: "",
   power: getPowerControlPresentation(hud.power.value).power,
-  tool: "hand",
-  unlockedTools: new Set(["hand", "ball", "rope", "water"]),
-  unlockedSkins: new Set(["classic"]),
-  selectedSkin: "classic",
+  tool: DEFAULT_TOOL,
+  unlockedTools: new Set(DEFAULT_UNLOCKED_TOOLS),
+  unlockedSkins: new Set(DEFAULT_UNLOCKED_SKINS),
+  selectedSkin: DEFAULT_SKIN,
   toolHeat: new Map(),
   usedTags: new Set(),
   pointerDown: false,
@@ -263,19 +293,7 @@ const state = {
     lastResult: null,
     bests: {}
   },
-  settings: {
-    reducedFlash: false,
-    slapstick: true,
-    audio: true,
-    haptics: true,
-    assetPack: "base",
-    audioPack: "classic",
-    liquidType: "water",
-    slowMo: false,
-    ceilingOpen: false,
-    gravityMode: "normal",
-    fpsCounter: false
-  },
+  settings: { ...DEFAULT_SETTINGS },
   fpsValue: 0,
   fpsFrames: 0,
   fpsElapsed: 0,
@@ -294,6 +312,30 @@ const assetPackFlow = createAssetPackController({
     { url: PRIVATE_ASSET_PACK_MANIFEST_URL, optional: true }
   ]
 });
+const toolTextureImageCache = new Map();
+const UI_THEME_VARIABLES = [
+  "--bg",
+  "--room",
+  "--room-dark",
+  "--panel",
+  "--panel-text",
+  "--ink",
+  "--muted",
+  "--line",
+  "--accent",
+  "--accent-2",
+  "--warn",
+  "--danger",
+  "--menu-bg",
+  "--menu-border",
+  "--menu-panel-bg",
+  "--menu-panel-border",
+  "--menu-hover",
+  "--menu-hover-outline",
+  "--menu-active",
+  "--menu-active-edge",
+  "--brand-bg"
+];
 
 const progression = createProgressionController({
   state,
@@ -393,7 +435,10 @@ function loadGame() {
   const migrated = migrateSave(save);
   state.cash = Number.isFinite(migrated.cash) ? migrated.cash : state.cash;
   state.xp = Number.isFinite(migrated.xp) ? migrated.xp : state.xp;
-  state.unlockedTools = new Set(migrated.unlockedTools || ["hand", "ball", "rope", "water"]);
+  state.unlockedTools = new Set(migrated.unlockedTools || ["hand", "poke", "slap", "tickle", "ball", "rope", "water"]);
+  state.unlockedTools.add("poke");
+  state.unlockedTools.add("slap");
+  state.unlockedTools.add("tickle");
   state.unlockedTools.add("rope");
   state.unlockedTools.add("water");
   state.unlockedSkins = new Set(migrated.unlockedSkins || ["classic"]);
@@ -410,6 +455,7 @@ function loadGame() {
     }
   });
   state.settings = { ...state.settings, ...(migrated.settings || {}) };
+  state.settings.volume = normalizeAudioVolume(state.settings.volume);
   state.settings.assetPack = getSelectedAssetPackId(state.assetPacks, state.settings.assetPack);
   state.settings.audioPack = getSelectedAudioPackId(AUDIO_PACKS, state.settings.audioPack);
   state.settings.liquidType = getSelectedLiquidTypeId(LIQUID_TYPES, state.settings.liquidType);
@@ -451,7 +497,7 @@ function createStageBounds() {
     isStatic: true,
     restitution: 0.25,
     friction: 0.82,
-    render: { fillStyle: "#64736b" }
+    render: { fillStyle: "#5f6962" }
   };
 
   state.floorBody = Bodies.rectangle(STAGE_WIDTH / 2, STAGE_HEIGHT + 18, STAGE_WIDTH, 36, {
@@ -609,12 +655,30 @@ function setupInteractions() {
 
   hud.power.addEventListener("input", (event) => {
     const powerView = getPowerControlPresentation(event.target.value);
-    state.power = powerView.power;
-    hud.powerReadout.textContent = powerView.label;
+    applyPowerControl(powerView);
   });
+
+  canvas.addEventListener("wheel", (event) => {
+    const tool = getTool(state.tool);
+    if (tool.hasPower === false) {
+      return;
+    }
+    event.preventDefault();
+    const powerView = getPowerWheelPresentation(
+      state.power,
+      event.deltaY,
+      Number(hud.power.min),
+      Number(hud.power.max),
+      Number(hud.power.step)
+    );
+    applyPowerControl(powerView);
+  }, { passive: false });
 
   controls.reset.addEventListener("click", resetScene);
   controls.resetMenu.addEventListener("click", resetScene);
+  controls.resetBuddy.addEventListener("click", resetBuddy);
+  controls.clearObjects.addEventListener("click", clearObjects);
+  controls.clearObjectsFooter.addEventListener("click", clearObjects);
   controls.exportReplay.addEventListener("click", exportReplayVideo);
   controls.newBuddy.addEventListener("click", () => {
     spawnNewBuddy();
@@ -628,12 +692,14 @@ function setupInteractions() {
   controls.saveImportInput.addEventListener("change", importSaveSnapshot);
   controls.importSkinPack.addEventListener("click", () => controls.skinPackImportInput.click());
   controls.skinPackImportInput.addEventListener("change", importSkinPackFile);
+  controls.resetProgress.addEventListener("click", resetProgress);
   controls.ceiling.addEventListener("click", toggleCeiling);
   controls.slowMo.addEventListener("click", toggleSlowMo);
   controls.gravityModes.forEach((button) => {
     button.addEventListener("click", () => setGravityMode(button.dataset.gravityMode));
   });
   controls.fpsCounter.addEventListener("click", toggleFpsCounter);
+  controls.debugPhysics.addEventListener("click", toggleDebugPhysics);
   controls.missionMenu.addEventListener("click", chooseMissions);
   controls.refreshMissions.addEventListener("click", chooseMissions);
   controls.challengeMode.addEventListener("change", () => {
@@ -641,14 +707,7 @@ function setupInteractions() {
   });
   controls.shopButton.addEventListener("click", () => hud.shopGrid.scrollIntoView({ behavior: "smooth", block: "nearest" }));
 
-  controls.reducedFlash.checked = state.settings.reducedFlash;
-  controls.goreToggle.checked = state.settings.slapstick;
-  controls.audioToggle.checked = state.settings.audio;
-  controls.hapticsToggle.checked = state.settings.haptics;
-  controls.assetPack.value = getSelectedAssetPackId(state.assetPacks, state.settings.assetPack);
-  controls.audioPack.value = getSelectedAudioPackId(AUDIO_PACKS, state.settings.audioPack);
-  controls.liquidType.value = getSelectedLiquidTypeId(LIQUID_TYPES, state.settings.liquidType);
-  controls.challengeMode.value = getChallengeModeId(CHALLENGE_MODES, state.challenge.mode);
+  syncSettingsControls();
   updateFpsCounterVisibility();
   updateModeButtonStates();
   controls.reducedFlash.addEventListener("change", () => {
@@ -666,6 +725,27 @@ function setupInteractions() {
     } else {
       feedback.resume();
       feedback.play("select", 0.5);
+    }
+    saveGame();
+  });
+  controls.audioVolume.addEventListener("input", () => {
+    state.settings.volume = normalizeAudioVolume(controls.audioVolume.value);
+    controls.audioVolumeValue.textContent = getAudioVolumeLabel(state.settings.volume);
+    feedback.updateMasterGain();
+    saveGame();
+  });
+  controls.cameraShakeToggle.addEventListener("change", () => {
+    state.settings.cameraShake = controls.cameraShakeToggle.checked;
+    if (!state.settings.cameraShake) {
+      state.shake = 0;
+      canvas.style.transform = "";
+    }
+    saveGame();
+  });
+  controls.particlesToggle.addEventListener("change", () => {
+    state.settings.particles = controls.particlesToggle.checked;
+    if (!state.settings.particles) {
+      state.particles = [];
     }
     saveGame();
   });
@@ -734,6 +814,13 @@ function setupInteractions() {
       spawnStickyBomb(worldPoint);
     } else if (state.tool === "largebomb") {
       spawnLargeBomb(worldPoint);
+    } else if (state.tool === "poke") {
+      pokeAt(worldPoint);
+    } else if (state.tool === "tickle") {
+      tickleAt(worldPoint);
+    } else if (state.tool === "slap") {
+      state.aimVector = { start: worldPoint, end: worldPoint };
+      setMood("Afraid", 600);
     } else if (state.tool === "paintball" || state.tool === "foamdart" || state.tool === "corkpopper" || state.tool === "plunger" || state.tool === "starshot" || state.tool === "cannonball") {
       state.aimVector = { start: worldPoint, end: worldPoint };
     } else if (state.tool === "ball" || state.tool === "beachball" || state.tool === "bowling" || state.tool === "brick" || state.tool === "crate" || state.tool === "glove" || state.tool === "anvil") {
@@ -805,6 +892,7 @@ function setupInteractions() {
     if (state.aimVector) {
       state.aimVector.end = { ...state.pointerCurrent };
     }
+    updateCanvasCursor(state.pointerCurrent);
   });
 
   window.addEventListener("pointerup", (event) => {
@@ -852,12 +940,15 @@ function setupInteractions() {
       fireStarShot(state.pointerStart, endPoint);
     } else if (state.tool === "cannonball") {
       fireCannonball(state.pointerStart, endPoint);
+    } else if (state.tool === "slap") {
+      slapAt(state.pointerStart, endPoint);
     } else if (state.tool === "hand" && elapsed < 210 && distance < 12) {
       tickleAt(endPoint);
     }
     state.aimVector = null;
     feedback.stopWind();
     clearBuddyHighlight();
+    updateCanvasCursor(endPoint);
   });
 
   canvas.addEventListener("pointerleave", () => {
@@ -866,6 +957,7 @@ function setupInteractions() {
     state.pendingTouchInstant = null;
     state.aimVector = null;
     feedback.stopWind();
+    canvas.style.cursor = "default";
   });
 
   canvas.addEventListener("contextmenu", (event) => {
@@ -880,6 +972,45 @@ function setupInteractions() {
       hideRadialWheel();
     }
   });
+}
+
+function applyPowerControl(powerView) {
+  state.power = powerView.power;
+  hud.power.value = String(powerView.power);
+  hud.powerReadout.textContent = powerView.label;
+}
+
+function updateCanvasCursor(worldPoint) {
+  canvas.style.cursor = getCanvasCursorPresentation({
+    toolId: state.tool,
+    pointerDown: state.pointerDown,
+    overBuddy: Boolean(getBuddyAt(worldPoint)),
+    draggingBuddy: Boolean(mouseConstraint.body || state.grabbedBody)
+  });
+}
+
+function syncSettingsControls() {
+  controls.reducedFlash.checked = state.settings.reducedFlash;
+  controls.goreToggle.checked = state.settings.slapstick;
+  controls.audioToggle.checked = state.settings.audio;
+  controls.audioVolume.value = String(normalizeAudioVolume(state.settings.volume));
+  controls.audioVolumeValue.textContent = getAudioVolumeLabel(state.settings.volume);
+  controls.cameraShakeToggle.checked = state.settings.cameraShake;
+  controls.particlesToggle.checked = state.settings.particles;
+  controls.hapticsToggle.checked = state.settings.haptics;
+  controls.assetPack.value = getSelectedAssetPackId(state.assetPacks, state.settings.assetPack);
+  controls.audioPack.value = getSelectedAudioPackId(AUDIO_PACKS, state.settings.audioPack);
+  controls.liquidType.value = getSelectedLiquidTypeId(LIQUID_TYPES, state.settings.liquidType);
+  controls.challengeMode.value = getChallengeModeId(CHALLENGE_MODES, state.challenge.mode);
+}
+
+function normalizeAudioVolume(value) {
+  const volume = Number(value);
+  return Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : 1;
+}
+
+function getAudioVolumeLabel(value) {
+  return `${Math.round(normalizeAudioVolume(value) * 100)}%`;
 }
 
 function setupMenuInteractions() {
@@ -1409,6 +1540,7 @@ function selectTool(toolId) {
   if (mouseConfig.damping !== undefined) {
     mouseConstraint.constraint.damping = mouseConfig.damping;
   }
+  updateCanvasCursor(state.pointerCurrent);
   feedback.play("select", 0.5);
   saveGame();
 }
@@ -1843,7 +1975,7 @@ function placeGift(position) {
   state.cash -= cost;
   const gift = createGiftBody(Bodies, position);
   registerProp(gift);
-  setMood("Happy", 2600);
+  setMood("Happy", 2600, "yay!");
   addScore(getGiftScore(), "gift", ["gift", "happy"]);
   recordMission("happy", 1);
 }
@@ -1854,7 +1986,7 @@ function placeMoneyDrop(position) {
   Body.setVelocity(money, getRandomTossVelocity(Math.random(), 2.5, -3.2));
   spawnMoneySparkles(position, 16);
   nudgeBuddy(position, 165, 0.00048, -0.00028);
-  setMood("Happy", 2200);
+  setMood("Happy", 2200, "$");
   addScore(getMoneyDropScore(), "moneydrop", ["moneydrop", "cash", "happy", "nice"]);
   recordMission("happy", 1);
   toast(getToolUseToast("moneyDrop"));
@@ -1866,7 +1998,7 @@ function placeTreat(position) {
   Body.setVelocity(treat, getRandomTossVelocity(Math.random(), 3, -2.4));
   spawnTreatCrumbs(position, 14);
   nudgeBuddy(position, 150, 0.00032, -0.00048);
-  setMood("Happy", 2400);
+  setMood("Happy", 2400, "yum!");
   addScore(getTreatScore(), "treat", ["treat", "happy", "nice"]);
   recordMission("happy", 1);
   toast(getToolUseToast("treatTossed"));
@@ -1907,7 +2039,7 @@ function placeConfettiPopper(position) {
     touchedBuddy = true;
   });
   spawnConfettiBurst(position, 34);
-  setMood("Excited", 2300);
+  setMood("Excited", 2300, "pop!");
   addScore(getConfettiScore(touchedBuddy), "confetti", ["confetti", "happy", "nice"]);
   toast(getToolUseToast("confettiFired"));
 }
@@ -1917,7 +2049,7 @@ function placeBoombox(position) {
   registerProp(boombox);
   state.boomboxes.push({ body: boombox, beat: getBoomboxInitialBeat(), life: getBoomboxLife() });
   spawnMusicNotes(position, 7);
-  setMood("Happy", 2400);
+  setMood("Happy", 2400, "la!");
   addScore(getBoomboxPlacementScore(), "boombox", ["boombox", "music", "happy", "nice"]);
   toast(getToolUseToast("boomboxPlaying"));
 }
@@ -2066,7 +2198,7 @@ function applyVacuum() {
     state.vacuumCooldown = getVacuumCooldown();
     setMood("Surprised", 1000);
   }
-  state.particles.push({ type: "ring", kind: "vacuum", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getVacuumRingEffect(radius), color: "#55d9cf" });
+  addParticle({ type: "ring", kind: "vacuum", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getVacuumRingEffect(radius), color: "#55d9cf" });
 }
 
 function applyRepulsor() {
@@ -2091,9 +2223,9 @@ function applyRepulsor() {
   if (touchedBuddy && state.repulsorCooldown <= 0) {
     addScore(getRepulsorScore(state.power), "repulsor", ["force", "repulsor"]);
     state.repulsorCooldown = getRepulsorCooldown();
-    setMood("Afraid", 1000);
+    setMood("Afraid", 1000, "hot!");
   }
-  state.particles.push({ type: "ring", kind: "repulsor", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getRepulsorRingEffect(radius), color: "#f1ff8b" });
+  addParticle({ type: "ring", kind: "repulsor", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getRepulsorRingEffect(radius), color: "#f1ff8b" });
 }
 
 function applyMagnet() {
@@ -2119,7 +2251,7 @@ function applyMagnet() {
     state.magnetCooldown = getMagnetCooldown();
     setMood("Curious", 900);
   }
-  state.particles.push({ type: "ring", kind: "magnet", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getMagnetRingEffect(radius), color: "#e7a8ff" });
+  addParticle({ type: "ring", kind: "magnet", x: state.pointerCurrent.x, y: state.pointerCurrent.y, ...getMagnetRingEffect(radius), color: "#e7a8ff" });
 }
 
 function updateRubberBlaster() {
@@ -2161,7 +2293,7 @@ function applyHeatCone() {
   });
 
   for (let i = 0; i < 2; i += 1) {
-    state.particles.push(getHeatConeParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getHeatConeParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 
   if (touchedBuddy && state.heatConeCooldown <= 0) {
@@ -2185,7 +2317,7 @@ function applySparkWand() {
   Body.applyForce(target, target.position, Vector.mult(Vector.normalise(jitter), getSparkWandForceMagnitude(target.mass)));
   Body.setAngularVelocity(target, getSparkWandAngularVelocity(target.angularVelocity, Math.random()));
 
-  state.particles.push({
+  addParticle({
     type: "bolt",
     a: { ...state.pointerCurrent },
     b: { ...target.position },
@@ -2196,7 +2328,7 @@ function applySparkWand() {
 
   if (state.sparkWandCooldown <= 0) {
     addScore(getSparkWandScore(state.power), "spark", ["shock", "elemental", "sparkWand", "stun"]);
-    setMood("Stunned", 850);
+    setMood("Stunned", 850, "zap!");
     state.sparkWandCooldown = getSparkWandCooldown();
   }
 }
@@ -2233,12 +2365,12 @@ function applyFrostPuff() {
   });
 
   for (let i = 0; i < 2; i += 1) {
-    state.particles.push(getFrostPuffParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getFrostPuffParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 
   if (touchedBuddy && state.frostPuffCooldown <= 0) {
     addScore(getFrostPuffScore(state.power), "frost", ["cold", "elemental", "frostPuff", "stun"]);
-    setMood("Surprised", 900);
+    setMood("Surprised", 900, "brr!");
     state.frostPuffCooldown = getFrostPuffCooldown();
   }
 }
@@ -2303,12 +2435,12 @@ function applyGooMist() {
   });
 
   for (let i = 0; i < 2; i += 1) {
-    state.particles.push(getGooMistParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getGooMistParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 
   if (touchedBuddy && state.gooMistCooldown <= 0) {
     addScore(getGooMistScore(state.power), "goo", ["goo", "slippery", "elemental", "gooMist"]);
-    setMood("Curious", 950);
+    setMood("Curious", 950, "goo?");
     state.gooMistCooldown = getGooMistCooldown();
   }
 }
@@ -2349,12 +2481,12 @@ function applyPulseBeam() {
   });
 
   for (let i = 0; i < 2; i += 1) {
-    state.particles.push(getPulseBeamParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getPulseBeamParticle(state.pointerCurrent, aim, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 
   if (touchedBuddy && state.pulseBeamCooldown <= 0) {
     addScore(getPulseBeamScore(state.power), "pulse", ["light", "elemental", "pulseBeam", "force"]);
-    setMood("Afraid", 850);
+    setMood("Afraid", 850, "!");
     state.pulseBeamCooldown = getPulseBeamCooldown();
   }
 }
@@ -2495,7 +2627,7 @@ function explodeGrenade(grenade) {
     addShake(grenade.shake || 18);
   }
   if (hitBuddy) {
-    setMood("Afraid", 2400);
+    setMood("Afraid", 2400, "boom!");
   }
   recordMission("explosion", 1);
   if (grenade.tether) {
@@ -2518,7 +2650,7 @@ function updateTesla(delta) {
       const dir = Vector.normalise(Vector.sub(body.position, coil.body.position));
       Body.applyForce(body, body.position, Vector.mult(dir, getTeslaForceMagnitude(body.mass)));
       addScore(getTeslaScore(), "shock", ["shock", "stun"]);
-      state.particles.push({
+      addParticle({
         type: "bolt",
         a: { ...coil.body.position },
         b: { ...body.position },
@@ -2528,7 +2660,7 @@ function updateTesla(delta) {
       });
     });
     if (targets.length) {
-      setMood("Stunned", 900);
+      setMood("Stunned", 900, "zap!");
     }
   }
 }
@@ -2636,6 +2768,10 @@ function updateLiquid(delta) {
 }
 
 function updateParticles(delta) {
+  if (!state.settings.particles) {
+    state.particles = [];
+    return;
+  }
   state.particles.forEach((particle) => {
     particle.life = advanceTimedEffectLife(particle.life, delta);
     if (particle.type === "spark" || particle.type === "music") {
@@ -2717,8 +2853,39 @@ function tickleAt(position) {
   Body.applyForce(target, target.position, impulse);
   addScore(getTickleScore(), "tickle", ["tickle", "happy"]);
   recordMission("happy", 1);
-  setMood("Happy", 1800);
+  setMood("Happy", 1800, "ha!");
   spawnBurst(position, "#f1ff8b", 8);
+}
+
+function pokeAt(position) {
+  const target = getBuddyAt(position);
+  if (!target) {
+    return;
+  }
+  const offset = Vector.sub(target.position, position);
+  const direction = getDirectionOrFallback(offset, { x: 0, y: -1 });
+  Body.applyForce(target, target.position, Vector.mult(direction, getPokeImpulseMagnitude(target.mass)));
+  Body.setAngularVelocity(target, getSpinAngularVelocity(target.angularVelocity, getHorizontalSpinSign(direction), 0.08));
+  addScore(getPokeScore(), "poke", ["poke", "hand", "basic"]);
+  recordMission("impact", 1);
+  setMood("Surprised", 900, "?");
+  spawnBurst(position, "#ffc857", 5);
+}
+
+function slapAt(start, end) {
+  const target = getBuddyAt(end);
+  if (!target) {
+    return;
+  }
+  const drag = Vector.sub(end, start);
+  const fallback = Vector.sub(target.position, start);
+  const direction = getDirectionOrFallback(Vector.magnitude(drag) > 2 ? drag : fallback, { x: 1, y: 0 });
+  Body.applyForce(target, target.position, Vector.mult(direction, getSlapImpulseMagnitude(target.mass)));
+  Body.setAngularVelocity(target, getSpinAngularVelocity(target.angularVelocity, getHorizontalSpinSign(direction), 0.22));
+  addScore(getSlapScore(), "slap", ["slap", "hand", "basic", "blunt"]);
+  recordMission("impact", 1);
+  setMood("Angry", 1200, "hey!");
+  spawnBurst(end, "#ff8d66", 9);
 }
 
 function getBuddyAt(position) {
@@ -2863,9 +3030,10 @@ function getChallengeLabel() {
   return challengeFlow.getChallengeLabel();
 }
 
-function setMood(nextMood, duration = 1500) {
+function setMood(nextMood, duration = 1500, bubble = "") {
   state.mood = nextMood;
   state.moodTimer = duration;
+  state.moodBubble = duration > 0 ? getMoodBubbleText(nextMood, bubble) : "";
   updateHud();
 }
 
@@ -3007,16 +3175,36 @@ function getAssetPack(packId = state.settings.assetPack) {
 }
 
 function applyRoomPack() {
-  const room = getRoomApplyPresentation(getAssetPack().room);
+  const pack = getAssetPack();
+  applyUiTheme(pack.uiTheme);
+  const room = getRoomApplyPresentation(pack.room);
   render.options.background = room.background;
   canvas.style.background = room.background;
+  canvas.style.backgroundSize = room.backgroundSize;
+  canvas.style.backgroundPosition = "center";
+  canvas.style.backgroundRepeat = "no-repeat";
   canvas.parentElement.style.background = room.background;
+  canvas.parentElement.style.backgroundSize = room.backgroundSize;
+  canvas.parentElement.style.backgroundPosition = "center";
+  canvas.parentElement.style.backgroundRepeat = "no-repeat";
   if (state.floorBody) {
     state.floorBody.render.fillStyle = room.floor;
   }
   if (state.ceilingBody) {
     state.ceilingBody.render.fillStyle = room.floor;
   }
+}
+
+function applyUiTheme(uiTheme = {}) {
+  const variables = uiTheme.variables || {};
+  UI_THEME_VARIABLES.forEach((variableName) => {
+    document.documentElement.style.removeProperty(variableName);
+  });
+  Object.entries(variables).forEach(([variableName, value]) => {
+    if (UI_THEME_VARIABLES.includes(variableName) && typeof value === "string") {
+      document.documentElement.style.setProperty(variableName, value);
+    }
+  });
 }
 
 function applyModeSettings() {
@@ -3061,7 +3249,7 @@ function removeProp(body) {
   World.remove(engine.world, body);
 }
 
-function resetScene() {
+function clearObjects(showToast = true) {
   state.grenades.forEach((grenade) => {
     if (grenade.tether) {
       World.remove(engine.world, grenade.tether);
@@ -3074,11 +3262,32 @@ function resetScene() {
   state.boomboxes = [];
   state.ropes.forEach((rope) => World.remove(engine.world, rope));
   state.ropes = [];
+  state.particles = [];
+  state.decals = [];
+  state.aimVector = null;
+  feedback.stopWind();
+  mouseConstraint.constraint.bodyB = null;
+  if (showToast) {
+    toast(getHudActionToast("objectsCleared"));
+    updateHud();
+  }
+}
+
+function resetBuddy() {
+  feedback.stopWind();
+  mouseConstraint.constraint.bodyB = null;
+  state.grabbedBody = null;
+  state.aimVector = null;
+  spawnNewBuddy();
+  toast(getHudActionToast("buddyReset"));
+  updateHud();
+}
+
+function resetScene() {
+  clearObjects(false);
   state.liquid.enabled = false;
   state.liquid.level = FLOOR_Y - 120;
   state.liquid.type = state.settings.liquidType;
-  state.particles = [];
-  state.decals = [];
   state.replayLog = [];
   state.comboCount = 0;
   state.comboTimer = 0;
@@ -3092,12 +3301,12 @@ function resetScene() {
 
 function savePreset() {
   const preset = createScenePreset(state.liquid, state.props);
-  localStorage.setItem("buddyLab2026.scene", JSON.stringify(preset));
+  localStorage.setItem(SCENE_PRESET_KEY, JSON.stringify(preset));
   toast(getScenePresetSaveToast());
 }
 
 function loadPreset() {
-  const stored = parseStoredScenePreset(localStorage.getItem("buddyLab2026.scene"));
+  const stored = parseStoredScenePreset(localStorage.getItem(SCENE_PRESET_KEY));
   if (stored.status !== "ready") {
     toast(getScenePresetLoadToast(stored.status));
     return;
@@ -3123,6 +3332,72 @@ function loadPreset() {
     }
   });
   toast(getScenePresetLoadToast(stored.status));
+}
+
+function resetProgress() {
+  const confirmed = window.confirm("Reset all local progress, unlocks, settings, and saved scene preset?");
+  if (!confirmed) {
+    return;
+  }
+
+  const customPackIds = new Set(state.customAssetPacks.map((pack) => pack.id));
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(SCENE_PRESET_KEY);
+
+  state.cash = DEFAULT_CASH;
+  state.xp = 0;
+  state.sessionCash = 0;
+  state.comboCount = 0;
+  state.comboTimer = 0;
+  state.unlockedTools = new Set(DEFAULT_UNLOCKED_TOOLS);
+  state.unlockedSkins = new Set(DEFAULT_UNLOCKED_SKINS);
+  state.selectedSkin = DEFAULT_SKIN;
+  state.tool = DEFAULT_TOOL;
+  state.mood = "Calm";
+  state.moodTimer = 0;
+  state.moodBubble = "";
+  state.toolHeat.clear();
+  state.usedTags.clear();
+  state.challenge.bests = {};
+  state.challenge.lastResult = null;
+  state.customAssetPacks = [];
+  state.assetPacks = state.assetPacks.filter((pack) => !customPackIds.has(pack.id));
+  for (let index = SKIN_DEFS.length - 1; index >= 0; index -= 1) {
+    if (customPackIds.has(SKIN_DEFS[index].assetPack)) {
+      SKIN_DEFS.splice(index, 1);
+    }
+  }
+  Object.entries(AUDIO_PACKS).forEach(([audioId, pack]) => {
+    if (customPackIds.has(pack.assetPack)) {
+      delete AUDIO_PACKS[audioId];
+    }
+  });
+
+  state.settings = { ...DEFAULT_SETTINGS };
+  state.liquid.type = state.settings.liquidType;
+  feedback.stopWind();
+  mouseConstraint.constraint.bodyB = null;
+  mouseConstraint.collisionFilter.mask = getMouseConstraintConfig(DEFAULT_TOOL).mask;
+  mouseConstraint.constraint.stiffness = getMouseConstraintConfig(DEFAULT_TOOL).stiffness;
+
+  buildAssetPackUi();
+  buildAudioPackUi();
+  buildMenus();
+  buildToolUi();
+  renderShop();
+  renderRoomPreview();
+  syncSettingsControls();
+  applyRoomPack();
+  applyModeSettings();
+  resetScene();
+  applySkin();
+  chooseMissions();
+  startChallenge("free", false);
+  selectTool(DEFAULT_TOOL);
+  updateModeButtonStates();
+  updateFpsCounterVisibility();
+  saveGame();
+  toast(getProgressResetToast());
 }
 
 function toggleCeiling() {
@@ -3184,10 +3459,19 @@ function updateFpsCounterVisibility() {
   hud.fpsCounter.textContent = fpsCounter.label;
 }
 
+function toggleDebugPhysics() {
+  state.settings.debugPhysics = !state.settings.debugPhysics;
+  updateModeButtonStates();
+  toast(state.settings.debugPhysics ? "Physics debug on." : "Physics debug off.");
+  saveGame();
+}
+
 function updateModeButtonStates() {
   const modeButtons = getBooleanModeButtonStates(state.settings);
   controls.ceiling?.setAttribute("aria-pressed", modeButtons.ceiling.ariaPressed);
   controls.slowMo?.setAttribute("aria-pressed", modeButtons.slowMo.ariaPressed);
+  controls.debugPhysics?.setAttribute("aria-pressed", state.settings.debugPhysics ? "true" : "false");
+  controls.debugPhysics?.classList.toggle("is-active", state.settings.debugPhysics);
   controls.gravityModes.forEach((button) => {
     const buttonState = getGravityModeButtonState(button.dataset.gravityMode, state.settings.gravityMode);
     button.setAttribute("aria-pressed", buttonState.ariaPressed);
@@ -3195,16 +3479,22 @@ function updateModeButtonStates() {
   });
 }
 
+function addParticle(particle) {
+  if (state.settings.particles) {
+    state.particles.push(particle);
+  }
+}
+
 function spawnBurst(position, color, count) {
   for (let i = 0; i < count; i += 1) {
-    state.particles.push(getBurstParticle(position, color, Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getBurstParticle(position, color, Math.random(), Math.random(), Math.random(), Math.random()));
   }
 }
 
 function spawnConfettiBurst(position, count) {
   const colors = ["#ffd06a", "#55d9cf", "#e46e5f", "#98f17f", "#e7a8ff"];
   for (let i = 0; i < count; i += 1) {
-    state.particles.push(getConfettiBurstParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getConfettiBurstParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random()));
   }
 }
 
@@ -3212,25 +3502,28 @@ function spawnMusicNotes(position, count) {
   const colors = ["#ffc857", "#55d9cf", "#f6f1d0"];
   for (let i = 0; i < count; i += 1) {
     const side = i % 2 === 0 ? -1 : 1;
-    state.particles.push(getMusicNoteParticle(position, colors[i % colors.length], side, Math.random(), Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getMusicNoteParticle(position, colors[i % colors.length], side, Math.random(), Math.random(), Math.random(), Math.random(), Math.random()));
   }
 }
 
 function spawnMoneySparkles(position, count) {
   const colors = ["#98f17f", "#f1ff8b", "#d8ffd1"];
   for (let i = 0; i < count; i += 1) {
-    state.particles.push(getMoneySparkleParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getMoneySparkleParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random(), Math.random()));
   }
 }
 
 function spawnTreatCrumbs(position, count) {
   const colors = ["#d89b5f", "#fff4d7", "#7a4a2e"];
   for (let i = 0; i < count; i += 1) {
-    state.particles.push(getTreatCrumbParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random()));
+    addParticle(getTreatCrumbParticle(position, colors[i % colors.length], Math.random(), Math.random(), Math.random(), Math.random()));
   }
 }
 
 function addShake(amount) {
+  if (!state.settings.cameraShake) {
+    return;
+  }
   state.shake = increaseShakeAmount(state.shake, amount);
 }
 
@@ -3238,7 +3531,7 @@ function drawOverlayEffects() {
   const ctx = render.context;
   ctx.save();
 
-  if (state.shake > 0 && !state.settings.reducedFlash) {
+  if (state.shake > 0 && state.settings.cameraShake && !state.settings.reducedFlash) {
     const offset = getShakeOffset(Math.random(), Math.random(), state.shake);
     canvas.style.transform = getShakeTransform(offset);
   } else {
@@ -3248,16 +3541,64 @@ function drawOverlayEffects() {
   drawRoomDetails(ctx);
   drawLiquid(ctx);
   drawClassicBuddyOverlay(ctx);
+  drawReactionBubble(ctx);
   drawAim(ctx);
   drawToolFields(ctx);
   drawPropCosmetics(ctx);
   drawParticles(ctx);
+  drawPhysicsDebug(ctx);
+  ctx.restore();
+}
+
+function drawReactionBubble(ctx) {
+  if (!state.buddy || state.mood === "Calm") {
+    return;
+  }
+  const head = Composite.allBodies(state.buddy).find((body) => body.label === "buddy_head");
+  if (!head) {
+    return;
+  }
+  const bubble = getReactionBubblePresentation({
+    mood: state.mood,
+    timerMs: state.moodTimer,
+    anchorX: head.position.x,
+    anchorY: head.position.y,
+    stageWidth: STAGE_WIDTH,
+    stageHeight: STAGE_HEIGHT,
+    text: state.moodBubble
+  });
+  if (!bubble.visible) {
+    return;
+  }
+
+  ctx.save();
+  ctx.globalAlpha = bubble.alpha;
+  ctx.fillStyle = "#fbfbf2";
+  ctx.strokeStyle = "#48534c";
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.roundRect(bubble.x, bubble.y, bubble.width, bubble.height, bubble.radius);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(bubble.x + bubble.pointerX - 6, bubble.y + bubble.height - 1);
+  ctx.lineTo(bubble.x + bubble.pointerX + 5, bubble.y + bubble.height - 1);
+  ctx.lineTo(head.position.x, bubble.y + bubble.height + 11);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#2f3933";
+  ctx.font = "bold 13px Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(bubble.text, bubble.x + bubble.width / 2, bubble.y + bubble.height / 2 + 0.5);
   ctx.restore();
 }
 
 function drawRoomDetails(ctx) {
   const room = getAssetPack().room;
-  ctx.globalAlpha = 0.16;
+  const isPlainRoom = room?.motif === "plain";
+  ctx.globalAlpha = isPlainRoom ? 0.055 : 0.16;
   ctx.strokeStyle = room.grid;
   ctx.lineWidth = 1;
   for (let x = 80; x < STAGE_WIDTH; x += 80) {
@@ -3273,7 +3614,7 @@ function drawRoomDetails(ctx) {
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
-  ctx.globalAlpha = 0.08;
+  ctx.globalAlpha = isPlainRoom ? 0.06 : 0.08;
   ctx.fillStyle = room.accent;
   ctx.fillRect(0, FLOOR_Y - 2, STAGE_WIDTH, 4);
   ctx.globalAlpha = 1;
@@ -3567,6 +3908,9 @@ function drawPropCosmetics(ctx) {
     if (!cosmetic) {
       continue;
     }
+    if (drawPrivateToolTexture(ctx, body, cosmetic)) {
+      continue;
+    }
     if (cosmetic.type === "bowling-classic") {
       drawBowlingCosmetic(ctx, body, cosmetic);
     } else if (cosmetic.type === "beach-ball-striped") {
@@ -3625,6 +3969,53 @@ function drawPropCosmetics(ctx) {
       drawLargeBombCosmetic(ctx, body, cosmetic);
     }
   }
+}
+
+function drawPrivateToolTexture(ctx, body, cosmetic) {
+  const texture = getPrivateToolTexture(body, cosmetic);
+  if (!texture) {
+    return false;
+  }
+  const image = getToolTextureImage(texture.src);
+  if (!image || !image.complete || image.naturalWidth <= 0 || image.naturalHeight <= 0) {
+    return false;
+  }
+  const bounds = body.bounds || {
+    min: { x: body.position.x - 20, y: body.position.y - 20 },
+    max: { x: body.position.x + 20, y: body.position.y + 20 }
+  };
+  const boundsWidth = Math.max(1, bounds.max.x - bounds.min.x);
+  const boundsHeight = Math.max(1, bounds.max.y - bounds.min.y);
+  const scale = texture.scale || 1;
+  const width = (texture.width > 0 ? texture.width : boundsWidth) * scale;
+  const height = (texture.height > 0 ? texture.height : boundsHeight) * scale;
+  ctx.save();
+  ctx.translate(body.position.x, body.position.y);
+  ctx.rotate(body.angle + (texture.rotationOffset || 0));
+  ctx.globalAlpha *= Math.max(0, Math.min(1, texture.alpha ?? 1));
+  ctx.drawImage(image, -width / 2, -height / 2, width, height);
+  ctx.restore();
+  return true;
+}
+
+function getPrivateToolTexture(body, cosmetic) {
+  const textures = getAssetPack().toolTextures || {};
+  return textures[cosmetic.type] || textures[body.label] || null;
+}
+
+function getToolTextureImage(src) {
+  if (!src || typeof Image === "undefined") {
+    return null;
+  }
+  const cached = toolTextureImageCache.get(src);
+  if (cached) {
+    return cached;
+  }
+  const image = new Image();
+  image.decoding = "async";
+  image.src = src;
+  toolTextureImageCache.set(src, image);
+  return image;
 }
 
 function drawBallCosmetic(ctx, body, cosmetic) {
@@ -4312,6 +4703,9 @@ function drawCannonballCosmetic(ctx, body, cosmetic) {
 }
 
 function drawParticles(ctx) {
+  if (!state.settings.particles) {
+    return;
+  }
   for (const particle of state.particles) {
     const alpha = getParticleAlpha(particle.life, particle.maxLife);
     ctx.globalAlpha = alpha;
@@ -4344,6 +4738,60 @@ function drawParticles(ctx) {
     }
   }
   ctx.globalAlpha = 1;
+}
+
+function drawPhysicsDebug(ctx) {
+  if (!state.settings.debugPhysics) {
+    return;
+  }
+
+  ctx.save();
+  ctx.globalAlpha = 0.78;
+  ctx.lineWidth = 1;
+  Composite.allConstraints(engine.world).forEach((constraint) => {
+    const pointA = getConstraintWorldPoint(constraint.bodyA, constraint.pointA);
+    const pointB = getConstraintWorldPoint(constraint.bodyB, constraint.pointB);
+    if (!pointA || !pointB) {
+      return;
+    }
+    ctx.strokeStyle = "#74f7ff";
+    ctx.beginPath();
+    ctx.moveTo(pointA.x, pointA.y);
+    ctx.lineTo(pointB.x, pointB.y);
+    ctx.stroke();
+  });
+
+  Composite.allBodies(engine.world).forEach((body) => {
+    ctx.strokeStyle = body.isStatic ? "#f1ff8b" : isBuddyBody(body) ? "#98f17f" : "#ff8d66";
+    ctx.beginPath();
+    body.vertices.forEach((vertex, index) => {
+      if (index === 0) {
+        ctx.moveTo(vertex.x, vertex.y);
+      } else {
+        ctx.lineTo(vertex.x, vertex.y);
+      }
+    });
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.beginPath();
+    ctx.arc(body.position.x, body.position.y, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function getConstraintWorldPoint(body, point) {
+  if (!point) {
+    return null;
+  }
+  if (!body) {
+    return point;
+  }
+  return {
+    x: body.position.x + point.x,
+    y: body.position.y + point.y
+  };
 }
 
 Events.on(engine, "collisionStart", (event) => {

@@ -16,7 +16,7 @@ npm run test:unit
 npm run test:runtime
 ```
 
-Expected result: extracted modules, content metadata, tool factories, storage, transfer helpers, UI binding checks, and typed runtime helper checks pass.
+Expected result: extracted modules, content metadata, tool factories, storage, transfer helpers, UI binding checks, asset-pack sanitizers, shop category filtering and owned/equipped card state, mouse-wheel power stepping helpers, canvas cursor-state helpers, audio volume persistence, camera shake/particle/debug-physics settings persistence, reset-progress helper coverage, and typed runtime helper checks pass, including exact-event feedback mapping for private audio samples.
 
 ## Asset Validation
 
@@ -24,7 +24,7 @@ Expected result: extracted modules, content metadata, tool factories, storage, t
 npm run test:assets
 ```
 
-Expected result: manifest packs, room palettes, audio-pack values, skin metadata, and local SVG texture paths validate.
+Expected result: manifest packs, template/private example packs, room palettes, optional room textures, optional constrained `uiTheme.variables`, audio-pack values, exact-event sample keys, skin metadata, local SVG texture paths, and optional private `toolTextures` image mappings validate.
 
 ## Static Dist Smoke
 
@@ -33,7 +33,7 @@ npm run build
 npm run test:static-smoke
 ```
 
-Expected result: the production `dist/` HTML references the bundled TypeScript shell, vendored Matter.js, runtime chunk, bundled CSS, and copied asset-pack manifest, and those files are served successfully from a local Node static server.
+Expected result: the production `dist/` HTML references the bundled TypeScript shell, vendored Matter.js, runtime chunk, bundled CSS, copied asset-pack manifest, private tool texture support, and current basic-tool/default-room content, and those files are served successfully from a local Node static server.
 
 ## Browser Regression
 
@@ -87,9 +87,12 @@ Expected result: stage, shop, radial wheel, and textured skin screenshots match 
 - Start `npm run dev`.
 - Open the Vite URL.
 - Grab and throw the buddy with Hand.
+- Hover Buddy with Hand and confirm the canvas cursor changes to grab/grabbing.
+- Scroll over the play canvas and confirm the Power slider/readout steps up and down.
 - Earn cash from impacts.
 - Buy one locked tool.
 - Equip one skin.
-- Toggle mute/reduced flash/debug FPS.
-- Reset buddy and clear room state.
+- Toggle mute/volume/camera shake/particles/reduced flash/debug FPS/physics debug.
+- Reset Buddy, Clear Objects, and Reset Room as separate recovery actions.
 - Reload and confirm money/unlocks/settings persist.
+- Use Settings > Reset Progress, confirm the prompt, and verify money, unlocks, selected skin/tool, settings, challenge records, imported local packs, and saved scene preset return to defaults.

@@ -102,6 +102,12 @@ export function getPowerControlPresentation(value: string | number): PowerContro
   };
 }
 
+export function getPowerWheelPresentation(currentPower: number, deltaY: number, min = 10, max = 100, step = 5): PowerControlPresentation {
+  const direction = deltaY < 0 ? 1 : deltaY > 0 ? -1 : 0;
+  const nextPower = Math.min(max, Math.max(min, currentPower + direction * step));
+  return getPowerControlPresentation(nextPower);
+}
+
 export function getHudCorePresentation(input: RuntimeHudCoreInput): RuntimeHudCorePresentation {
   return {
     cash: formatHudCash(input.cash),
@@ -128,6 +134,8 @@ export function getToastHiddenPresentation(): ToastHiddenPresentation {
 
 const hudActionToasts: Record<string, string> = {
   newBuddy: "New buddy spawned.",
+  buddyReset: "Buddy reset.",
+  objectsCleared: "Objects cleared.",
   sceneReset: "Scene reset."
 };
 

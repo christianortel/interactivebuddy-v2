@@ -16,9 +16,11 @@
     "test:browser-smoke": "powershell -ExecutionPolicy Bypass -File ./tests/run-browser-smoke.ps1",
     "test:browser-smoke:external": "powershell -ExecutionPolicy Bypass -File ./tests/run-browser-smoke-external.ps1",
     "test:regression": "npm run build && powershell -ExecutionPolicy Bypass -File ./tests/run-regression.ps1",
-    "test:visual": "npm run build && powershell -ExecutionPolicy Bypass -File ./tests/run-regression.ps1 -Visual"
+    "test:visual": "npm run build && powershell -ExecutionPolicy Bypass -File ./tests/run-regression.ps1 -Visual",
+    "test:parity": "node tests/parity-checks.mjs"
   },
   "devDependencies": {
+    "@ruffle-rs/ruffle": "^0.4.0-nightly.2026.7.2",
     "@types/node": "^25.6.0",
     "playwright": "^1.59.1",
     "typescript": "^5.9.3",

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import { createAssetPackController, finiteOr, sanitizeAssetPack } from "../js/asset-packs.js";
+import { createAssetPackController, finiteOr, sanitizeAssetPack, sanitizeAudioSamples, sanitizeToolTextures, sanitizeUiTheme } from "../js/asset-packs.js";
 import { createChallengeController, formatProgress } from "../js/challenges.js";
 import { FeedbackEngine } from "../js/feedback.js";
 import { createProgressionController } from "../js/progression.js";
@@ -54,6 +54,7 @@ class FakeElement {
     this.textContent = "";
     this.className = "";
     this.style = {};
+    this.attributes = {};
     this._innerHTML = "";
     this.classList = {
       add: () => {},
@@ -79,6 +80,14 @@ class FakeElement {
 
   addEventListener(type, listener) {
     this.listeners[type] = listener;
+  }
+
+  setAttribute(name, value) {
+    this.attributes[name] = String(value);
+  }
+
+  getAttribute(name) {
+    return this.attributes[name] ?? null;
   }
 
   click() {
@@ -192,12 +201,89 @@ assert.equal(formatProgress(2), "2");
 assert.equal(formatProgress(2.25), "2.3");
 assert.equal(finiteOr(4, 1), 4);
 assert.equal(finiteOr(Number.NaN, 1), 1);
+assert.deepEqual(sanitizeAudioSamples({
+  impact: "audio/impact.wav",
+  frost: { src: "audio/frost.wav", gain: 0.65, playbackRate: 1.1 },
+  moneydrop: { src: "audio/moneydrop.wav" },
+  ignored: { gain: 2 },
+  empty: ""
+}), {
+  impact: { src: "audio/impact.wav" },
+  frost: { src: "audio/frost.wav", gain: 0.65, playbackRate: 1.1 },
+  moneydrop: { src: "audio/moneydrop.wav", gain: 1, playbackRate: 1 }
+});
+assert.deepEqual(sanitizeToolTextures({
+  "money-drop": {
+    textureDataUrl: "data:image/svg+xml;base64,PHN2Zy8+",
+    scale: 1.2,
+    alpha: 0.8,
+    rotationOffset: 0.1,
+    width: 44,
+    height: 24
+  },
+  "gift-box": { texture: "assets/private/tool-gift.png" },
+  ignored: {},
+  "": { texture: "bad.png" }
+}), {
+  "money-drop": {
+    src: "data:image/svg+xml;base64,PHN2Zy8+",
+    scale: 1.2,
+    alpha: 0.8,
+    rotationOffset: 0.1,
+    width: 44,
+    height: 24
+  },
+  "gift-box": {
+    src: "assets/private/tool-gift.png",
+    scale: 1,
+    alpha: 1,
+    rotationOffset: 0,
+    width: 0,
+    height: 0
+  }
+});
+assert.deepEqual(sanitizeUiTheme({
+  variables: {
+    "--panel": "rgba(255,255,255,0.95)",
+    "--accent": "#ff00aa",
+    "--menu-bg": "linear-gradient(#fff, #ddd)",
+    "--unknown": "#000",
+    color: "red",
+    "--ink": ""
+  }
+}), {
+  variables: {
+    "--panel": "rgba(255,255,255,0.95)",
+    "--accent": "#ff00aa",
+    "--menu-bg": "linear-gradient(#fff, #ddd)"
+  }
+});
+assert.deepEqual(sanitizeUiTheme(null), { variables: {} });
 
 const sanitizedPack = sanitizeAssetPack(
   {
     id: "unit-pack",
     name: "Unit Pack",
-    room: { accent: "#abcdef", motif: "office" },
+    room: {
+      accent: "#abcdef",
+      motif: "office",
+      textureDataUrl: "data:image/svg+xml;base64,PHN2Zy8+",
+      textureFit: "contain"
+    },
+    toolTextures: {
+      "money-drop": {
+        textureDataUrl: "data:image/svg+xml;base64,PHN2Zy8+",
+        scale: 1.1,
+        alpha: 0.75
+      }
+    },
+    uiTheme: {
+      variables: {
+        "--panel": "rgba(250,250,244,0.96)",
+        "--menu-bg": "linear-gradient(#ffffff, #d7d7d0)",
+        "--unknown": "#000"
+      }
+    },
     skins: [{ id: "unit:skin", name: "Unit Skin", cost: Number.NaN }],
     audioPacks: {
       unitTone: {
@@ -206,6 +292,8 @@ const sanitizedPack = sanitizeAssetPack(
         samples: {
           impact: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
           explosion: { src: "audio/explosion.wav", gain: 0.7, playbackRate: 0.9 },
+          frost: { src: "audio/frost.wav", gain: 0.6, playbackRate: 1.05 },
+          moneydrop: "audio/moneydrop.wav",
           invalid: { gain: 2 }
         }
       }
@@ -213,14 +301,25 @@ const sanitizedPack = sanitizeAssetPack(
   },
   {}
 );
-assert.equal(sanitizedPack.room.background, "#87968e");
+assert.equal(sanitizedPack.room.background, "#9aa59d");
 assert.equal(sanitizedPack.room.motif, "office");
+assert.equal(sanitizedPack.room.textureDataUrl, "data:image/svg+xml;base64,PHN2Zy8+");
+assert.equal(sanitizedPack.room.textureFit, "contain");
+assert.equal(sanitizedPack.toolTextures["money-drop"].src, "data:image/svg+xml;base64,PHN2Zy8+");
+assert.equal(sanitizedPack.toolTextures["money-drop"].scale, 1.1);
+assert.equal(sanitizedPack.toolTextures["money-drop"].alpha, 0.75);
+assert.deepEqual(sanitizedPack.uiTheme.variables, {
+  "--panel": "rgba(250,250,244,0.96)",
+  "--menu-bg": "linear-gradient(#ffffff, #d7d7d0)"
+});
 assert.equal(sanitizedPack.skins[0].cost, 300);
 assert.equal(sanitizedPack.skins[0].accent, "#abcdef");
 assert.equal(sanitizedPack.audioPacks.unitTone.master, 0.18);
 assert.equal(sanitizedPack.audioPacks.unitTone.samples.impact.src.startsWith("data:audio/wav"), true);
 assert.equal(sanitizedPack.audioPacks.unitTone.samples.explosion.src, "audio/explosion.wav");
 assert.equal(sanitizedPack.audioPacks.unitTone.samples.explosion.gain, 0.7);
+assert.equal(sanitizedPack.audioPacks.unitTone.samples.frost.playbackRate, 1.05);
+assert.equal(sanitizedPack.audioPacks.unitTone.samples.moneydrop.src, "audio/moneydrop.wav");
 assert.equal("invalid" in sanitizedPack.audioPacks.unitTone.samples, false);
 
 const assetPackState = { assetPacks: [{ id: "base" }] };
@@ -280,9 +379,18 @@ assert.ok(requestedIds.includes("shopGrid"));
 assert.ok(requestedIds.includes("toolMeta"));
 assert.ok(requestedIds.includes("fpsCounter"));
 assert.ok(requestedIds.includes("fpsCounterButton"));
+assert.ok(requestedIds.includes("resetBuddyButton"));
+assert.ok(requestedIds.includes("clearObjectsButton"));
+assert.ok(requestedIds.includes("clearObjectsFooterButton"));
+assert.ok(requestedIds.includes("debugPhysicsButton"));
 assert.ok(requestedIds.includes("roomPreview"));
 assert.ok(requestedIds.includes("saveImportInput"));
 assert.ok(requestedIds.includes("skinPackImportInput"));
+assert.ok(requestedIds.includes("resetProgressButton"));
+assert.ok(requestedIds.includes("audioVolume"));
+assert.ok(requestedIds.includes("audioVolumeValue"));
+assert.ok(requestedIds.includes("cameraShakeToggle"));
+assert.ok(requestedIds.includes("particlesToggle"));
 
 const storage = new Map();
 globalThis.localStorage = {
@@ -302,7 +410,7 @@ storage.set("unit.invalid", "{bad");
 assert.equal(readJson("unit.invalid"), null);
 assert.equal(storage.has("unit.invalid"), false);
 
-const settings = { audio: false };
+const settings = { audio: false, volume: 0.35 };
 const feedback = new FeedbackEngine({
   getSettings: () => settings,
   getPack: () => ({ master: 0.2, pitch: 1, toneWave: "sine", impactWave: "sine", zapWave: "square", noiseFilter: 1, decay: 1 }),
@@ -311,6 +419,7 @@ const feedback = new FeedbackEngine({
 feedback.play("impact", 1);
 feedback.startWind();
 feedback.stopWind();
+feedback.updateMasterGain();
 
 const shopGrid = new FakeElement("div");
 const state = {
@@ -324,11 +433,12 @@ const progression = createProgressionController({
   state,
   toolDefs: [
     { id: "hand", name: "Hand", cost: 0, description: "Grab" },
-    { id: "fan", name: "Fan", cost: 120, description: "Wind" }
+    { id: "fan", name: "Fan", category: "Force", cost: 120, description: "Wind" },
+    { id: "paintball", name: "Paintball", category: "Projectiles", cost: 260, description: "Paint" }
   ],
   getSkinDefs: () => [
     { id: "classic", name: "Classic", cost: 0, description: "Base" },
-    { id: "neon", name: "Neon", cost: 50, description: "Glow" }
+    { id: "neon", name: "Neon", cost: 50, color: "#99f17f", accent: "#55d9cf", texture: "skins/neon.svg", description: "Glow" }
   ],
   shopGrid,
   getTool: (toolId) => ({ id: toolId, name: toolId === "fan" ? "Fan" : "Hand", cost: toolId === "fan" ? 120 : 0 }),
@@ -343,7 +453,23 @@ const progression = createProgressionController({
   pulse: (pattern) => calls.push(["pulse", pattern])
 });
 progression.renderShop();
-assert.equal(shopGrid.children.length, 2);
+assert.equal(shopGrid.children[0].className, "shop-tabs");
+assert.equal(shopGrid.children[0].children.map((child) => child.dataset.category).join(","), "all,force,projectiles,skins");
+assert.equal(shopGrid.children[0].children[0].textContent, "All 3");
+assert.equal(shopGrid.children.filter((child) => child.className.includes("shop-item")).length, 3);
+assert.equal(shopGrid.children.find((child) => child.className.includes("shop-item")).dataset.category, "force");
+progression.setActiveCategory("skins");
+assert.equal(progression.getActiveCategory(), "skins");
+assert.equal(shopGrid.children.filter((child) => child.className.includes("shop-item")).length, 1);
+const skinShopItem = shopGrid.children.find((child) => child.className.includes("shop-item"));
+assert.equal(skinShopItem.dataset.category, "skins");
+assert.equal(skinShopItem.dataset.owned, "false");
+assert.equal(skinShopItem.dataset.active, "false");
+assert.equal(skinShopItem.children[0].className, "shop-skin-preview");
+assert.equal(skinShopItem.children[0].children[0].className, "shop-skin-preview__swatch shop-skin-preview__swatch--textured");
+assert.equal(skinShopItem.children[0].children[0].style.backgroundColor, "#99f17f");
+assert.equal(skinShopItem.children[0].children[0].style.backgroundImage, 'url("skins/neon.svg")');
+progression.setActiveCategory("all");
 progression.buyTool("fan");
 assert.equal(state.cash, 80);
 assert.equal(state.unlockedTools.has("fan"), true);
@@ -352,6 +478,11 @@ progression.buyOrSelectSkin("neon");
 assert.equal(state.cash, 30);
 assert.equal(state.unlockedSkins.has("neon"), true);
 assert.equal(state.selectedSkin, "neon");
+const activeSkinShopItem = shopGrid.children.find((child) => child.dataset?.active === "true");
+assert.equal(activeSkinShopItem.dataset.category, "skins");
+assert.match(activeSkinShopItem.className, /shop-item--owned/);
+assert.match(activeSkinShopItem.className, /shop-item--active/);
+assert.equal(activeSkinShopItem.getAttribute("aria-current"), "true");
 assert.ok(calls.some(([name]) => name === "applySkin"));
 
 let timeoutCount = 0;

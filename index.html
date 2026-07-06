@@ -3,206 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Buddy Lab 2026</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="vendor/matter.min.js"></script>
+    <title>Interactive Buddy (parity build)</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #333333; /* host-page letterbox, not part of the 550x400 stage */
+      }
+      #stage {
+        position: absolute;
+      }
+      #world {
+        display: block;
+      }
+    </style>
   </head>
   <body>
-    <main class="app-shell">
-      <nav class="menu-bar" aria-label="Game menus">
-        <button class="menu-bar__brand" id="newBuddyButton" type="button">Buddy Lab 2026</button>
-        <div class="menu">
-          <button type="button">File</button>
-          <div class="menu__panel">
-            <button type="button" id="resetMenuButton">Reset Scene</button>
-            <button type="button" id="saveSceneButton">Save Preset</button>
-            <button type="button" id="loadSceneButton">Load Preset</button>
-            <button type="button" id="exportSaveButton">Export Save</button>
-            <button type="button" id="importSaveButton">Import Save</button>
-            <button type="button" id="importSkinPackButton">Import Skin Pack</button>
-          </div>
-        </div>
-        <div class="menu">
-          <button type="button">Skins</button>
-          <div class="menu__panel" id="skinMenu"></div>
-        </div>
-        <div class="menu">
-          <button type="button">Items</button>
-          <div class="menu__panel menu__panel--wide" id="itemMenu"></div>
-        </div>
-        <div class="menu">
-          <button type="button">Modes</button>
-          <div class="menu__panel">
-            <button type="button" id="ceilingButton">Toggle Ceiling</button>
-            <button type="button" id="slowMoButton">Slow Motion</button>
-            <div class="menu__submenu">
-              <button type="button" class="menu__submenu-trigger">Gravity</button>
-              <div class="menu__submenu-panel">
-                <button type="button" class="gravity-mode-button" data-gravity-mode="normal">Normal</button>
-                <button type="button" class="gravity-mode-button" data-gravity-mode="low">Low Gravity</button>
-                <button type="button" class="gravity-mode-button" data-gravity-mode="heavy">Heavy Gravity</button>
-              </div>
-            </div>
-            <div class="menu__submenu">
-              <button type="button" class="menu__submenu-trigger">Debug</button>
-              <div class="menu__submenu-panel">
-                <button type="button" id="fpsCounterButton">FPS Counter</button>
-              </div>
-            </div>
-            <button type="button" id="missionButton">Refresh Missions</button>
-            <label>
-              Challenge
-              <select id="challengeMode">
-                <option value="free">Free Play</option>
-                <option value="juggle">Juggle Lab</option>
-                <option value="tether">Tether Tricks</option>
-                <option value="liquid">Liquid Control</option>
-                <option value="export">Clip Export</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <div class="menu">
-          <button type="button">Settings</button>
-          <div class="menu__panel">
-            <label><input id="reducedFlash" type="checkbox" /> Reduced flash</label>
-            <label><input id="goreToggle" type="checkbox" checked /> Slapstick mode</label>
-            <label><input id="audioToggle" type="checkbox" checked /> Sound enabled</label>
-            <label><input id="hapticsToggle" type="checkbox" checked /> Haptics enabled</label>
-            <label>
-              Asset pack
-              <select id="assetPack">
-                <option value="base">Base Lab</option>
-              </select>
-            </label>
-            <div class="room-preview" id="roomPreview" aria-label="Room preview"></div>
-            <label>
-              Audio pack
-              <select id="audioPack">
-                <option value="classic">Classic</option>
-                <option value="arcade">Arcade</option>
-                <option value="sciFi">Sci-Fi</option>
-                <option value="soft">Soft</option>
-              </select>
-            </label>
-            <label>
-              Liquid
-              <select id="liquidType">
-                <option value="water">Water</option>
-                <option value="slime">Slime</option>
-                <option value="oil">Oil</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <div class="menu menu--push">
-          <button type="button">Help</button>
-          <div class="menu__panel menu__panel--right">
-            <p>Click and drag with Hand. Pick tools from the bottom rail or menus. Earn cash through varied reactions and combos.</p>
-          </div>
-        </div>
-      </nav>
-
-      <section class="hud" aria-label="Status">
-        <div class="hud__stat">
-          <span>Cash</span>
-          <strong id="cash">$0</strong>
-        </div>
-        <div class="hud__stat">
-          <span>XP</span>
-          <strong id="xp">0</strong>
-        </div>
-        <div class="hud__stat">
-          <span>Combo</span>
-          <strong id="combo">x1.00</strong>
-        </div>
-        <div class="hud__stat hud__stat--mood">
-          <span>Mood</span>
-          <strong id="mood">Calm</strong>
-        </div>
-        <div class="hud__stat">
-          <span>Challenge</span>
-          <strong id="challenge">Free</strong>
-        </div>
-        <label class="hud__power">
-          <span>Power</span>
-          <input id="power" type="range" min="10" max="100" step="5" value="55" />
-          <output id="powerReadout">55</output>
-        </label>
-      </section>
-
-      <section class="stage-card" aria-label="Sandbox">
-        <canvas id="world" width="960" height="640"></canvas>
-        <div class="stage-overlay">
-          <div class="buddy-face" id="buddyFace">:)</div>
-          <div class="toast" id="toast" role="status" aria-live="polite"></div>
-          <div class="combo-meter" aria-label="Combo timer">
-            <span id="comboFill"></span>
-          </div>
-          <div class="fps-counter" id="fpsCounter" aria-label="FPS counter">FPS 0</div>
-          <div class="replay-strip" id="replayStrip"></div>
-          <div class="radial-wheel" id="radialWheel" aria-label="Tool wheel"></div>
-        </div>
-      </section>
-
-      <aside class="side-panel" aria-label="Progression">
-        <section class="panel-block">
-          <div class="panel-block__header">
-            <h2>Missions</h2>
-            <button id="refreshMissions" type="button">New</button>
-          </div>
-          <div id="missionList" class="mission-list"></div>
-        </section>
-        <section class="panel-block">
-          <div class="panel-block__header">
-            <h2>Shop</h2>
-            <button id="shopButton" type="button">Buy</button>
-          </div>
-          <div id="shopGrid" class="shop-grid"></div>
-        </section>
-      </aside>
-
-      <footer class="tool-rail" aria-label="Tools">
-        <div class="tool-tabs" id="toolRail"></div>
-        <div class="tool-readout">
-          <strong id="toolName">Open Hand</strong>
-          <span id="toolDescription">Grab, drag, flick, and toss the buddy.</span>
-          <span id="toolMeta" class="tool-meta">Ready</span>
-        </div>
-        <button id="reset" type="button">Reset</button>
-        <button id="replay" type="button">Replay</button>
-        <button id="exportReplay" type="button">Export</button>
-      </footer>
-    </main>
-
-    <input id="saveImportInput" type="file" accept="application/json,.json" hidden />
-    <input id="skinPackImportInput" type="file" accept="application/json,.json" hidden />
-    <script>
-      window.__buddyLabBootFallbackTimer = window.setTimeout(async () => {
-        if (window.__buddyLabDebug) {
-          return;
-        }
-        const toast = document.getElementById("toast");
-        try {
-          const response = await fetch("./dist/index.html", { cache: "no-store" });
-          if (!response.ok) {
-            throw new Error(`Built runtime unavailable: ${response.status}`);
-          }
-          const html = await response.text();
-          const match = html.match(/<script[^>]+type="module"[^>]+src="\.\/assets\/([^"]+\.js)"/);
-          if (!match) {
-            throw new Error("Built runtime entry not found.");
-          }
-          await import(`./dist/assets/${match[1]}`);
-        } catch (error) {
-          console.error("Buddy Lab runtime did not boot.", error);
-          if (toast) {
-            toast.textContent = "Runtime did not start. Run npm run build, then npm run dev or npm run preview.";
-            toast.classList.add("is-visible");
-          }
-        }
-      }, 1600);
-    </script>
-    <script src="/src/main.ts" type="module"></script>
+    <div id="stage">
+      <canvas id="world" width="550" height="400"></canvas>
+    </div>
+    <script src="/src/parity/main.ts" type="module"></script>
   </body>
 </html>

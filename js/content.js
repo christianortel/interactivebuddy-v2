@@ -1,5 +1,8 @@
 export const TOOL_DEFS = [
   { id: "hand", name: "Open Hand", icon: "H", category: "Utility", cost: 0, description: "Grab, drag, flick, throw, and quick-tap to tickle." },
+  { id: "poke", name: "Poke", icon: ".", category: "Utility", cost: 0, description: "Click Buddy for a small sharp nudge and startled reaction." },
+  { id: "slap", name: "Slap", icon: "/", category: "Utility", cost: 0, description: "Drag across Buddy for a broader shove with slapstick spin." },
+  { id: "tickle", name: "Tickle", icon: "~", category: "Utility", cost: 0, description: "Click Buddy for a happy tickle burst without grabbing." },
   { id: "ball", name: "Ball", icon: "O", category: "Props", cost: 0, description: "Drag to aim and release a springy projectile." },
   { id: "beachball", name: "Beach Ball", icon: "o", category: "Props", cost: 280, description: "A big light prop with floaty bounce and soft impacts." },
   { id: "bowling", name: "Bowling Ball", icon: "8", category: "Props", cost: 340, description: "A heavy rolling ball with satisfying blunt impacts." },
@@ -45,6 +48,9 @@ export const TOOL_DEFS = [
 
 export const TOOL_EFFECT_AUDIT = {
   hand: { cosmetic: "buddy contact highlight and classic cursor affordance", visual: "grab stroke, tickle burst, ragdoll motion", scoring: ["throw", "tickle", "hand"], coverage: "browser hand flick and wall recovery" },
+  poke: { cosmetic: "small contact burst", visual: "short single-limb nudge and surprised reaction", scoring: ["poke", "hand", "basic"], coverage: "unit/runtime metadata plus static smoke pending browser automation" },
+  slap: { cosmetic: "broad contact burst", visual: "drag-direction shove, spin, and angry reaction", scoring: ["slap", "hand", "basic"], coverage: "unit/runtime metadata plus static smoke pending browser automation" },
+  tickle: { cosmetic: "happy contact burst", visual: "quick tickle impulse and happy reaction", scoring: ["tickle", "happy", "hand", "basic"], coverage: "unit/runtime metadata plus static smoke pending browser automation" },
   ball: { cosmetic: "ball-basic round prop metadata", visual: "springy thrown ball body", scoring: ["throw", "blunt", "toy"], coverage: "browser ball launch scoring" },
   beachball: { cosmetic: "beach-ball-striped prop metadata", visual: "striped beach ball overlay", scoring: ["beachball", "propVariant"], coverage: "browser prop throw regression" },
   bowling: { cosmetic: "bowling-classic prop metadata", visual: "highlight and finger-hole overlay", scoring: ["bowling", "propVariant"], coverage: "browser prop throw regression" },
@@ -77,7 +83,7 @@ export const TOOL_EFFECT_AUDIT = {
   rope: { cosmetic: "elastic rope constraint line", visual: "ceiling tether and constraint physics", scoring: ["tether", "builder", "force"], coverage: "browser toolEffects rope" },
   water: { cosmetic: "liquid room fill", visual: "water/slime/oil band with buoyancy", scoring: ["liquid", "builder"], coverage: "browser liquid use and Liquid Control challenge" },
   gift: { cosmetic: "gift-box prop metadata", visual: "gift body and happy mood", scoring: ["gift", "happy"], coverage: "browser toolEffects gift" },
-  moneydrop: { cosmetic: "money-drop prop metadata", visual: "bill bundle prop, coin particles, and happy/cash feedback", scoring: ["moneydrop", "cash", "happy"], coverage: "unit metadata plus manual nice-item smoke" },
+  moneydrop: { cosmetic: "money-drop prop metadata", visual: "bill bundle prop, coin particles, and happy/cash feedback", scoring: ["moneydrop", "cash", "happy", "nice"], coverage: "unit metadata plus static smoke for Bonus Drop content hook" },
   treat: { cosmetic: "treat-cookie prop metadata", visual: "cookie prop, crumb particles, and happy bump", scoring: ["treat", "happy", "nice"], coverage: "unit metadata plus manual nice-item smoke" },
   confetti: { cosmetic: "confetti-popper prop metadata", visual: "popper body, colored confetti particles, and cheerful bump", scoring: ["confetti", "happy", "nice"], coverage: "browser toolEffects confetti and Cheer Check challenge" },
   boombox: { cosmetic: "boombox speaker prop metadata", visual: "speaker body, music-note particles, and rhythmic happy pulses", scoring: ["boombox", "music", "happy", "nice"], coverage: "browser toolEffects boombox and Groove Check challenge" },
@@ -133,6 +139,7 @@ export const MISSION_POOL = [
   { id: "pulse5", title: "Pulse Check", description: "Hold 5 Pulse Beam hits.", target: 5, event: "pulseBeam", reward: 185 },
   { id: "confetti5", title: "Cheer Check", description: "Pop confetti 5 times.", target: 5, event: "confetti", reward: 150 },
   { id: "boombox4", title: "Groove Check", description: "Score 4 Boombox music pulses.", target: 4, event: "boombox", reward: 165 },
+  { id: "moneydrop4", title: "Bonus Drop", description: "Trigger 4 Money Drop bonuses.", target: 4, event: "moneydrop", reward: 170 },
   { id: "wheel3", title: "Quick Picker", description: "Open the radial tool wheel 3 times.", target: 3, event: "radialWheel", reward: 90 },
   { id: "export1", title: "Clip It", description: "Export one replay clip.", target: 1, event: "replayExport", reward: 160 }
 ];
@@ -152,5 +159,6 @@ export const CHALLENGE_MODES = {
   pulse: { name: "Pulse Check", description: "Hold 5 Pulse Beam hits before time runs out.", event: "pulseBeam", target: 5, duration: 35, reward: 250 },
   cheer: { name: "Cheer Check", description: "Pop 5 Confetti Poppers before time runs out.", event: "confetti", target: 5, duration: 35, reward: 210 },
   groove: { name: "Groove Check", description: "Score 4 Boombox music pulses before time runs out.", event: "boombox", target: 4, duration: 35, reward: 225 },
+  bonus: { name: "Bonus Drop", description: "Trigger 4 Money Drop bonuses before time runs out.", event: "moneydrop", target: 4, duration: 35, reward: 230 },
   export: { name: "Clip Export", description: "Export 1 replay clip before time runs out.", event: "replayExport", target: 1, duration: 35, reward: 260 }
 };

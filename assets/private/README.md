@@ -21,9 +21,17 @@ assets/private/
       explosion.wav
       shock.wav
       tickle.wav
+      poke.wav
+      slap.wav
       gift.wav
+      moneydrop.wav
+      treat.wav
+      confetti.wav
       boombox.wav
       paint.wav
+      frost.wav
+      goo.wav
+      pulse.wav
       unlock.wav
       select.wav
 ```
@@ -42,8 +50,10 @@ For private sounds, use `audioPacks.<id>.samples` in the pack JSON:
 ```json
 {
   "impact": "assets/private/interactive-buddy-private/audio/impact.wav",
-  "explosion": { "src": "assets/private/interactive-buddy-private/audio/explosion.wav", "gain": 0.9 }
+  "explosion": { "src": "assets/private/interactive-buddy-private/audio/explosion.wav", "gain": 0.9 },
+  "frost": "assets/private/interactive-buddy-private/audio/frost.wav",
+  "moneydrop": "assets/private/interactive-buddy-private/audio/moneydrop.wav"
 }
 ```
 
-Supported sample event keys are `impact`, `explosion`, `shock`, `tickle`, `gift`, `boombox`, `paint`, `unlock`, and `select`.
+Supported sample event keys include the generic fallbacks `impact`, `explosion`, `shock`, `paint`, `unlock`, and `select`, plus exact score/tool events such as `poke`, `slap`, `moneydrop`, `treat`, `confetti`, `heat`, `frost`, `goo`, `pulse`, `firecracker`, `mine`, `stickybomb`, `largebomb`, `wind`, `vacuum`, `conveyor`, and `liquid`. Exact event samples are tried first, then compatible generic samples or synthesized placeholders are used.

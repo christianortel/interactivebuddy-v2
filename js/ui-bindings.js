@@ -29,6 +29,9 @@ export function getControlBindings(documentRef = document) {
     reset: documentRef.getElementById("reset"),
     replay: documentRef.getElementById("replay"),
     resetMenu: documentRef.getElementById("resetMenuButton"),
+    resetBuddy: documentRef.getElementById("resetBuddyButton"),
+    clearObjects: documentRef.getElementById("clearObjectsButton"),
+    clearObjectsFooter: documentRef.getElementById("clearObjectsFooterButton"),
     saveScene: documentRef.getElementById("saveSceneButton"),
     loadScene: documentRef.getElementById("loadSceneButton"),
     exportSave: documentRef.getElementById("exportSaveButton"),
@@ -42,6 +45,7 @@ export function getControlBindings(documentRef = document) {
     slowMo: documentRef.getElementById("slowMoButton"),
     gravityModes: documentRef.querySelectorAll ? [...documentRef.querySelectorAll(".gravity-mode-button")] : [],
     fpsCounter: documentRef.getElementById("fpsCounterButton"),
+    debugPhysics: documentRef.getElementById("debugPhysicsButton"),
     missionMenu: documentRef.getElementById("missionButton"),
     challengeMode: documentRef.getElementById("challengeMode"),
     refreshMissions: documentRef.getElementById("refreshMissions"),
@@ -49,10 +53,15 @@ export function getControlBindings(documentRef = document) {
     reducedFlash: documentRef.getElementById("reducedFlash"),
     goreToggle: documentRef.getElementById("goreToggle"),
     audioToggle: documentRef.getElementById("audioToggle"),
+    audioVolume: documentRef.getElementById("audioVolume"),
+    audioVolumeValue: documentRef.getElementById("audioVolumeValue"),
+    cameraShakeToggle: documentRef.getElementById("cameraShakeToggle"),
+    particlesToggle: documentRef.getElementById("particlesToggle"),
     hapticsToggle: documentRef.getElementById("hapticsToggle"),
     assetPack: documentRef.getElementById("assetPack"),
     roomPreview: documentRef.getElementById("roomPreview"),
     audioPack: documentRef.getElementById("audioPack"),
-    liquidType: documentRef.getElementById("liquidType")
+    liquidType: documentRef.getElementById("liquidType"),
+    resetProgress: documentRef.getElementById("resetProgressButton")
   };
 }
